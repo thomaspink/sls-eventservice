@@ -12,18 +12,15 @@ export function stringify(token: any): string {
   if (token === undefined || token === null) {
     return '' + token;
   }
-
-  // if (typeof token === 'function') {
-  //     return getClassName(token);
-  // }
-
   if (token.name) {
     return token.name;
   }
   if (token.overriddenName) {
     return token.overriddenName;
   }
-
+  if (typeof token === 'function') {
+      return getClassName(token);
+  }
   if (token instanceof HTMLElement) {
     let parts = token.toString().match(/\w+/g);
     if (parts && parts.length) {

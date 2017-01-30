@@ -1,6 +1,6 @@
 import { BaseError } from '../error';
-import { stringify } from '../utils';
-import { ClassType } from '../facade';
+import { stringify } from '../utils/lang';
+import { ClassType } from '../utils/facade';
 
 export class NoComponentsOrFactoriesProvidedError extends BaseError {
   constructor() {
@@ -10,7 +10,8 @@ export class NoComponentsOrFactoriesProvidedError extends BaseError {
 
 export class InvalidComponentTypeError extends BaseError {
   constructor(type: any) {
-    super(`Invalid component type "${stringify(type)}" provided to bootstrap the application! Make sure you have provided a class`);
+    super(`Invalid component type "${stringify(type)}" provided to bootstrap the application!` +
+      ` Make sure you have provided a class`);
   }
 }
 
@@ -22,7 +23,8 @@ export class NoMetadataFoundError extends BaseError {
 
 export class ComponentAlreadyFoundError extends BaseError {
   constructor(classType: ClassType<any>) {
-    super(`The component "${stringify(classType)}" found twice or more in the provided array to bootstrap the application`);
+    super(`The component "${stringify(classType)}" found twice or more in the provided array to ` +
+      `bootstrap the application`);
   }
 }
 

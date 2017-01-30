@@ -1,4 +1,4 @@
-import { ClassType } from './facade';
+import { ClassType } from './utils/facade';
 import { ApplicationRef } from './application/application';
 import { ComponentFactory } from './component/factory';
 

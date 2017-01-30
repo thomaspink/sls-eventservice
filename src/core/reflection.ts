@@ -1,4 +1,4 @@
-import { ClassType } from './facade';
+import { ClassType } from './utils/facade';
 
 export class ClassReflection {
 

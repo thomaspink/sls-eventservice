@@ -5,5 +5,5 @@ export interface ClassType<T> {
 }
 
 export function isClassInstance(instance: any): boolean {
-    return typeof instance === 'object' && !!instance['constructor']
+    return typeof instance === 'object' && !!instance['constructor'];
 }

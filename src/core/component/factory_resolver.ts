@@ -1,7 +1,7 @@
-import { ClassType } from '../facade';
+import { ClassType } from '../utils/facade';
 import { ComponentFactory } from './factory';
 import { BaseError } from '../error';
-import { stringify } from '../utils';
+import { stringify } from '../utils/lang';
 
 export class ComponentFactoryResolver {
   private _factories = new Map<any, ComponentFactory<any>>();
@@ -16,7 +16,7 @@ export class ComponentFactoryResolver {
   resolveComponentFactory<C>(componentType: ClassType<C>): ComponentFactory<C> {
     let result = this._factories.get(componentType);
     if (!result) {
-      if(!this._parent) {
+      if (!this._parent) {
         throw new CouldNotResolveFactoryError(componentType);
       }
       result = this._parent.resolveComponentFactory(componentType);
@@ -27,6 +27,7 @@ export class ComponentFactoryResolver {
 
 export class CouldNotResolveFactoryError extends BaseError {
   constructor(type: ClassType<any>) {
-    super(`Could not resolve factory for "${stringify(type)}! Did you provide the component to the bootstrap function?`);
+    super(`Could not resolve factory for "${stringify(type)}! ` +
+      `Did you provide the component to the bootstrap function?`);
   }
 }

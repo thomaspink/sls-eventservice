@@ -22,13 +22,13 @@ export class WrappedError extends BaseError {
   originalError: any;
 
   constructor(message: string, error: any) {
-    super(`${message} caused by: ${error instanceof Error ? error.message: error }`);
+    super(`${message} caused by: ${error instanceof Error ? error.message : error}`);
     this.originalError = error;
   }
 
   get stack() {
     return ((this.originalError instanceof Error ? this.originalError : this._nativeError) as any)
-        .stack;
+      .stack;
   }
 }
 

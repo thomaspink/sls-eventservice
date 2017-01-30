@@ -1,7 +1,7 @@
 import { ComponentFactoryResolver } from '../component/factory_resolver';
 import { ComponentRef } from '../component/reference';
 import { ComponentFactory } from '../component/factory';
-import { ClassType } from '../facade';
+import { ClassType } from '../utils/facade';
 import {
   InvalidComponentTypeError,
   NoComponentsOrFactoriesProvidedError,
@@ -23,8 +23,10 @@ export class ApplicationRef {
   }
 
   get nativeElement(): Element { return this._nativeElement; }
-  get componentFactoryResolver(): ComponentFactoryResolver { return this._componentFactoryResolver };
-  get components(): ComponentRef<any>[] { return this._components };
+  get componentFactoryResolver(): ComponentFactoryResolver {
+    return this._componentFactoryResolver;
+  };
+  get components(): ComponentRef<any>[] { return this._components; };
   get componentTypes(): ClassType<any>[] { return this._componentTypes; };
 
   bootstrap(componentsOrFactories: Array<ClassType<any> | ComponentFactory<any>>) {
@@ -58,7 +60,7 @@ export class ApplicationRef {
   }
 
   parse() {
-    if(!this._componentFactoryResolver) {
+    if (!this._componentFactoryResolver) {
       throw new NotYetBootstrappedError('parse');
     }
     this._componentTypes.forEach(type => {
@@ -71,7 +73,7 @@ export class ApplicationRef {
       if (foundElements && foundElements.length) {
         const factory = this._componentFactoryResolver.resolveComponentFactory(type);
         for (let i = 0, max = foundElements.length; i < max; i++) {
-          const ref = factory.create(foundElements[i])
+          const ref = factory.create(foundElements[i]);
           this._components.push(ref);
         }
       }

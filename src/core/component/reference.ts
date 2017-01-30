@@ -1,4 +1,4 @@
-import { ClassType } from '../facade';
+import { ClassType } from '../utils/facade';
 import { NotImplementedError } from '../error';
 import { ElementRef } from '../element_ref';
 

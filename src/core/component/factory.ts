@@ -1,4 +1,4 @@
-import { ClassType } from '../facade';
+import { ClassType } from '../utils/facade';
 import { ComponentRef } from './reference';
 
 export class ComponentFactory<C> {
@@ -13,7 +13,7 @@ export class ComponentFactory<C> {
 
   create(nativeElement: Element): ComponentRef<C> {
     const type = this._componentType;
-    let ref = new ComponentRef(nativeElement, type);
+    let ref = new ComponentRef<C>(nativeElement, type);
     return ref;
   }
 }
