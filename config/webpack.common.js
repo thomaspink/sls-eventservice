@@ -1,10 +1,13 @@
-var webpack = require('webpack');
-var helpers = require('./helpers');
+const webpack = require('webpack');
+const helpers = require('./helpers');
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
 
   entry: {
-    'app': helpers.root('src', 'main.ts')
+    'app': helpers.root('src', 'main.ts'),
+    // 'css': helpers.root('src', 'main.css')
   },
 
   resolve: {
@@ -15,8 +18,25 @@ module.exports = {
     rules: [
       {
         test: /\.ts$/,
-        loaders: ['awesome-typescript-loader']
-      },
+        use: {
+          loader: 'awesome-typescript-loader',
+          options: {
+            configFileName: helpers.root('src', 'tsconfig.json')
+          }
+        }
+      },{
+        test: /\.css$/,
+        use: ExtractTextPlugin.extract({
+          fallbackLoader: "style-loader",
+          loader: "css-loader?sourceMap"
+        })
+      }
     ]
-  }
+  },
+
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: 'src/index.html'
+    })
+  ]
 };
