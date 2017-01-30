@@ -6,7 +6,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "build": "npm run clean && npm run lint && node_modules/webpack/bin/webpack.js --config config/webpack.prod.js --progress --profile --bail",
-    "dev": "npm run clean && node_modules/webpack/bin/webpack.js --config config/webpack.dev.js --progress --profile --bail",
+    "dev": "npm run clean && npm run lint && node_modules/webpack/bin/webpack.js --config config/webpack.dev.js --progress --profile --bail",
     "lint": "npm run lint:ts",
     "lint:ts": "node_modules/tslint/bin/tslint -c ./tslint.json 'src/**/*.ts'"
   },
