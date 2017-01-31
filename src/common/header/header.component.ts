@@ -1,4 +1,4 @@
-import { Component, ElementRef } from '../../core';
+import { Component, ElementRef } from 'mojito';
 
 @Component({
   selector: 'header'

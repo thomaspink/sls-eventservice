@@ -6,7 +6,9 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
 
   entry: {
+    // 'polyfills': helpers.root('src', 'polyfills.ts'),
     'app': helpers.root('src', 'main.ts'),
+    'vendor': helpers.root('src', 'vendor.ts'),
     // 'css': helpers.root('src', 'main.css')
   },
 
@@ -35,8 +37,11 @@ module.exports = {
   },
 
   plugins: [
+    new webpack.optimize.CommonsChunkPlugin({
+      name: ['app', 'vendor']
+    }),
     new HtmlWebpackPlugin({
       template: 'src/index.html'
-    })
+    }),
   ]
 };
