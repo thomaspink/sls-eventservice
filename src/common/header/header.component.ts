@@ -5,6 +5,5 @@ import { Component, ElementRef } from 'mojito';
 })
 export class HeaderComponent {
   constructor(element: ElementRef) {
-    console.log('init', element);
   }
 }
