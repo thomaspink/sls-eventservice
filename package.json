@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "clean": "rimraf dist",
-    "build": "npm run clean && npm run lint && node_modules/webpack/bin/webpack.js --config config/webpack.prod.js --progress --profile --bail",
-    "dev": "npm run clean && npm run lint && node_modules/webpack/bin/webpack.js --config config/webpack.dev.js --progress --profile --bail",
+    "start": "npm run clean",
+    "build": "npm run clean && npm run lint && npm run build:server",
+    "build:server": "node_modules/typescript/bin/tsc -p ./server/tsconfig.json && cp -R server/templates dist/server/templates",
     "lint": "npm run lint:ts",
     "lint:ts": "node_modules/tslint/bin/tslint -c ./tslint.json 'src/**/*.ts'"
   },
@@ -21,5 +22,14 @@
   },
   "homepage": "https://github.com/thomaspink/sls-eventservice#readme",
   "devDependencies": {
+    "rimraf": "^2.5.4",
+    "tslint": "^4.4.2",
+    "typescript": "^2.1.6"
+  },
+  "dependencies": {
+    "@types/express": "^4.0.35",
+    "@types/nunjucks": "0.0.32",
+    "express": "^4.14.1",
+    "nunjucks": "^3.0.0"
   }
 }
