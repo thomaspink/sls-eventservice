@@ -5,14 +5,13 @@
   "main": "index.js",
   "scripts": {
     "clean": "rimraf dist",
-    "start": "npm run clean && npm run server:structure && npm run server:views && npm run server:assets && npm run server:compile:watch & npm run server:start",
-    "build": "npm run clean && npm run lint && npm run server:compile && npm run server:views && npm run server:assets",
-    "server:start": "node_modules/nodemon/bin/nodemon.js dist/app.js --config ./config/nodemon.json",
-    "server:structure": "mkdir dist && mkdir dist/views && mkdir dist/public",
+    "start": "npm run clean && mkdir dist && npm run server:views:dev &&npm run server:compile && (npm run server:compile:watch & npm run server:start)",
+    "server:start": "node_modules/nodemon/bin/nodemon.js dist/app.js --config config/nodemon.json",
     "server:compile": "node_modules/typescript/bin/tsc -p ./server/tsconfig.json",
     "server:compile:watch": "node_modules/typescript/bin/tsc -p ./server/tsconfig.json -w",
     "server:assets": "cp -R server/public dist",
     "server:views": "cp -R server/views dist",
+    "server:views:dev": "ln -s ../server/views dist/views",
     "lint": "npm run lint:ts",
     "lint:ts": "node_modules/tslint/bin/tslint -c ./tslint.json 'server/**/*.ts'"
   },

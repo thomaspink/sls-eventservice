@@ -1,3 +1,4 @@
 {
-  "ignore": ["client/*", "server/*", "config/*"]
+  "verbose": false,
+  "watch": ["dist/app.js"]
 }

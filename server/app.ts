@@ -10,7 +10,8 @@ const app = express();
 // configure nunjucks
 nunjucks.configure(path.join(__dirname, 'views'), {
   autoescape: true,
-  express: app
+  express: app,
+  noCache: true // TODO: do this only in dev mode
 });
 
 // Use gzip compression
