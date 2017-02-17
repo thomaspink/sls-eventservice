@@ -1,0 +1,50 @@
+.social-nav {
+  background-color: #fff;
+  text-align: right;
+}
+
+.social-nav__list {
+  margin: 0;
+  list-style: none;
+}
+
+.social-nav__item {
+  display: inline-block;
+}
+
+.main-header {
+  background-color: #eee;
+}
+
+.main-header .container  {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+
+.brand {
+  display: block;
+  flex-grow: 0;
+
+  svg {
+    display: block;
+  }
+}
+
+.main-nav{
+  flex-shrink: 1;
+  flex-grow: 1;
+}
+
+.main-nav__list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+}
+
+.main-nav__item {
+  flex-grow: 0;
+}
