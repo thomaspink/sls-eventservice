@@ -22,7 +22,7 @@ app.use(compression());
 app.use(helmet());
 
 // define location where static files are
-app.use('/static', express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', function (req, res, next) {
   res.render('routes/index.njk');

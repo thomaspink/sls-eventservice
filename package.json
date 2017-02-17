@@ -5,13 +5,15 @@
   "main": "index.js",
   "scripts": {
     "clean": "rimraf dist",
-    "start": "npm run clean && mkdir dist && npm run server:views:dev &&npm run server:compile && (npm run server:compile:watch & npm run server:start)",
+    "start": "npm run clean && mkdir dist && npm run server:views:dev && npm run server:compile && npm run client:sass && (npm run server:compile:watch & npm run client:sass:watch & npm run server:start)",
     "server:start": "node_modules/nodemon/bin/nodemon.js dist/app.js --config config/nodemon.json",
     "server:compile": "node_modules/typescript/bin/tsc -p ./server/tsconfig.json",
-    "server:compile:watch": "node_modules/typescript/bin/tsc -p ./server/tsconfig.json -w",
+    "server:compile:watch": "npm run server:compile -- -w",
     "server:assets": "cp -R server/public dist",
     "server:views": "cp -R server/views dist",
     "server:views:dev": "ln -s ../server/views dist/views",
+    "client:sass": "node_modules/node-sass/bin/node-sass --source-map true --output-style nested --output dist/public/assets client ",
+    "client:sass:watch": "npm run client:sass -- -w",
     "lint": "npm run lint:ts",
     "lint:ts": "node_modules/tslint/bin/tslint -c ./tslint.json 'server/**/*.ts'"
   },
@@ -26,6 +28,7 @@
   },
   "homepage": "https://github.com/thomaspink/sls-eventservice#readme",
   "devDependencies": {
+    "node-sass": "^4.5.0",
     "nodemon": "^1.11.0",
     "rimraf": "^2.5.4",
     "tslint": "^4.4.2",
