@@ -2,6 +2,7 @@ import * as express from 'express';
 import * as nunjucks from 'nunjucks';
 import * as path from 'path';
 import * as compression from 'compression';
+import * as helmet from 'helmet';
 
 // create a new express app
 const app = express();
@@ -14,6 +15,10 @@ nunjucks.configure(path.join(__dirname, 'views'), {
 
 // Use gzip compression
 app.use(compression());
+
+// Helmet can help protect your app from some well-known web
+// vulnerabilities by setting HTTP headers appropriately.
+app.use(helmet());
 
 // define location where static files are
 app.use('/static', express.static(path.join(__dirname, 'public')));
