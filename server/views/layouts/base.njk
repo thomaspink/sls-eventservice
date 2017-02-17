@@ -5,8 +5,14 @@
   <title>{% block title %}{% endblock %}SLS Eventservice</title>
 </head>
 <body>
-  {% block content %}
-  This is the Content!
-  {% endblock %}
+  <div class="root">
+    {% include "../components/header.njk" %}
+    <main>
+      {% block content %}
+      This is the Content!
+      {% endblock %}
+    </main>
+    {% include "../components/footer.njk" %}
+  </div>
 </body>
 </html>
