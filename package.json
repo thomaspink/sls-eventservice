@@ -14,8 +14,9 @@
     "server:views:dev": "ln -s ../server/views dist/views",
     "client:sass": "node_modules/node-sass/bin/node-sass --source-map true --output-style nested --output dist/public/assets client ",
     "client:sass:watch": "npm run client:sass -- -w",
-    "lint": "npm run lint:ts",
-    "lint:ts": "node_modules/tslint/bin/tslint -c ./tslint.json 'server/**/*.ts'"
+    "lint": "npm run lint:scripts && npm run lint:styles",
+    "lint:scripts": "node_modules/tslint/bin/tslint -c ./tslint.json 'server/**/*.ts'",
+    "lint:styles": "node_modules/stylelint/bin/stylelint.js client/**/*.scss --config .stylelintrc.json --syntax scss"
   },
   "repository": {
     "type": "git",
@@ -31,6 +32,7 @@
     "node-sass": "^4.5.0",
     "nodemon": "^1.11.0",
     "rimraf": "^2.5.4",
+    "stylelint": "^7.8.0",
     "tslint": "^4.4.2",
     "typescript": "^2.1.6"
   },

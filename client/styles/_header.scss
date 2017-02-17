@@ -16,7 +16,7 @@
   background-color: #eee;
 }
 
-.main-header .container  {
+.main-header .container {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -31,7 +31,7 @@
   }
 }
 
-.main-nav{
+.main-nav {
   flex-shrink: 1;
   flex-grow: 1;
 }
