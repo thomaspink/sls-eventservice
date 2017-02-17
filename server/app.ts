@@ -1,6 +1,7 @@
 import * as express from 'express';
 import * as nunjucks from 'nunjucks';
 import * as path from 'path';
+import * as compression from 'compression';
 
 // create a new express app
 const app = express();
@@ -10,6 +11,9 @@ nunjucks.configure(path.join(__dirname, 'views'), {
   autoescape: true,
   express: app
 });
+
+// Use gzip compression
+app.use(compression());
 
 // define location where static files are
 app.use('/static', express.static(path.join(__dirname, 'public')));
