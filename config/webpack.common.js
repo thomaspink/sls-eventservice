@@ -5,9 +5,9 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
 
   entry: {
-    'polyfills': helpers.root('client', 'polyfills.ts'),
-    'app': helpers.root('client', 'main.ts'),
-    'vendor': helpers.root('client', 'vendor.ts'),
+    'polyfills': helpers.root('src','client', 'polyfills.ts'),
+    'app': helpers.root('src','client', 'main.ts'),
+    'vendor': helpers.root('src','client', 'vendor.ts'),
   },
 
   resolve: {
@@ -21,7 +21,7 @@ module.exports = {
         use: {
           loader: 'awesome-typescript-loader',
           options: {
-            configFileName: helpers.root('client', 'tsconfig.json')
+            configFileName: helpers.root('src','client', 'tsconfig.json')
           }
         }
       }
