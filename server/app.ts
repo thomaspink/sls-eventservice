@@ -7,6 +7,9 @@ import * as helmet from 'helmet';
 // create a new express app
 const app = express();
 
+// get port or fall back to 8080
+const PORT: number = process.env.PORT || 8080;
+
 // configure nunjucks
 nunjucks.configure(path.join(__dirname, 'views'), {
   autoescape: true,
@@ -28,6 +31,7 @@ app.get('/', function (req, res, next) {
   res.render('routes/index.njk');
 });
 
-app.listen(3000, function () {
-  console.log('Listening on: http://localhost:3000');
+app.listen(PORT, function () {
+  console.log(`App listening on port ${PORT}`);
+  console.log(`Press Ctrl+C to quit.`);
 });
