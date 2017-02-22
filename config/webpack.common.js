@@ -1,6 +1,7 @@
 const webpack = require('webpack');
 const helpers = require('./helpers');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 
 module.exports = {
 
@@ -32,10 +33,13 @@ module.exports = {
     new webpack.optimize.CommonsChunkPlugin({
       name: ['app', 'vendor', 'polyfills']
     }),
-    // new HtmlWebpackPlugin({
-    //   template: 'dist/views/layouts/base.njk',
-    //   filename: '../../../server/views/layouts/base.njk',
-    //   inject: 'body'
-    // }),
+    new HtmlWebpackPlugin({
+      template: helpers.root('src', 'server', 'views', 'layouts', 'base.njk'),
+      filename: helpers.root('dist', 'views', 'layouts', 'base.njk'),
+      inject: 'body'
+    }),
+    new ScriptExtHtmlWebpackPlugin({
+      defaultAttribute: 'defer'
+    })
   ]
 };
