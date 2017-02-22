@@ -7,7 +7,7 @@ module.exports = webpackMerge(commonConfig, {
 
   output: {
     path: helpers.root('dist', 'public', 'assets'),
-    // publicPath: 'http://localhost:8080/',
+    publicPath: '/assets/',
     filename: '[name].bundle.js',
     chunkFilename: '[id].chunk.js'
   }
