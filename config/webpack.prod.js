@@ -7,8 +7,9 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const StyleExtHtmlWebpackPlugin = require('style-ext-html-webpack-plugin');
 const HtmlWebpackExcludeAssetsPlugin = require('html-webpack-exclude-assets-plugin');
+const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 
-const ENV = process.env.NODE_ENV = process.env.ENV = 'production';
+// const ENV = process.env.NODE_ENV = process.env.ENV = 'production';
 
 module.exports = webpackMerge(commonConfig, {
   devtool: 'source-map',
@@ -21,8 +22,6 @@ module.exports = webpackMerge(commonConfig, {
   },
 
   plugins: [
-    new webpack.NoEmitOnErrorsPlugin(),
-
     // Exludes asses specified in the excludeAssets array
     new HtmlWebpackExcludeAssetsPlugin(),
 
@@ -30,6 +29,21 @@ module.exports = webpackMerge(commonConfig, {
     new ExtractTextPlugin('[name].[hash].bundle.css'),
 
     // inlines internal css into a style tag in you html
-    new StyleExtHtmlWebpackPlugin('internal')
+    new StyleExtHtmlWebpackPlugin('internal'),
+
+    // adds a defer attribute to the injected script tags
+    new ScriptExtHtmlWebpackPlugin({
+      defaultAttribute: 'defer'
+    }),
+
+    new webpack.optimize.UglifyJsPlugin({
+      comments: false,
+      dropDebugger: true,
+      dropConsole: true,
+      sourceMap: false,
+      compressor: {
+        warnings: false,
+      },
+    }),
   ]
 });

@@ -2,7 +2,6 @@ const webpack = require('webpack');
 const helpers = require('./helpers');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
@@ -43,6 +42,7 @@ module.exports = {
   },
 
   plugins: [
+    new webpack.NoEmitOnErrorsPlugin(),
 
     // creates 3 junks, does code splitting
     new webpack.optimize.CommonsChunkPlugin({
@@ -55,11 +55,6 @@ module.exports = {
       filename: helpers.root('dist', 'views', 'layouts', 'base.njk'),
       inject: 'body',
       excludeAssets: [/internal.*.js/, /external.*.js/]
-    }),
-
-    // adds a defer attribute to the injected script tags
-    new ScriptExtHtmlWebpackPlugin({
-      defaultAttribute: 'defer'
     })
 
   ]
