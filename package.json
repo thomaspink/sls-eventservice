@@ -12,7 +12,7 @@
     "server:assets": "cp -R src/server/public dist",
     "server:views": "cp -R src/server/views dist",
     "server:views:dev": "ln -s ../server/views dist/views",
-    "client:sass": "node_modules/node-sass/bin/node-sass --source-map true --output-style nested --output dist/public/assets client ",
+    "client:sass": "node_modules/node-sass/bin/node-sass --source-map true --output-style nested --output dist/public/assets src/client ",
     "client:sass:watch": "npm run client:sass -- -w",
     "client:ts": "node_modules/webpack/bin/webpack.js --config config/webpack.dev.js --progress --profile --bail",
     "lint": "npm run lint:scripts && npm run lint:styles",
