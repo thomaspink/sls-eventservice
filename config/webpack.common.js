@@ -34,6 +34,7 @@ module.exports = {
       },{
         test: /\.scss$/,
         exclude: helpers.root('src', 'client', 'app'),
+        // use: ['raw-loader', 'sass-loader']
         use: ExtractTextPlugin.extract({
           use: ['raw-loader', 'sass-loader']
         })

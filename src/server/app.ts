@@ -5,11 +5,7 @@ import * as compression from 'compression';
 import * as helmet from 'helmet';
 import { useWebpackMiddleware } from './webpack.middleware';
 
-console.log('--------');
-console.log('ENV: ' + process.env.NODE_ENV);
-console.log('--------');
-
-const ENV = process.env.NODE_ENV || 'development';
+const ENV = process.env.NODE_ENV || 'production';
 const isDEV = ENV === 'development';
 
 if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'development') {
@@ -32,15 +28,16 @@ nunjucks.configure(path.join(__dirname, 'views'), {
 });
 
 if (isDEV) {
+  // inject webpack middleware for hot module reloading
   useWebpackMiddleware(app);
+} else {
+  // Use gzip compression
+  app.use(compression());
+
+  // Helmet can help protect your app from some well-known web
+  // vulnerabilities by setting HTTP headers appropriately.
+  app.use(helmet());
 }
-
-// Use gzip compression
-app.use(compression());
-
-// Helmet can help protect your app from some well-known web
-// vulnerabilities by setting HTTP headers appropriately.
-app.use(helmet());
 
 // define location where static files are
 app.use(express.static(path.join(__dirname, 'public')));
