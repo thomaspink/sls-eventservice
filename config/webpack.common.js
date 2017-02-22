@@ -1,10 +1,9 @@
 const webpack = require('webpack');
 const helpers = require('./helpers');
+
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const StyleExtHtmlWebpackPlugin = require('style-ext-html-webpack-plugin');
-const HtmlWebpackExcludeAssetsPlugin = require('html-webpack-exclude-assets-plugin');
 
 module.exports = {
 
@@ -15,8 +14,8 @@ module.exports = {
     'vendor': helpers.root('src', 'client', 'vendor.ts'),
 
     // Style entry files
-    'critical.css': helpers.root('src', 'client', 'critical.scss'),
-    'main.css': helpers.root('src', 'client', 'main.scss'),
+    'internal': helpers.root('src', 'client', 'internal.scss'),
+    'external': helpers.root('src', 'client', 'external.scss'),
   },
 
   resolve: {
@@ -33,12 +32,10 @@ module.exports = {
             configFileName: helpers.root('src', 'client', 'tsconfig.json')
           }
         }
-      }, {
+      },{
         test: /\.scss$/,
         exclude: helpers.root('src', 'client', 'app'),
         use: ExtractTextPlugin.extract({
-          fallback: 'style-loader',
-          //resolve-url-loader may be chained before sass-loader if necessary
           use: ['raw-loader', 'sass-loader']
         })
       }
@@ -57,17 +54,8 @@ module.exports = {
       template: helpers.root('src', 'server', 'views', 'layouts', 'base.njk'),
       filename: helpers.root('dist', 'views', 'layouts', 'base.njk'),
       inject: 'body',
-      excludeAssets: [/critical.css.bundle.js/, /main.css.bundle.js/]
+      excludeAssets: [/internal.*.js/, /external.*.js/]
     }),
-
-    // Exludes asses specified in the excludeAssets array
-    new HtmlWebpackExcludeAssetsPlugin(),
-
-    // extracts css form the js bundles and saves it as its own file
-    new ExtractTextPlugin('[name]'),
-
-    // inlines critical css into a style tag in you html
-    new StyleExtHtmlWebpackPlugin('critical.css'),
 
     // adds a defer attribute to the injected script tags
     new ScriptExtHtmlWebpackPlugin({
