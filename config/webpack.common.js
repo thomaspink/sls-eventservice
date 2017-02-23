@@ -1,14 +1,20 @@
 const webpack = require('webpack');
 const helpers = require('./helpers');
+
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
 
   entry: {
-    'polyfills': helpers.root('src','client', 'polyfills.ts'),
-    'app': helpers.root('src','client', 'main.ts'),
-    'vendor': helpers.root('src','client', 'vendor.ts'),
+    // Script entry files
+    'polyfills': helpers.root('src', 'client', 'polyfills.ts'),
+    'app': helpers.root('src', 'client', 'main.ts'),
+    'vendor': helpers.root('src', 'client', 'vendor.ts'),
+
+    // Style entry files
+    'internal': helpers.root('src', 'client', 'internal.scss'),
+    'external': helpers.root('src', 'client', 'external.scss'),
   },
 
   resolve: {
@@ -22,14 +28,23 @@ module.exports = {
         use: {
           loader: 'awesome-typescript-loader',
           options: {
-            configFileName: helpers.root('src','client', 'tsconfig.json')
+            configFileName: helpers.root('src', 'client', 'tsconfig.json')
           }
         }
+      },{
+        test: /\.scss$/,
+        exclude: helpers.root('src', 'client', 'app'),
+        // use: ['raw-loader', 'sass-loader']
+        use: ExtractTextPlugin.extract({
+          use: ['raw-loader', 'sass-loader']
+        })
       }
     ]
   },
 
   plugins: [
+    new webpack.NoEmitOnErrorsPlugin(),
+
     // creates 3 junks, does code splitting
     new webpack.optimize.CommonsChunkPlugin({
       name: ['app', 'vendor', 'polyfills']
@@ -39,12 +54,9 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: helpers.root('src', 'server', 'views', 'layouts', 'base.njk'),
       filename: helpers.root('dist', 'views', 'layouts', 'base.njk'),
-      inject: 'body'
-    }),
-
-    // adds a defer attribute to the injected script tags
-    new ScriptExtHtmlWebpackPlugin({
-      defaultAttribute: 'defer'
+      inject: 'body',
+      excludeAssets: [/internal.*.js/, /external.*.js/]
     })
+
   ]
 };
