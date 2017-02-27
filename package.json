@@ -6,14 +6,15 @@
   "scripts": {
     "clean": "rimraf dist",
     "struct": "mkdir dist && mkdir dist/views && mkdir dist/public",
-    "start": "npm run clean && npm run struct && npm run server:views && npm run server:compile && npm run client:ts && npm run server:start",
-    "build": "npm run clean && npm run struct && npm run server:views && npm run server:compile && npm run client:ts",
+    "start": "npm run prebuild && npm run client:compile -- --config config/webpack.dev.js && npm run server:start",
+    "build": "npm run prebuild && npm run client:compile -- --config config/webpack.prod.js",
+    "prebuild": "npm run clean && npm run struct && npm run server:views && npm run server:compile",
     "server:start": "NODE_ENV=development node_modules/.bin/nodemon --debug dist/app.js",
     "server:compile": "node_modules/typescript/bin/tsc -p src/server/tsconfig.json",
     "server:compile:watch": "npm run server:compile -- -w",
     "server:assets": "cp -R src/server/public dist",
     "server:views": "cp -R src/server/views dist && rm -rf dist/views/layouts && mkdir dist/views/layouts",
-    "client:ts": "node_modules/webpack/bin/webpack.js --config config/webpack.dev.js --progress --profile --bail",
+    "client:compile": "node_modules/webpack/bin/webpack.js --progress --profile --bail",
     "lint": "npm run lint:scripts && npm run lint:styles",
     "lint:scripts": "node_modules/tslint/bin/tslint -c ./tslint.json 'src/**/*.ts'",
     "lint:styles": "node_modules/stylelint/bin/stylelint.js src/client/**/*.scss --config .stylelintrc.json --syntax scss"
