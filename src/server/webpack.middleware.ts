@@ -9,8 +9,14 @@ const compiler = webpack(webpackConfig);
 export function useWebpackMiddleware(app: express.Application) {
   // Attach the dev middleware to the compiler & the server
   app.use(webpackDevMiddleware(compiler, {
+    hot: true,
+    filename: 'app.bundle.js',
+    publicPath: webpackConfig.output.publicPath,
     noInfo: true,
-    publicPath: webpackConfig.output.publicPath
+    stats: {
+      colors: true,
+    },
+    historyApiFallback: true,
   }));
 
   // Attach the hot middleware to the compiler & the server

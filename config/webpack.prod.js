@@ -21,6 +21,18 @@ module.exports = webpackMerge(commonConfig, {
     chunkFilename: '[id].[hash].chunk.js'
   },
 
+  module: {
+    rules: [
+      {
+        test: /\.scss$/,
+        exclude: helpers.root('src', 'client', 'app'),
+        use: ExtractTextPlugin.extract({
+          use: ['raw-loader', 'sass-loader']
+        })
+      }
+    ]
+  },
+
   plugins: [
     // Exludes asses specified in the excludeAssets array
     new HtmlWebpackExcludeAssetsPlugin(),

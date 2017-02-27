@@ -9,8 +9,8 @@ module.exports = {
   entry: {
     // Script entry files
     'polyfills': helpers.root('src', 'client', 'polyfills.ts'),
-    'app': helpers.root('src', 'client', 'main.ts'),
     'vendor': helpers.root('src', 'client', 'vendor.ts'),
+    'app': helpers.root('src', 'client', 'main.ts'),
 
     // Style entry files
     'internal': helpers.root('src', 'client', 'internal.scss'),
@@ -31,14 +31,7 @@ module.exports = {
             configFileName: helpers.root('src', 'client', 'tsconfig.json')
           }
         }
-      },{
-        test: /\.scss$/,
-        exclude: helpers.root('src', 'client', 'app'),
-        // use: ['raw-loader', 'sass-loader']
-        use: ExtractTextPlugin.extract({
-          use: ['raw-loader', 'sass-loader']
-        })
-      }
+      },
     ]
   },
 
