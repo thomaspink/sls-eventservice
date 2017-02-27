@@ -33,3 +33,8 @@
     background: white;
   }
 }
+
+[aria-hidden='true'],
+.hidden {
+  display: none;
+}
