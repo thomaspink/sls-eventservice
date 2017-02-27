@@ -11,4 +11,4 @@
 Run `npm start` in your Command Line Tool.
 
 ## Deploy
-*ToDo*
+To build for production run `npm run build` in your Command Line Tool. This will generate a `dist` folder ready for deploy.
