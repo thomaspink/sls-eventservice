@@ -8,7 +8,7 @@
 2. Run `npm install`
 
 ## Run locally
-Run `npm run` in your Command Line Tool.
+Run `npm start` in your Command Line Tool.
 
 ## Deploy
 *ToDo*
