@@ -45,7 +45,6 @@ module.exports = webpackMerge(commonConfig, {
     new HtmlWebpackExcludeAssetsPlugin(),
 
     // extracts css form the js bundles and saves it as its own file
-    // new ExtractTextPlugin('[name].[hash].bundle.css'),
     internalCSS,
     externalCSS,
 
