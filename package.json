@@ -15,7 +15,7 @@
     "server:views": "cp -R src/server/views dist && rm -rf dist/views/layouts && mkdir dist/views/layouts",
     "client:ts": "node_modules/webpack/bin/webpack.js --config config/webpack.dev.js --progress --profile --bail",
     "lint": "npm run lint:scripts && npm run lint:styles",
-    "lint:scripts": "node_modules/tslint/bin/tslint -c ./tslint.json 'src/server/**/*.ts'",
+    "lint:scripts": "node_modules/tslint/bin/tslint -c ./tslint.json 'src/**/*.ts'",
     "lint:styles": "node_modules/stylelint/bin/stylelint.js src/client/**/*.scss --config .stylelintrc.json --syntax scss"
   },
   "repository": {
