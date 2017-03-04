@@ -1,6 +1,5 @@
 # sls-eventservice
-
-*ToDo*
+New website for [sls-eventservice.at](http://sls-eventservice.at)
 
 ## Prerequisite
 
