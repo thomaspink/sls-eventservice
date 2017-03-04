@@ -22,6 +22,7 @@
 
 .main-header {
   background-color: #ececec;
+  height: 70px;
 }
 
 .main-header .container {
@@ -33,9 +34,11 @@
 .brand {
   display: block;
   flex-grow: 0;
+  padding: 10px 0;
 
   svg {
     display: block;
+    height: 50px;
   }
 }
 
