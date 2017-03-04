@@ -20,3 +20,20 @@ a {
   margin-left: auto;
   margin-right: auto;
 }
+
+.link-list {
+  display: block;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.link-list__item {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+.link-list__link {
+  display: block;
+}
