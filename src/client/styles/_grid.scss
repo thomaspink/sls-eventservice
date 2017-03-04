@@ -1,0 +1,80 @@
+grid-row, [row] {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    &[gutter='tiny'] {
+        margin-left:  ($gutter-tiny / -2);
+        margin-right: ($gutter-tiny / -2);
+    }
+
+    &[gutter='small'] {
+        margin-left:  ($gutter-small / -2);
+        margin-right: ($gutter-small / -2);
+    }
+
+    &[gutter='medium'] {
+        margin-left:  ($gutter-medium / -2);
+        margin-right: ($gutter-medium / -2);
+    }
+
+    &[gutter='large'] {
+        margin-left:  ($gutter-large / -2);
+        margin-right: ($gutter-large / -2);
+    }
+}
+
+grid-column, [column] {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    flex-shrink: 1;
+    width: 100%;
+
+    > * {
+        width: 100%;
+    }
+
+    [gutter='tiny'] > & {
+        padding-top:  $gutter-tiny;
+        padding-left:  ($gutter-tiny / 2);
+        padding-right: ($gutter-tiny / 2);
+    }
+
+    [gutter='small'] > & {
+        padding-left:  ($gutter-small / 2);
+        padding-right: ($gutter-small / 2);
+    }
+
+    [gutter='medium'] > & {
+        padding-left:  ($gutter-medium / 2);
+        padding-right: ($gutter-medium / 2);
+    }
+
+    [gutter='large'] > & {
+        padding-left:  ($gutter-large / 2);
+        padding-right: ($gutter-large / 2);
+    }
+}
+
+@media all and (min-width:$breakpoint-tablet) {
+    @for $i from 1 through ($grid-columns - 1) {
+        [medium-#{$i}], [column='m-#{$i}'] {
+            flex-grow: 0;
+            flex-shrink: 0;
+            flex-basis: percentage($i / $grid-columns);
+            max-width: percentage($i / $grid-columns);
+        }
+    }
+}
+
+@media all and (min-width:$breakpoint-desktop) {
+    @for $i from 1 through ($grid-columns - 1) {
+        [large-#{$i}], [column='l-#{$i}'] {
+            flex-grow: 0;
+            flex-shrink: 0;
+            flex-basis: percentage($i / $grid-columns);
+            max-width: percentage($i / $grid-columns);
+        }
+    }
+}

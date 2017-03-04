@@ -1,7 +1,21 @@
 footer {
-  color: #fff;
+  color: #e3e3e3;
+
+  h3, a {
+    color: #fff;
+  }
+}
+
+.sitemap-footer {
+  background-color: #1e1e1e;
 }
 
 .legal-footer {
   background-color: #171717;
+  font-size: 14px;
+  line-height: 60px;
+
+  span {
+    float: right;
+  }
 }
