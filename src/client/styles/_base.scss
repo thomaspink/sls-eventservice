@@ -15,10 +15,15 @@ a {
 .container {
   width: 100%;
   max-width: $container-width;
-  padding-left: $spacer;
-  padding-right: $spacer;
+  padding-left: $spacer/2;
+  padding-right: $spacer/2;
   margin-left: auto;
   margin-right: auto;
+
+  @media all and (min-width:$breakpoint-tablet) {
+    padding-left: $spacer;
+    padding-right: $spacer;
+  }
 }
 
 .link-list {
