@@ -1,9 +1,10 @@
 import { Component, ElementRef } from 'mojiito-core';
 import { DrawerComponent } from './drawer.component';
+import { HeaderComponent } from './header.component';
 
 @Component({
   selector: 'body',
-  components: [ DrawerComponent ]
+  components: [ HeaderComponent, DrawerComponent ]
 })
 export class AppComponent {
 

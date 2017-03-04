@@ -29,12 +29,14 @@
   flex-direction: row;
   flex-wrap: nowrap;
   align-items: center;
+  justify-content: space-between;
   height: 70px;
 }
 
 .brand {
   display: block;
   flex-grow: 0;
+  margin-left: -10px;
 
   svg {
     display: block;
@@ -43,9 +45,14 @@
 }
 
 .main-nav {
+  display: none;
   flex-shrink: 1;
   flex-grow: 1;
   text-transform: uppercase;
+
+  @media all and (min-width:$breakpoint-tablet) {
+    display: block;
+  }
 }
 
 .main-nav__list {
@@ -68,4 +75,11 @@
 .main-nav__link {
   color: #000;
   padding: 0 5px;
+}
+
+.toggle-drawer {
+  float: right;
+  border: none;
+  background-color: transparent;
+  appearance: none;
 }
