@@ -13,6 +13,13 @@
   display: inline-block;
 }
 
+.social-nav__link {
+  color: #999;
+  &:hover {
+    color: #666;
+  }
+}
+
 .main-header {
   background-color: #ececec;
 }
