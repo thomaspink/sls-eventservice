@@ -1,12 +1,13 @@
 import { Component, ElementRef } from 'mojiito-core';
+import { Overlay } from './overlay.service';
 
 @Component({
   selector: 'side-drawer'
 })
 export class DrawerComponent {
 
-  constructor(private elementRef: ElementRef) {
-    console.log(elementRef.nativeElement);
+  constructor(private _overlay: Overlay) {
+    this._overlay.open();
   }
 
 }
