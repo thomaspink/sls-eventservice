@@ -15,7 +15,7 @@ export class Overlay {
 
   open() {
     if (this.isOpen) {
-      throw new Error('Overlay is already open. Close it first')
+      throw new Error('Overlay is already open. Close it first');
     }
     const factory = this._resolver.resolveComponentFactory(OverlayContainerComponent);
   }
