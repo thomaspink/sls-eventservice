@@ -21,7 +21,9 @@ export class Overlay {
   }
 
   close() {
-
+    if (!this.isOpen) {
+      return;
+    }
   }
 }
 
