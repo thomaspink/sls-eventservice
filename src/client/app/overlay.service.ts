@@ -3,7 +3,7 @@ import {
 } from 'mojiito-core';
 
 @Injectable()
-export class Overlay {
+export class Dialog {
 
   private _hostRef: ComponentRef<OverlayContainerComponent>;
 
@@ -15,7 +15,7 @@ export class Overlay {
 
   open() {
     if (this.isOpen) {
-      throw new Error('Overlay is already open. Close it first');
+      throw new Error('A Dialog is already open. Close it first before opening a new one.');
     }
     const factory = this._resolver.resolveComponentFactory(OverlayContainerComponent);
   }
