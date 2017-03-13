@@ -27,6 +27,13 @@ export class Dialog {
   }
 }
 
+/**
+ * Container that holds all overlays.
+ * It will be attached to the body of the document.
+ *
+ * @export
+ * @class OverlayContainerComponent
+ */
 @Component({
   selector: 'overlay-container'
 })
@@ -36,5 +43,5 @@ export class OverlayContainerComponent {
 
 }
 
-export const OVERLAY_PROVIDERS = [ Overlay ];
-export const OVERLAY_COMPONENTS = [ OverlayContainerComponent ];
+export const DIALOG_PROVIDERS = [ Dialog ];
+export const DIALOG_COMPONENTS = [ OverlayContainerComponent ];
