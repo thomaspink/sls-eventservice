@@ -6,10 +6,9 @@ import { Component, ElementRef, Renderer } from 'mojiito-core';
 export class HeaderComponent {
 
   constructor(private elementRef: ElementRef, private renderer: Renderer) {
-    renderer.selectElements('.toggle-drawer').forEach(btn => {
-      renderer.listen(btn, 'click', (event: Event) => {
-        console.log('clicked');
-      });
+    const btn: Element = renderer.selectRootElement('.toggle-drawer');
+    renderer.listen(btn, 'click', (event: Event) => {
+      console.log('clicked');
     });
   }
 

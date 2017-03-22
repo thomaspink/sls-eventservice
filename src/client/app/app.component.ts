@@ -1,12 +1,12 @@
 import { Component, ElementRef } from 'mojiito-core';
 import { DrawerComponent } from './drawer.component';
 import { HeaderComponent } from './header.component';
-import { Overlay, OVERLAY_PROVIDERS, OVERLAY_COMPONENTS } from './overlay.service';
+import { Dialog, DIALOG_COMPONENTS, DIALOG_PROVIDERS } from './dialog.service';
 
 @Component({
   selector: 'body',
-  components: [HeaderComponent, DrawerComponent, OVERLAY_COMPONENTS],
-  providers: [OVERLAY_PROVIDERS]
+  components: [HeaderComponent, DrawerComponent, DIALOG_COMPONENTS],
+  providers: [DIALOG_PROVIDERS]
 })
 export class AppComponent {
 
