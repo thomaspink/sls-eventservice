@@ -10,4 +10,5 @@ New website for [sls-eventservice.at](http://sls-eventservice.at)
 Run `npm start` in your Command Line Tool.
 
 ## Deploy
-To build for production run `npm run build` in your Command Line Tool. This will generate a `dist` folder ready for deployment.
+To build for production run `npm run build` in your Command Line Tool.    
+This will generate a `dist` folder ready for deployment.
