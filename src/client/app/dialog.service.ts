@@ -1,29 +1,44 @@
 import {
-  Injectable, Component, ComponentRef, ComponentFactoryResolver, ElementRef
+  Injectable, Injector, Component, ComponentRef, ComponentFactoryResolver, ElementRef
 } from 'mojiito-core';
 
 @Injectable()
 export class Dialog {
 
-  private _hostRef: ComponentRef<OverlayContainerComponent>;
+  private _containerRef: ComponentRef<OverlayContainerComponent>;
+  private _openDialogRef: ComponentRef<any>;
 
-  constructor(private _resolver: ComponentFactoryResolver) {
+  constructor(private _resolver: ComponentFactoryResolver, private _injector: Injector) {
 
   }
 
-  get isOpen(): boolean { return !!this._hostRef; }
+  get isOpen(): boolean { return !!this._openDialogRef; }
 
   open() {
     if (this.isOpen) {
       throw new Error('A Dialog is already open. Close it first before opening a new one.');
     }
-    const factory = this._resolver.resolveComponentFactory(OverlayContainerComponent);
+    let container = this._containerRef;
+    if (!container) {
+      container = this._createContainer();
+    }
+    console.log(container);
   }
 
   close() {
     if (!this.isOpen) {
       return;
     }
+  }
+
+  private _createContainer(): ComponentRef<OverlayContainerComponent> {
+    const el = document.createElement('div');
+    el.className = 'overlay-container';
+    document.body.appendChild(el);
+    const factory = this._resolver.resolveComponentFactory(OverlayContainerComponent);
+    const ref = factory.create(this._injector, el);
+    this._containerRef = ref;
+    return ref;
   }
 }
 
