@@ -63,8 +63,8 @@
     "core-js": "^2.4.1",
     "express": "^4.14.1",
     "helmet": "^3.4.0",
-    "mojiito-core": "^2.0.0-alpha.3-505a1d9",
-    "mojiito-platform-browser": "^2.0.0-alpha.3-505a1d9",
+    "mojiito-core": "^2.0.0-alpha.3-d6db997",
+    "mojiito-platform-browser": "^2.0.0-alpha.3-d6db997",
     "nunjucks": "^3.0.0"
   }
 }
