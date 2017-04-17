@@ -5,8 +5,8 @@ import {
 @Injectable()
 export class Dialog {
 
-  private _containerRef: ComponentRef<OverlayContainerComponent>;
-  private _openDialogRef: ComponentRef<any>;
+  private _containerRef: ComponentRef<OverlayContainerComponent> = null;
+  private _openDialogRef: ComponentRef<any> = null;
 
   constructor(private _resolver: ComponentFactoryResolver, private _injector: Injector) {
 
@@ -22,7 +22,6 @@ export class Dialog {
     if (!container) {
       container = this._createContainer();
     }
-    console.log(container);
   }
 
   close() {
@@ -36,9 +35,10 @@ export class Dialog {
     el.className = 'overlay-container';
     document.body.appendChild(el);
     const factory = this._resolver.resolveComponentFactory(OverlayContainerComponent);
-    const ref = factory.create(this._injector, el);
-    this._containerRef = ref;
-    return ref;
+    // const ref = factory.create(this._injector, el);
+    // this._containerRef = ref;
+    // return ref;
+    return null;
   }
 }
 
