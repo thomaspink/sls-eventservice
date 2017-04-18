@@ -1,0 +1,32 @@
+[image-gallery-item] {
+  display: block;
+  position: relative;
+  width: 100%;
+  padding-bottom: 65%;
+  background-position: 50% 50%;
+}
+
+.image-gallery-item__body {
+  position: absolute;
+  color: #fff;
+  opacity: 0;
+  transition: opacity 150ms ease-in-out;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  strong, span {
+    display: block;
+    text-align: center;
+  }
+}
+
+[image-gallery-item]:hover .image-gallery-item__body {
+  opacity: 1;
+}
