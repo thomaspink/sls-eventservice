@@ -78,8 +78,13 @@
 }
 
 .toggle-drawer {
+  display: block;
   float: right;
   border: none;
   background-color: transparent;
   appearance: none;
+
+  @media all and (min-width:$breakpoint-tablet) {
+    display: none;
+  }
 }
