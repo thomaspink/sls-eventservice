@@ -46,6 +46,14 @@ app.get('/', function (req, res, next) {
   res.render('routes/index.njk');
 });
 
+app.get('/referenzen', function (req, res, next) {
+  res.render('routes/referenzen.njk');
+});
+
+app.get('/referenzen/:id', function (req, res, next) {
+  res.render('routes/referenzen-detail.njk');
+});
+
 app.listen(PORT, function () {
   console.log(``);
   console.log(`\x1b[32m#####################################\x1b[0m`);
