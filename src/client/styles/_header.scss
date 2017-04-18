@@ -49,6 +49,8 @@
   flex-shrink: 1;
   flex-grow: 1;
   text-transform: uppercase;
+  font-family: $font-family-condensed;
+  font-weight: bold;
 
   @media all and (min-width:$breakpoint-tablet) {
     display: block;
@@ -69,6 +71,11 @@
 
   + .main-nav__item {
     margin-left: 15px;
+  }
+
+  &.main-nav__item--active a,
+  &.active a {
+    color: #666;
   }
 }
 
