@@ -24,7 +24,7 @@ h1, h2, h3 {
   text-transform: uppercase;
 }
 
-h1+ p,
+h1 + p,
 h2 + p,
 h3 + p {
   margin-top: 30px;
