@@ -4,6 +4,7 @@
   width: 100%;
   padding-bottom: 65%;
   background-position: 50% 50%;
+  background-size: cover;
 }
 
 .image-gallery-item__body {
@@ -24,6 +25,12 @@
   strong, span {
     display: block;
     text-align: center;
+    font-family: $font-family-condensed;
+  }
+
+  strong {
+    text-transform: uppercase;
+    font-size: 20px;
   }
 }
 
