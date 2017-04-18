@@ -1,0 +1,36 @@
+.hero {
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  overflow: hidden;
+}
+
+.hero--bg-bottom {
+  background-position: 50% 100%;
+}
+
+.hero > .container {
+  position: relative;
+  height: 300px;
+}
+
+.hero__title {
+  color: #fff;
+  position: absolute;
+  top: 50%;
+  transform: translate(0, -50%);
+}
+
+.hero--outline > .container::after {
+  content: '';
+  display: block;
+  position: absolute;
+  width: 630px;
+  height: 630px;
+  z-index: 0;
+  border: 30px solid #fff;
+  bottom: 30px;
+  border-bottom-right-radius: 100px;
+  pointer-events: none;
+  transform: translateX(-50%);
+}
