@@ -1,0 +1,28 @@
+.feature {
+  text-align: center;
+  margin: $spacer*2 0;
+}
+
+.feature__img {
+  display: block;
+  max-width: 100px;
+  margin: 0 auto;
+}
+.feature__heading {
+  text-transform: uppercase;
+  margin: 0;
+  padding: 0;
+}
+
+.feature__img + .feature__heading {
+  margin-top: $spacer;
+}
+
+.feature__description {
+  margin: 0;
+  padding: 0;
+}
+
+.feature__heading + .feature__description {
+  margin-top: $spacer;
+}
