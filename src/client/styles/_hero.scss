@@ -18,6 +18,13 @@
   }
 }
 
+.hero.hero--large > .container {
+  height: 250px;
+  @media all and (min-width:$breakpoint-tablet) {
+    height: 500px;
+  }
+}
+
 .hero__title {
   color: #fff;
   position: absolute;
