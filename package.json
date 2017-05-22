@@ -65,6 +65,7 @@
     "helmet": "^3.4.0",
     "mojiito-core": "^2.0.0-alpha.3-d6db997",
     "mojiito-platform-browser": "^2.0.0-alpha.3-d6db997",
-    "nunjucks": "^3.0.0"
+    "nunjucks": "^3.0.0",
+    "swiper": "^3.4.2"
   }
 }
