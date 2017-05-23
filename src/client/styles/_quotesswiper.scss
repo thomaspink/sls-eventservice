@@ -4,6 +4,23 @@ quotes-swiper {
   color: #fff;
   padding: $spacer*3 0;
 
+  .swiper-container {
+    padding-bottom: 60px;
+  }
+
+  .swiper-pagination {
+    bottom: 0 !important;
+  }
+
+  .swiper-pagination-bullet {
+    background-color: #eee;
+    cursor: pointer;
+  }
+  .swiper-pagination-bullet.swiper-pagination-bullet-active {
+    background-color: #fff;
+    cursor: default;
+  }
+
   blockquote {
     text-transform: uppercase;
     font-family: $font-family-condensed;

@@ -13,7 +13,8 @@ export class QuotesSwiperComponent {
     }
     const swiper = new global.Swiper(container, {
       loop: true,
-      autoplay: 10000
+      autoplay: 10000,
+      pagination: '.swiper-pagination',
     });
   }
 }
