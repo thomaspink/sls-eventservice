@@ -3,4 +3,21 @@ quotes-swiper {
   background-color: #333;
   color: #fff;
   padding: $spacer*2 0;
+
+  blockquote {
+    text-transform: uppercase;
+    font-family: $font-family-condensed;
+    text-align: center;
+    padding: 0 $spacer;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  p {
+    font-size: 30px;
+  }
+
+  cite {
+    font-style: normal;
+  }
 }
