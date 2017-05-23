@@ -15,9 +15,15 @@ quotes-swiper {
 
   p {
     font-size: 30px;
+    margin: 0;
   }
 
   cite {
+    display: block;
     font-style: normal;
+  }
+
+  p + cite {
+    margin-top: $spacer;
   }
 }
