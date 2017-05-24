@@ -1,0 +1,21 @@
+.logo-bar {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.logo-bar__item {
+  display: block;
+  max-width: 25%;
+}
+
+.logo-bar__img {
+  display: block;
+  max-width: 100%;
+}
