@@ -1,6 +1,10 @@
 quotes-swiper {
   display: block;
   background-color: #333;
+  background: -moz-radial-gradient(center, ellipse cover, #555555 0%, #222222 100%); /* FF3.6-15 */
+  background: -webkit-radial-gradient(center, ellipse cover, #555555 0%, #222222 100%); /* Chrome10-25,Safari5.1-6 */
+  background: radial-gradient(ellipse at center, #555555 0%, #222222 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+
   color: #fff;
   padding: $spacer*3 0;
 
