@@ -46,6 +46,10 @@ app.get('/', function (req, res, next) {
   res.render('routes/index.njk');
 });
 
+app.get('/unternehmen', function (req, res, next) {
+  res.render('routes/unternehmen.njk');
+});
+
 app.get('/referenzen', function (req, res, next) {
   res.render('routes/referenzen.njk');
 });
