@@ -14,18 +14,19 @@
   position: relative;
   height: 180px;
   @media all and (min-width:$breakpoint-tablet) {
-    height: 300px;
+    height: 350px;
   }
 }
 
 .hero.hero--large > .container {
   height: 250px;
   @media all and (min-width:$breakpoint-tablet) {
-    height: 500px;
+    height: 550px;
   }
 }
 
 .hero__title {
+  max-width: 240px;
   color: #fff;
   position: absolute;
   top: 50%;
@@ -35,6 +36,7 @@
 
   @media all and (min-width:$breakpoint-tablet) {
     font-size: 40px;
+    max-width: 380px;
   }
 }
 
@@ -42,18 +44,18 @@
   content: '';
   display: block;
   position: absolute;
-  width: 400px;
+  width: 500px;
   height: 400px;
   z-index: 0;
-  border: 20px solid #fff;
-  bottom: 20px;
+  border: 16px solid #fff;
+  bottom: 16px;
   border-bottom-right-radius: 50px;
   pointer-events: none;
   transform: translateX(-50%);
 
   @media all and (min-width:$breakpoint-tablet) {
-    width: 630px;
-    height: 630px;
+    width: 830px;
+    height: 830px;
     border-width: 30px;
     border-bottom-right-radius: 100px;
     bottom: 30px;
