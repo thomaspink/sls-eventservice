@@ -58,6 +58,10 @@ app.get('/referenzen/:id', function (req, res, next) {
   res.render('routes/referenzen-detail.njk');
 });
 
+app.get('/kontakt', function (req, res, next) {
+  res.render('routes/kontakt.njk');
+});
+
 app.listen(PORT, function () {
   console.log(``);
   console.log(`\x1b[32m#####################################\x1b[0m`);
