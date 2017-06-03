@@ -1,0 +1,25 @@
+.btn {
+  height: 50px;
+  line-height: 50px;
+  border-radius: 0;
+  border: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  font-family: $font-family-condensed;
+  font-size: 15px;
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 0 $spacer;
+  text-align: center;
+  background-color: #ccc;
+}
+
+.btn--block {
+  display: block;
+  width: 100%;
+}
+
+.btn--black {
+  background-color: #000;
+  color: #fff;
+}
