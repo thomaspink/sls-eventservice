@@ -1,0 +1,19 @@
+@for $i from 1 through 3 {
+    .island-#{$i} {
+      margin-top: $spacer * $i;
+      margin-bottom: $spacer * $i;
+    }
+
+    .island-i-#{$i} {
+      padding-top: $spacer * $i;
+      padding-bottom: $spacer * $i;
+    }
+
+    .island-t-#{$i} {
+      margin-top: $spacer * $i;
+    }
+
+    .island-b-#{$i} {
+      margin-bottom: $spacer * $i;
+    }
+  }
