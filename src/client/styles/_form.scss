@@ -20,7 +20,7 @@ textarea {
   margin: 0 0 $spacer 0;
 
   &:focus {
-    // outline: 2px solid $color-orange;
+    border-color: #21b7fd;
   }
 
   &::-webkit-input-placeholder { /* Chrome/Opera/Safari */
