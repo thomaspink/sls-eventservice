@@ -1,0 +1,8 @@
+.card {
+  display: block;
+  border: 6px solid #000;
+  padding: $spacer/2 $spacer;
+  font-family: $font-family-condensed;
+  border-top-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
