@@ -37,6 +37,22 @@ copyFile() {
   fi
 }
 
+#######################################
+# Virtual link a file or folder
+# Arguments:
+#   param1 - File or folder to copy
+#   param2 - Destination
+# Returns:
+#   None
+#######################################
+linkFile() {
+  if [[ -d ${1} ]]; then
+    ln -s ${1} ${2}
+  elif [[ -f ${1} ]]; then
+    ln -s ${1} ${2}
+  fi
+}
+
 rm -rf $THEME_DEST
 mkdir $THEME_DEST
 
@@ -44,8 +60,8 @@ FILES=${THEME_SRC}/*
 for f in $FILES
 do
   if [[ ${DEV} == true ]]; then
-    echo '1';
+    linkFile $f $THEME_DEST
   else
-      copyFile $f $THEME_DEST
+    copyFile $f $THEME_DEST
   fi
 done
