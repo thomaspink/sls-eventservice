@@ -14,7 +14,7 @@ for ARG in "$@"; do
       DEV=true
       ;;
     *)
-      echo 'Unknown option $ARG.'
+      echo "Unknown option $ARG."
       exit 1
       ;;
   esac
