@@ -10,7 +10,7 @@ DEV=false
 
 for ARG in "$@"; do
   case "$ARG" in
-    --dev=*)
+    --dev)
       DEV=true
       ;;
     *)
