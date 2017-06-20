@@ -18,7 +18,11 @@
     "client:compile": "node_modules/webpack/bin/webpack.js --progress --profile --bail",
     "lint": "npm run lint:scripts && npm run lint:styles",
     "lint:scripts": "node_modules/tslint/bin/tslint -c ./tslint.json 'src/**/*.ts'",
-    "lint:styles": "node_modules/stylelint/bin/stylelint.js src/client/**/*.scss --config .stylelintrc.json --syntax scss"
+    "lint:styles": "node_modules/stylelint/bin/stylelint.js src/client/**/*.scss --config .stylelintrc.json --syntax scss",
+
+    "wp:install": "./scripts/wp.sh",
+    "wp:theme:prod": "./scripts/theme.sh",
+    "wp:theme:dev": "./scripts/theme.sh --dev"
   },
   "repository": {
     "type": "git",
