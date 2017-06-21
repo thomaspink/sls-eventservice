@@ -53,9 +53,11 @@ linkFile() {
   fi
 }
 
+echo 'Cleaning up theme'
 rm -rf $THEME_DEST
 mkdir $THEME_DEST
 
+echo 'Copying theme files'
 FILES=${THEME_SRC}/*
 for f in $FILES
 do
@@ -65,3 +67,4 @@ do
     copyFile $f $THEME_DEST
   fi
 done
+echo 'Finished copying theme files'
