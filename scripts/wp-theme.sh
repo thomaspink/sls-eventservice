@@ -3,9 +3,9 @@
 set -u -e -o pipefail
 
 PUBLIC=`pwd`/public
-THEMES=${PUBLIC}/wp-content/themes
+THEMES_DIR=${PUBLIC}/wp-content/themes
 THEME_SRC=`pwd`/src/theme
-THEME_DEST=${THEMES}/sls-2017
+THEME_DEST=${THEMES_DIR}/sls-2017
 DEV=false
 
 for ARG in "$@"; do
