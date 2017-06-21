@@ -20,9 +20,9 @@
     "lint:scripts": "node_modules/tslint/bin/tslint -c ./tslint.json 'src/**/*.ts'",
     "lint:styles": "node_modules/stylelint/bin/stylelint.js src/client/**/*.scss --config .stylelintrc.json --syntax scss",
 
-    "wp:install": "./scripts/wp.sh",
-    "wp:theme:prod": "./scripts/theme.sh",
-    "wp:theme:dev": "./scripts/theme.sh --dev"
+    "wp:install": "./scripts/wp_install.sh",
+    "wp:theme:prod": "./scripts/wp_theme.sh",
+    "wp:theme:dev": "./scripts/wp_theme.sh --dev"
   },
   "repository": {
     "type": "git",
