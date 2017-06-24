@@ -2,6 +2,11 @@
 
 set -u -e -o pipefail
 
+PUBLIC=`pwd`/public
+
+echo 'Creating wp-config.php'
+cp -n ${PUBLIC}/wp-config-sample.php ${PUBLIC}/wp-config.php
+
 #######################################
 # Generates a random string
 # Arguments:
