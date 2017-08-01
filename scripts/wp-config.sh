@@ -7,6 +7,10 @@ PUBLIC=`pwd`/public
 echo 'Creating wp-config.php'
 cp -n ${PUBLIC}/wp-config-sample.php ${PUBLIC}/wp-config.php
 
+# sed "s/false/true/g" ${PUBLIC}/wp-config.php
+# cd ${PUBLIC}
+# perl -p -i -e "s/false/true/g" "wp-config.php" < /dev/null 2> /dev/null
+
 #######################################
 # Generates a random string
 # Arguments:
