@@ -4,6 +4,7 @@
 /dist
 /tmp
 /.tmp
+/.tools
 /public
 
 # dependencies
