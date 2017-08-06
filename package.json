@@ -22,7 +22,6 @@
     "wp:install": "./scripts/wp_install.sh",
     "wp:theme:prod": "./scripts/wp_theme.sh",
     "wp:theme:dev": "./scripts/wp_theme.sh --dev",
-
     "build-tools": "tsc -p src/tools/tsconfig.json",
     "wp:config": "node .tools/config.js --template=../public/wp-config-sample.php --out=../public"
   },
@@ -37,13 +36,17 @@
   },
   "homepage": "https://github.com/thomaspink/sls-eventservice#readme",
   "devDependencies": {
+    "@types/chalk": "^0.4.31",
+    "@types/inquirer": "0.0.35",
     "@types/minimist": "^1.2.0",
     "awesome-typescript-loader": "^3.0.4",
+    "chalk": "^2.0.1",
     "cross-env": "^3.1.4",
     "css-loader": "^0.26.2",
     "extract-text-webpack-plugin": "^2.0.0-rc.3",
     "html-webpack-exclude-assets-plugin": "0.0.4",
     "html-webpack-plugin": "^2.28.0",
+    "inquirer": "^3.2.1",
     "minimist": "^1.2.0",
     "node-sass": "^4.5.0",
     "nodemon": "^1.11.0",
