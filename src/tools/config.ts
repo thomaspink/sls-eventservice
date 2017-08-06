@@ -1,6 +1,7 @@
 import * as util from './util';
 import * as minimist from 'minimist';
 import * as inquirer from 'inquirer';
+import * as chalk from 'chalk';
 
 interface WPConfig {
   dbName: string;
@@ -77,7 +78,8 @@ export function main(templateFile: string, outdir: string, config: WPConfig,
 }
 
 function askForOptions(): Promise<WPConfig> {
-  console.log()
+  console.log(chalk.bold('To configure wordpress we need some information:'));
+  console.log('You can later change this options in your wp-config.php.\n');
   return inquirer.prompt(questions).then(answers => {
     return {
       dbName: answers['dbName'],
