@@ -1,9 +1,12 @@
+// tslint:disable:max-line-length
+
 import * as fs from 'fs';
+import * as rimraf from 'rimraf';
 
-
-export const readFile = promisifyFn(fs.readFile);
-export const writeFile = promisifyFn(fs.writeFile);
-export const readDir = promisifyFn(fs.readdir);
+export const readFile: (path: string, encoding: string) => Promise<string> = promisifyFn(fs.readFile);
+export const writeFile: (path: string, contents: string) => Promise<void> = promisifyFn<void>(fs.writeFile);
+export const readDir: (path: string) => Promise<string[]> = promisifyFn(fs.readdir);
+export const removeFileOrDir: (path: string) => Promise<void> = promisifyFn<void>(rimraf);
 
 export function promisifyFn<T>(fn: (...args: any[]) => void): () => Promise<T> {
   return (...args: any[]) => {

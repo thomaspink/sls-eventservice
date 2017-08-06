@@ -3,13 +3,23 @@ import * as minimist from 'minimist';
 import * as inquirer from 'inquirer';
 import * as chalk from 'chalk';
 
+
+const KEY_PLACEHOLDER = 'put your unique phrase here';
+const DB_NAME_PLACEHOLDER = 'database_name_here';
+const DB_USER_PLACEHOLDER = 'username_here';
+const DB_PASSWORD_PLACEHOLDER = 'password_here';
+const DB_HOST_PLACEHOLDER = 'localhost';
+const DB_CHARSET_PLACEHOLDER = 'utf8';
+const DB_TABLE_PREFIX = 'wp_';
+const WP_DEBUG_MODE_PLACEHOLDER = 'false';
 interface WPConfig {
   dbName: string;
   dbUser: string;
   dbPassword: string;
   dbHost?: string;
   dbCharset?: string;
-  dbCollate?: string;
+  dbTablePrefix?: string;
+  debugMode: boolean;
 }
 
 const stringValidatorFactory = (msg: string) => {
@@ -50,28 +60,64 @@ const questions: inquirer.Questions = [
     default: 'utf8'
   }, {
     type: 'input',
-    name: 'dbCollate',
-    // tslint:disable-next-line:max-line-length
-    message: '[Optional] - Enter your wordpress database collate (DB_COLLATE):'
+    name: 'dbTablePrefix',
+    message: '[Optional | defaults to wp_] - Enter your database table prefix:',
+    default: 'wp_'
+  }, {
+    type: 'confirm',
+    name: 'debugMode',
+    message: 'Do you want to enable the WordPress debugging mode?'
   }
 ];
 
-export function main(templateFile: string, outdir: string, config: WPConfig,
+export async function main(templatePath: string, outdir: string, config: WPConfig,
     genKeys: boolean|(() => string)): Promise<number|void> {
-
-  let genKeyFn: () => string = () => {
-    return '';
-  };
-
-  if (typeof genKeys === 'function') {
-    genKeyFn = genKeys;
-    genKeys = true;
-  }
-
-  console.log(config);
-
   try {
-    return Promise.resolve();
+    // set the function for generating keys
+    let genKeyFn: () => string = () => genRandom(30);
+    if (typeof genKeys === 'function') {
+      genKeyFn = genKeys;
+      genKeys = true;
+    }
+
+    const files = await util.readDir(outdir);
+
+    // check if wp-config.php already exists
+    // if so, ask user if we should override it
+    if (files.indexOf('wp-config.php') !== -1) {
+      const answer = await inquirer.prompt({
+        type: 'confirm',
+        name: 'confirmRemoval',
+        message: 'A wp-config.php alreay exists. Should it be overwritten?'
+      });
+
+      // Finish here as the user wants to stick to the existing wp-config.php
+      if (!answer['confirmRemoval']) {
+        return Promise.resolve();
+      }
+
+      // Remove wp-config.php so we can create a new one
+      await util.removeFileOrDir(outdir + '/wp-config.php');
+    }
+
+    let content = await util.readFile(templatePath, 'utf8');
+
+    if (genKeys) {
+      while (content.indexOf(KEY_PLACEHOLDER) !== -1) {
+        content = content.replace(KEY_PLACEHOLDER, genKeyFn);
+      }
+    }
+
+    content = content.replace(DB_NAME_PLACEHOLDER, config.dbName);
+    content = content.replace(DB_USER_PLACEHOLDER, config.dbUser);
+    content = content.replace(DB_PASSWORD_PLACEHOLDER, config.dbPassword);
+    content = content.replace(DB_HOST_PLACEHOLDER, config.dbHost);
+    content = content.replace(DB_CHARSET_PLACEHOLDER, config.dbCharset);
+    content = content.replace(DB_TABLE_PREFIX, config.dbTablePrefix);
+    if (config.debugMode) {
+      content = content.replace(WP_DEBUG_MODE_PLACEHOLDER, 'true');
+    }
+    return util.writeFile(outdir + '/wp-config.php', content);
   } catch (e) {
     return Promise.reject(e);
   }
@@ -87,23 +133,32 @@ function askForOptions(): Promise<WPConfig> {
       dbPassword: answers['dbPassword'],
       dbHost: answers['dbHost'],
       dbCharset: answers['dbCharset'],
-      dbCollate: answers['dbCollate']
+      debugMode: answers['debugMode']
     } as WPConfig;
   });
+}
+
+function genRandom(length = 16): string {
+  const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789#+-/\&%$!?';
+  let text = '';
+  for (var i = 0; i < length; i++) {
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
+  return text;
 }
 
 if (require.main === module) {
   const args = process.argv.slice(2);
   const options = minimist(args);
-  const template = options['template'];
-  const outDir = options['out'];
+  const template = options['template'][1];
+  const outDir = options['out'][1];
   const genKeys = !!options['generate-keys'];
   (() => {
-    if (typeof template === 'string') {
+    if (typeof template !== 'string') {
       return Promise.reject('No path to the wp-config.php template file provided. ' +
         'Look for wp-config.sample.php');
     }
-    if (typeof outDir === 'string') {
+    if (typeof outDir !== 'string') {
       return Promise.reject('No output directory provided where the wp-config.php will be written');
     }
     return askForOptions().then(config => main(template, outDir, config, genKeys));
