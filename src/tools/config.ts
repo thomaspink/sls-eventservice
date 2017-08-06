@@ -125,7 +125,8 @@ export async function main(templatePath: string, outdir: string, config: WPConfi
 
 function askForOptions(): Promise<WPConfig> {
   console.log(chalk.bold('To configure wordpress we need some information:'));
-  console.log('You can later change this options in your wp-config.php.\n');
+  console.log('You can later change this options in your wp-config.php.');
+  console.log('For more information visit https://codex.wordpress.org/Editing_wp-config.php\n');
   return inquirer.prompt(questions).then(answers => {
     return {
       dbName: answers['dbName'],
@@ -133,6 +134,7 @@ function askForOptions(): Promise<WPConfig> {
       dbPassword: answers['dbPassword'],
       dbHost: answers['dbHost'],
       dbCharset: answers['dbCharset'],
+      dbTablePrefix: answers['dbTablePrefix'],
       debugMode: answers['debugMode']
     } as WPConfig;
   });
@@ -161,7 +163,13 @@ if (require.main === module) {
     if (typeof outDir !== 'string') {
       return Promise.reject('No output directory provided where the wp-config.php will be written');
     }
-    return askForOptions().then(config => main(template, outDir, config, genKeys));
+    return askForOptions().then(config => main(template, outDir, config, genKeys)).then(_ => {
+      console.log('\n\n' + chalk.bold(chalk.green('Configuration successfully finished')));
+      console.log(`The wp-config.php has been created at "${outDir}/wp-config.php"`);
+      // tslint:disable-next-line:max-line-length
+      console.log(`You can change options now directly in the wp-config.php or run this wizzard again`);
+      console.log('For more information visit https://codex.wordpress.org/Editing_wp-config.php\n');
+    });
   })()
   .then(function (exitCode) { return process.exit(exitCode || 0); })
   .catch(function (e) {
