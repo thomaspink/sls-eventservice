@@ -3,7 +3,6 @@ import * as minimist from 'minimist';
 import * as inquirer from 'inquirer';
 import * as chalk from 'chalk';
 
-
 const KEY_PLACEHOLDER = 'put your unique phrase here';
 const DB_NAME_PLACEHOLDER = 'database_name_here';
 const DB_USER_PLACEHOLDER = 'username_here';
@@ -22,6 +21,11 @@ interface WPConfig {
   debugMode: boolean;
 }
 
+/**
+ * Generates a validator function with a specific error string
+ * for the wizzard
+ * @param msg Error message string
+ */
 const stringValidatorFactory = (msg: string) => {
   return (value: string) => {
     if (value && value.length > 0) {
@@ -100,14 +104,17 @@ export async function main(templatePath: string, outdir: string, config: WPConfi
       await util.removeFileOrDir(outdir + '/wp-config.php');
     }
 
+    // Read template config file
     let content = await util.readFile(templatePath, 'utf8');
 
+    // Replace all the key placeholder with a generated one
     if (genKeys) {
       while (content.indexOf(KEY_PLACEHOLDER) !== -1) {
         content = content.replace(KEY_PLACEHOLDER, genKeyFn);
       }
     }
 
+    // Replace all the config placeholder
     content = content.replace(DB_NAME_PLACEHOLDER, config.dbName);
     content = content.replace(DB_USER_PLACEHOLDER, config.dbUser);
     content = content.replace(DB_PASSWORD_PLACEHOLDER, config.dbPassword);
@@ -117,13 +124,18 @@ export async function main(templatePath: string, outdir: string, config: WPConfi
     if (config.debugMode) {
       content = content.replace(WP_DEBUG_MODE_PLACEHOLDER, 'true');
     }
+
+    // Create wp-config.php file and write content
     return util.writeFile(outdir + '/wp-config.php', content);
   } catch (e) {
     return Promise.reject(e);
   }
 }
 
-function askForOptions(): Promise<WPConfig> {
+/**
+ * Runs the wizzard and returns a config object
+ */
+export function askForOptions(): Promise<WPConfig> {
   console.log(chalk.bold('To configure wordpress we need some information:'));
   console.log('You can later change this options in your wp-config.php.');
   console.log('For more information visit https://codex.wordpress.org/Editing_wp-config.php\n');
