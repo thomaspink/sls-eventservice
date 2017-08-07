@@ -19,10 +19,12 @@
     "lint": "npm run lint:scripts && npm run lint:styles",
     "lint:scripts": "node_modules/tslint/bin/tslint -c ./tslint.json 'src/**/*.ts'",
     "lint:styles": "node_modules/stylelint/bin/stylelint.js src/client/**/*.scss --config .stylelintrc.json --syntax scss",
-    "wp:install": "./scripts/wp_install.sh",
-    "wp:theme:prod": "./scripts/wp_theme.sh",
-    "wp:theme:dev": "./scripts/wp_theme.sh --dev",
-    "build-tools": "tsc -p src/tools/tsconfig.json",
+
+    "postinstall": "npm run tools:build && npm run wp:install && npm run wp:theme:dev && npm run wp:config",
+    "tools:build": "tsc -p src/tools/tsconfig.json",
+    "wp:install": "./scripts/wp-install.sh",
+    "wp:theme:dev": "./scripts/wp-theme.sh --dev",
+    "wp:theme:prod": "./scripts/wp-theme.sh",
     "wp:config": "node .tools/config.js --template=../public/wp-config-sample.php --out=../public"
   },
   "repository": {
@@ -75,8 +77,6 @@
     "core-js": "^2.4.1",
     "express": "^4.14.1",
     "helmet": "^3.4.0",
-    "mojiito-core": "^2.0.0-alpha.3-d6db997",
-    "mojiito-platform-browser": "^2.0.0-alpha.3-d6db997",
     "nunjucks": "^3.0.0",
     "swiper": "^3.4.2"
   }
