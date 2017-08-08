@@ -1,5 +1,5 @@
 import { Type } from './type';
-import { querySelectorAll, stringify, genRandom } from '../util';
+import { findElements, stringify, genRandom } from '../util';
 
 const COMPONENT_IDS_ATTR_NAME = 'component-ids';
 const COMPONENT_IDS_SEPARATOR = ' ';
@@ -55,7 +55,7 @@ export function updateDOM(root: Element = document.body) {
     return;
   }
   factories.forEach(factory => {
-    querySelectorAll(factory.selector, root).map((elem: Element) => {
+    findElements(factory.selector, root).map((elem: Element) => {
       let skip = false;
 
       // Check if a component of this type already exists on that element

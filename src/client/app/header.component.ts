@@ -1,15 +1,25 @@
-// import { Component, ElementRef, Renderer } from 'mojiito-core';
+import { registerComponent, OnInit, OnDestroy } from '../core';
+import {listen, findElement} from '../util';
 
-// @Component({
-//   selector: 'header'
-// })
-// export class HeaderComponent {
+export class HeaderComponent implements OnInit, OnDestroy {
+  private _drawerBtn: HTMLButtonElement;
+  private _delegates: Function[] = [];
 
-//   constructor(private elementRef: ElementRef, private renderer: Renderer) {
-//     const btn: Element = renderer.selectRootElement('.toggle-drawer');
-//     renderer.listen(btn, 'click', (event: Event) => {
-//       console.log('clicked');
-//     });
-//   }
+  constructor(private element: Element) {
+    this._drawerBtn = findElement('.toggle-drawer', element) as HTMLButtonElement;
+  }
 
-// }
+  onInit() {
+    this._delegates.push(listen(this._drawerBtn, 'click', this.openDrawer.bind(this)));
+  }
+
+  onDestroy() {
+    this._delegates.forEach(fn => fn());
+  }
+
+  openDrawer() {
+    alert("dsaf");
+
+  }
+}
+registerComponent('header', HeaderComponent);
