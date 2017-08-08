@@ -30,7 +30,27 @@
   </nav>
   <div class="root">
     <main id="main" role="main">
+      <?php
+			if ( have_posts() ) :
+
+				/* Start the Loop */
+				while ( have_posts() ) : the_post();
+
+					/*
+					 * Include the Post-Format-specific template for the content.
+					 * If you want to override this in a child theme, then include a file
+					 * called content-___.php (where ___ is the Post Format name) and that will be used instead.
+					 */
+					// get_template_part( 'template-parts/post/content', get_post_format() );
+
+				endwhile;
+      else :
+
+				get_template_part( 'template-parts/post/content', 'none' );
+
+			endif;
+      ?>
     </main>
   </div>
-<script type="text/javascript" src="/assets/polyfills.bundle.js"></script><script type="text/javascript" src="/assets/vendor.bundle.js"></script><script type="text/javascript" src="/assets/app.bundle.js"></script><script type="text/javascript" src="/assets/external.bundle.js"></script><script type="text/javascript" src="/assets/internal.bundle.js"></script></body>
+<script type="text/javascript" src="/assets/polyfills.bundle.js"></script><script type="text/javascript" src="/assets/vendor.bundle.js"></script><script type="text/javascript" src="/assets/app.bundle.js"></script><script type="text/javascript" src="/assets/external.bundle.js"></script><script type="text/javascript" src="/assets/internal.bundle.js"></script><script type="text/javascript" src="/assets/polyfills.bundle.js"></script><script type="text/javascript" src="/assets/vendor.bundle.js"></script><script type="text/javascript" src="/assets/app.bundle.js"></script><script type="text/javascript" src="/assets/external.bundle.js"></script><script type="text/javascript" src="/assets/internal.bundle.js"></script><script type="text/javascript" src="/assets/polyfills.bundle.js"></script><script type="text/javascript" src="/assets/vendor.bundle.js"></script><script type="text/javascript" src="/assets/app.bundle.js"></script><script type="text/javascript" src="/assets/external.bundle.js"></script><script type="text/javascript" src="/assets/internal.bundle.js"></script></body>
 </html>
