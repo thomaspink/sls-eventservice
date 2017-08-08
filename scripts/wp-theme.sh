@@ -67,4 +67,5 @@ do
     copyFile $f $THEME_DEST
   fi
 done
+
 echo 'Finished copying theme files'

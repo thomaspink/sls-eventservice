@@ -1,6 +1,5 @@
 const webpack = require('webpack');
 const helpers = require('./helpers');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
 
@@ -39,15 +38,6 @@ module.exports = {
     // creates 3 junks, does code splitting
     new webpack.optimize.CommonsChunkPlugin({
       name: ['app', 'vendor', 'polyfills']
-    }),
-
-    // injects script tag into layout html template and saves the file to dist folder
-    new HtmlWebpackPlugin({
-      template: helpers.root('src', 'server', 'views', 'layouts', 'base.njk'),
-      filename: helpers.root('dist', 'views', 'layouts', 'base.njk'),
-      inject: 'body',
-      excludeAssets: [/internal.*.js/, /external.*.js/]
     })
-
   ]
 };

@@ -15,16 +15,20 @@
     "server:assets": "cp -R src/server/public dist",
     "server:views:dev": "mkdir dist/views/layouts && ln -s `pwd`/src/server/views/components/ `pwd`/dist/views/components && ln -s `pwd`/src/server/views/routes/ `pwd`/dist/views/routes",
     "server:views:prod": "cp -R src/server/views dist && rm -rf dist/views/layouts && mkdir dist/views/layouts",
-    "client:compile": "node_modules/webpack/bin/webpack.js --progress --profile --bail",
+
     "lint": "npm run lint:scripts && npm run lint:styles",
     "lint:scripts": "node_modules/tslint/bin/tslint -c ./tslint.json 'src/**/*.ts'",
     "lint:styles": "node_modules/stylelint/bin/stylelint.js src/client/**/*.scss --config .stylelintrc.json --syntax scss",
+
     "postinstall": "npm run tools:build && npm run wp:install && npm run wp:theme:dev && npm run wp:config",
     "tools:build": "tsc -p src/tools/tsconfig.json",
     "wp:install": "./scripts/wp-install.sh",
     "wp:theme:dev": "./scripts/wp-theme.sh --dev",
     "wp:theme:prod": "./scripts/wp-theme.sh",
-    "wp:config": "node .tools/config.js --template=public/wp-config-sample.php --out=public --generate-keys"
+    "wp:config": "node .tools/config.js --template=public/wp-config-sample.php --out=public --generate-keys",
+
+    "compile:dev": "webpack --progress --profile --bail --config config/webpack.dev.js",
+    "compile:prod": "webpack --progress --profile --bail --config config/webpack.prod.js"
   },
   "repository": {
     "type": "git",
