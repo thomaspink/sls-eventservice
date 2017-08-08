@@ -6,7 +6,7 @@
   "scripts": {
     "postinstall": "npm run tools:build && npm run wp:install && npm run wp:theme:dev && npm run wp:config",
     "build": "",
-    "start": "npm run compile:dev && npm run server:start",
+    "start": "npm run wp:theme:dev && npm run compile:dev && npm run server:start",
 
     "lint": "npm run lint:scripts && npm run lint:styles",
     "lint:scripts": "node_modules/tslint/bin/tslint -c ./tslint.json 'src/**/*.ts'",
