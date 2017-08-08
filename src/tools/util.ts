@@ -2,6 +2,7 @@
 
 import * as fs from 'fs';
 import * as rimraf from 'rimraf';
+import * as minimist from 'minimist';
 
 export const readFile: (path: string, encoding: string) => Promise<string> = promisifyFn(fs.readFile);
 export const writeFile: (path: string, contents: string) => Promise<void> = promisifyFn<void>(fs.writeFile);
@@ -22,4 +23,16 @@ export function promisifyFn<T>(fn: (...args: any[]) => void): () => Promise<T> {
   };
 }
 
+export function getCommandlineArgs(args: string[]): {[key: string]: string} {
+  const options = minimist(args);
+  for (let key in options) {
+    if (options.hasOwnProperty(key)) {
+      let value = options[key];
+      if (Array.isArray(value)) {
+        options[key] = value[value.length - 1];
+      }
+    }
+  }
+  return options;
+}
 

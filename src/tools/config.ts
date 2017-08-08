@@ -1,5 +1,4 @@
 import * as util from './util';
-import * as minimist from 'minimist';
 import * as inquirer from 'inquirer';
 import * as chalk from 'chalk';
 
@@ -163,9 +162,9 @@ function genRandom(length = 16): string {
 
 if (require.main === module) {
   const args = process.argv.slice(2);
-  const options = minimist(args);
-  const template = options['template'][1];
-  const outDir = options['out'][1];
+  const options = util.getCommandlineArgs(args);
+  const template = options['template'];
+  const outDir = options['out'];
   const genKeys = !!options['generate-keys'];
   (() => {
     if (typeof template !== 'string') {
