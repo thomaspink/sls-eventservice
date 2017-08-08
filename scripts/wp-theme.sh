@@ -68,4 +68,6 @@ do
   fi
 done
 
+rm -rf ${THEME_DEST}/index.php
+
 echo 'Finished copying theme files'

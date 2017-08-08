@@ -52,5 +52,5 @@
       ?>
     </main>
   </div>
-<script type="text/javascript" src="/assets/polyfills.bundle.js"></script><script type="text/javascript" src="/assets/vendor.bundle.js"></script><script type="text/javascript" src="/assets/app.bundle.js"></script><script type="text/javascript" src="/assets/external.bundle.js"></script><script type="text/javascript" src="/assets/internal.bundle.js"></script><script type="text/javascript" src="/assets/polyfills.bundle.js"></script><script type="text/javascript" src="/assets/vendor.bundle.js"></script><script type="text/javascript" src="/assets/app.bundle.js"></script><script type="text/javascript" src="/assets/external.bundle.js"></script><script type="text/javascript" src="/assets/internal.bundle.js"></script><script type="text/javascript" src="/assets/polyfills.bundle.js"></script><script type="text/javascript" src="/assets/vendor.bundle.js"></script><script type="text/javascript" src="/assets/app.bundle.js"></script><script type="text/javascript" src="/assets/external.bundle.js"></script><script type="text/javascript" src="/assets/internal.bundle.js"></script></body>
+</body>
 </html>
