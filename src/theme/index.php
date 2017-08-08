@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html <?php language_attributes(); ?>>
 <head>
-  <meta charset="UTF-8">
+  <meta charset="<?php bloginfo( 'charset' ); ?>">
   <meta http-equiv="X-UA-Compatible" content="IE=EDGE">
   <meta name="viewport" content="width=device-width,minimal-ui,initial-scale=1,maximum-scale=1,user-scalable=no">
   <meta name="mobile-web-app-capable" content="yes">
@@ -11,7 +11,7 @@
   <meta name="description" content="SLS Eventservice ist Ihr professioneller Partner für die gesamte Technik rund um Ihre Veranstaltungen. Wir freuen uns auf die Zusammenarbeit mit Ihnen!">
   <meta name="keywords" content="">
   <link rel="canonical" href="https://www.sls-eventservice.at/">
-  <title>{% block title %}{% endblock %}SLS Eventservice</title>
+  <title><? wp_title('&raquo;', true, 'right' ); ?></title>
   <meta property="og:locale" content="de_DE">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Ihr Event - unsere Aufgabe - SLS Eventservice">
@@ -23,12 +23,13 @@
   <link href="https://fonts.googleapis.com/css?family=Oswald" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
-<body>
+<body <?php body_class(); ?>>
   <nav class="skiplinks" role="navigation">
-    <a href="#main-navigation" class="visuallyhidden focusable">Zur Hauptnavigation springen</a>
-    <a href="#main" class="visuallyhidden focusable">Zum Seiteninhalt springen</a>
+    <a href="#main-navigation" class="visuallyhidden focusable"><?php _e( 'Zur Hauptnavigation springen', 'sls2017' ); ?></a>
+    <a href="#main" class="visuallyhidden focusable"><?php _e( 'Zum Seiteninhalt springen', 'sls2017' ); ?></a>
   </nav>
   <div class="root">
+    <?php get_template_part( 'template-parts/header/header', '' ); ?>
     <main id="main" role="main">
       <?php
 			if ( have_posts() ) :
