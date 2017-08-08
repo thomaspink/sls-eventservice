@@ -24,7 +24,7 @@
     "wp:install": "./scripts/wp-install.sh",
     "wp:theme:dev": "./scripts/wp-theme.sh --dev",
     "wp:theme:prod": "./scripts/wp-theme.sh",
-    "wp:config": "node .tools/config.js --template=public/wp-config-sample.php --out=public"
+    "wp:config": "node .tools/config.js --template=public/wp-config-sample.php --out=public --generate-keys"
   },
   "repository": {
     "type": "git",
