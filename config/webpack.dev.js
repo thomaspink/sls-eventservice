@@ -9,7 +9,7 @@ module.exports = webpackMerge(commonConfig, {
 
   output: {
     path: helpers.root('public', 'wp-content', 'themes', 'sls-2017', 'assets'),
-    publicPath: '/assets/',
+    publicPath: '<?= get_template_directory_uri(); ?>/assets/',
     filename: '[name].bundle.js',
     chunkFilename: '[id].chunk.js'
   },
