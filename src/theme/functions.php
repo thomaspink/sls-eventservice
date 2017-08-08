@@ -30,7 +30,7 @@ function sls_setup() {
   // This theme uses wp_nav_menu() in multiple locations.
   register_nav_menus( array(
     'top'    => __( 'Top Menu', 'sls-2017' ),
-    'drawer'    => __( 'Drawer Menu', 'sls-2017' ),
+    'drawer' => __( 'Drawer Menu', 'sls-2017' ),
     'social' => __( 'Social Links Menu', 'sls-2017' ),
   ));
 }
