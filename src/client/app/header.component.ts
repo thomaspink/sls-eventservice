@@ -3,10 +3,12 @@ import {listen, findElement} from '../util';
 
 export class HeaderComponent implements OnInit, OnDestroy {
   private _drawerBtn: HTMLButtonElement;
+  private _drawer: Element;
   private _delegates: Function[] = [];
 
   constructor(private element: Element) {
     this._drawerBtn = findElement('.toggle-drawer', element) as HTMLButtonElement;
+    this._drawer = findElement('side-drawer');
   }
 
   onInit() {
@@ -18,8 +20,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   openDrawer() {
-    alert("dsaf");
-
+    if(this._drawer.getAttribute('aria-hidden') === 'true') {
+      this._drawer.setAttribute('aria-hidden', 'false');
+    } else {
+      this._drawer.setAttribute('aria-hidden', 'true');
+    }
   }
 }
 registerComponent('header', HeaderComponent);
