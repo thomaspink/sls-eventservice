@@ -45,6 +45,7 @@
       endif;
       ?>
     </main>
+    <?php get_template_part( 'template-parts/drawer/drawer', '' ); ?>
   </div>
 </body>
 </html>
