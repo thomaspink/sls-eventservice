@@ -46,6 +46,7 @@
       ?>
     </main>
     <?php get_template_part( 'template-parts/drawer/drawer', '' ); ?>
+    <?php get_template_part( 'template-parts/footer/footer', '' ); ?>
   </div>
 </body>
 </html>
