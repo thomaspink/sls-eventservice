@@ -19,9 +19,14 @@ footer {
 .legal-footer {
   background-color: #171717;
   font-size: 14px;
+  text-transform: uppercase;
   line-height: 60px;
 
   span {
     float: right;
+
+    a + a::before {
+      content: ' | ';
+    }
   }
 }
