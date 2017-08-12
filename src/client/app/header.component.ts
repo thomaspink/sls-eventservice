@@ -20,11 +20,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   openDrawer() {
-    if(this._drawer.getAttribute('aria-hidden') === 'true') {
-      this._drawer.setAttribute('aria-hidden', 'false');
-    } else {
-      this._drawer.setAttribute('aria-hidden', 'true');
-    }
+    // if(this._drawer.getAttribute('aria-hidden') === 'true') {
+    //   this._drawer.setAttribute('aria-hidden', 'false');
+    // } else {
+    //   this._drawer.setAttribute('aria-hidden', 'true');
+    // }
   }
 }
 registerComponent('header', HeaderComponent);
