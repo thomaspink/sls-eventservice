@@ -33,6 +33,8 @@ function sls_setup() {
     'drawer' => __( 'Drawer Menu', 'sls-2017' ),
     'social' => __( 'Social Links Menu', 'sls-2017' ),
     'legal' => __( 'Footer Legal Links', 'sls-2017' ),
+    'partner' => __( 'Footer Partner Links', 'sls-2017' ),
+    'downloads' => __( 'Footer Download Links', 'sls-2017' ),
   ));
 }
 add_action( 'after_setup_theme', 'sls_setup' );

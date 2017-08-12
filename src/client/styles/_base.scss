@@ -49,14 +49,16 @@ h3 + p {
   margin: 0;
   padding: 0;
   list-style: none;
-}
 
-.link-list__item {
-  display: block;
-  margin: 0;
-  padding: 0;
-}
+  .link-list__item,
+  .menu-item {
+    display: block;
+    margin: 0;
+    padding: 0;
+  }
 
-.link-list__link {
-  display: block;
+  .link-list__link,
+  .menu-item a {
+    display: block;
+  }
 }

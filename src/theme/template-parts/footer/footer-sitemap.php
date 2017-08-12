@@ -2,7 +2,7 @@
   <div class="container">
     <grid-row gutter="medium">
       <grid-column medium-6 large-3>
-        <h3>Kontakt</h3>
+        <h3><?php _e( 'Kontakt', 'sls-2017' ); ?></h3>
         <v-card class="vcard" itemscope="" itemtype="http://microformats.org/profile/hcard">
           <div>
             <span itemprop="org">SLS Eventservice</span><br>
@@ -33,27 +33,27 @@
         </v-card>
       </grid-column>
       <grid-column medium-6 large-3>
-        <h3>Jobs</h3>
+        <h3><?php _e( 'Jobs', 'sls-2017' ); ?></h3>
         <p>Aktuell keine Stellenausschreibungen.<br>Schicke mir eine Initiativbewerbung an:</p>
         <p><a href="mailto:office@sls-eventservice.at">office@sls-eventservice.at</a></p>
       </grid-column>
       <grid-column medium-6 large-3>
-        <h3>Partner</h3>
-        <ul class="link-list">
-          <li class="link-list__item"><a href="#" class="link-list__link">OMP - Alles fürs Fest</a></li>
-          <li class="link-list__item"><a href="#" class="link-list__link">Innosoft</a></li>
-          <li class="link-list__item"><a href="#" class="link-list__link">Delt-Print</a></li>
-          <li class="link-list__item"><a href="#" class="link-list__link">Elektrotechnik Jenzer</a></li>
-        </ul>
+        <h3><?php _e( 'Partner', 'sls-2017' ); ?></h3>
+        <?php wp_nav_menu( array(
+          'theme_location' => 'partner',
+          'fallback_cb' => false,
+          'menu_class' => 'link-list',
+          'container' => false
+        )); ?>
       </grid-column>
       <grid-column medium-6 large-3>
-        <h3>Downloads</h3>
-        <ul class="link-list">
-          <li class="link-list__item"><a href="#" class="link-list__link">SLS Eventservice Imagebroschüre</a></li>
-          <li class="link-list__item"><a href="#" class="link-list__link">SLS Eventservice Logo (Schwarz-Weiß)</a></li>
-          <li class="link-list__item"><a href="#" class="link-list__link">SLS Eventservice Logo (Farbe)</a></li>
-          <li class="link-list__item"><a href="#" class="link-list__link">AGBs</a></li>
-        </ul>
+        <h3><?php _e( 'Downloads', 'sls-2017' ); ?></h3>
+        <?php wp_nav_menu( array(
+          'theme_location' => 'downloads',
+          'fallback_cb' => false,
+          'menu_class' => 'link-list',
+          'container' => false
+        )); ?>
       </grid-column>
     </grid-row>
   </div>
