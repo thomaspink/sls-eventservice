@@ -3,3 +3,4 @@ export {
   getComponentOnElement, getComponentsOnElement
 } from './component';
 export { OnInit, OnDestroy } from './lifecycle_hooks';
+export { EventEmitter } from './events';

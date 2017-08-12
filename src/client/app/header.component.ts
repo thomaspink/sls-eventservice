@@ -1,7 +1,9 @@
-import { registerComponent, OnInit, OnDestroy } from '../core';
+import { registerComponent, OnInit, OnDestroy, EventEmitter } from '../core';
 import {listen, findElement} from '../util';
 
 export class HeaderComponent implements OnInit, OnDestroy {
+  public onOpenDrawer = new EventEmitter();
+
   private _drawerBtn: HTMLButtonElement;
   private _drawer: Element;
   private _delegates: Function[] = [];
@@ -20,11 +22,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   openDrawer() {
-    // if(this._drawer.getAttribute('aria-hidden') === 'true') {
-    //   this._drawer.setAttribute('aria-hidden', 'false');
-    // } else {
-    //   this._drawer.setAttribute('aria-hidden', 'true');
-    // }
+    this.onOpenDrawer.emit();
   }
 }
 registerComponent('header', HeaderComponent);

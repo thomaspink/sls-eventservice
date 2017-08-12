@@ -7,20 +7,16 @@
     "postinstall": "npm run tools:build && npm run wp:install && npm run wp:theme:dev && npm run wp:config",
     "build": "",
     "start": "npm run wp:theme:dev && npm run compile:dev -- --watch & npm run server:start",
-
     "lint": "npm run lint:scripts && npm run lint:styles",
     "lint:scripts": "node_modules/tslint/bin/tslint -c ./tslint.json 'src/**/*.ts'",
     "lint:styles": "node_modules/stylelint/bin/stylelint.js src/client/**/*.scss --config .stylelintrc.json --syntax scss",
-
     "tools:build": "tsc -p src/tools/tsconfig.json",
     "wp:install": "./scripts/wp-install.sh",
     "wp:theme:dev": "./scripts/wp-theme.sh --dev",
     "wp:theme:prod": "./scripts/wp-theme.sh",
     "wp:config": "node .tools/config.js --template=public/wp-config-sample.php --out=public --generate-keys",
-
     "compile:dev": "webpack --progress --profile --bail --config config/webpack.dev.js",
     "compile:prod": "webpack --progress --profile --bail --config config/webpack.prod.js",
-
     "server:start": "php -S localhost:8080 -t public/"
   },
   "repository": {
@@ -74,6 +70,7 @@
     "express": "^4.14.1",
     "helmet": "^3.4.0",
     "nunjucks": "^3.0.0",
+    "rxjs": "^5.4.3",
     "swiper": "^3.4.2"
   }
 }
