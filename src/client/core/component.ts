@@ -15,14 +15,16 @@ const refs: ComponentRef<any>[] = [];
  * @param component The component class
  * @param shouldUpdate Indicates if the dom should be crawled immediately and create components
  */
-export function registerComponent<C>(selector: string, component: Type<C>, shouldUpdate = false): ComponentFactory<C> {
+export function registerComponent<C>(selector: string, component: Type<C>, shouldUpdate = false):
+  ComponentFactory<C> {
   // First check if component has already been registered
   if (factories && factories.length) {
     factories.forEach(factory => {
       if (factory.selector === selector && factory.componentType === component) {
+        // tslint:disable-next-line:max-line-length
         throw new Error(`${stringify(component)} has already been registered on this selector "${selector}"`);
       }
-    })
+    });
   }
   const factory = new ComponentFactory<C>(selector, component);
   factories.push(factory);
@@ -39,6 +41,7 @@ export function registerComponent<C>(selector: string, component: Type<C>, shoul
 export function destroyComponent<C>(ref: ComponentRef<C>): void {
   const idx = refs.indexOf(ref);
   if (idx === -1) {
+    // tslint:disable-next-line:max-line-length
     throw new Error(`Cannot destroy component because component reference is not in the registry. Did you already remove the component?`);
   }
   try {
