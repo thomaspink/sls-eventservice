@@ -11,7 +11,7 @@
   <meta name="description" content="SLS Eventservice ist Ihr professioneller Partner für die gesamte Technik rund um Ihre Veranstaltungen. Wir freuen uns auf die Zusammenarbeit mit Ihnen!">
   <meta name="keywords" content="">
   <link rel="canonical" href="https://www.sls-eventservice.at/">
-  <title><? wp_title('&raquo;', true, 'right' ); ?></title>
+  <title><?php wp_title('&raquo;', true, 'right' ); bloginfo( 'name' ); ?></title>
   <meta property="og:locale" content="de_DE">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Ihr Event - unsere Aufgabe - SLS Eventservice">
