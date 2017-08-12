@@ -53,25 +53,33 @@ export function destroyComponent<C>(ref: ComponentRef<C>): void {
   callLifecycleHook(ref.instance, 'onDestroy');
 }
 
-export function updateDOM(root: Element = document.body) {
+export function updateDOM(root: Element|Document = document) {
   if (!factories || !factories.length) {
     return;
   }
   factories.forEach(factory => {
     findElements(factory.selector, root).map((elem: Element) => {
-      let skip = false;
-
       // Check if a component of this type already exists on that element
-      for (var i = 0; i < refs.length; i++) {
-        const ref = refs[i];
-        if (ref.location === elem && ref.componentType === factory.componentType) {
-          return null;
-        }
-      }
-
-      return factory.create(elem);
+      return getComponentOnElement(factory.componentType, elem) ? null : factory.create(elem);
     });
   });
+}
+
+export function getComponentsOnElement(element: Element): ComponentRef<any>[] {
+  return refs.length && refs.filter(ref => ref.location === element ) || [];
+}
+
+export function getComponentOnElement<C>(component: Type<C>, element: Element):
+  ComponentRef<C>|null {
+  if (refs.length) {
+    for (var i = 0; i < refs.length; i++) {
+      const ref = refs[i];
+      if (ref.location === element && ref.componentType === component) {
+        return ref;
+      }
+    }
+  }
+  return null;
 }
 
 /**
