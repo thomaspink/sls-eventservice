@@ -191,5 +191,4 @@ if (require.main === module) {
     console.error('Writing wp-config.php failed');
     process.exit(1);
   });
-
 }

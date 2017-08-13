@@ -4,7 +4,7 @@
   "description": "Website for SLS Eventservice",
   "main": "index.js",
   "scripts": {
-    "postinstall": "npm run tools:build && npm run wp:install && npm run wp:theme:dev && npm run wp:config",
+    "postinstall": "npm run tools:build && npm run wp:install && npm run wp:plugins && npm run wp:theme:dev && npm run wp:config",
     "build": "",
     "start": "npm run wp:theme:dev && npm run compile:dev -- --watch & npm run server:start",
     "lint": "npm run lint:scripts && npm run lint:styles",
@@ -14,7 +14,8 @@
     "wp:install": "./scripts/wp-install.sh",
     "wp:theme:dev": "./scripts/wp-theme.sh --dev",
     "wp:theme:prod": "./scripts/wp-theme.sh",
-    "wp:config": "node .tools/config.js --template=public/wp-config-sample.php --out=public --generate-keys",
+    "wp:config": "node .tools/wp-config.js --template=public/wp-config-sample.php --out=public --generate-keys",
+    "wp:plugins": "node .tools/wp-plugins.js --out=public/wp-content/plugins",
     "compile:dev": "webpack --progress --profile --bail --config config/webpack.dev.js",
     "compile:prod": "webpack --progress --profile --bail --config config/webpack.prod.js",
     "server:start": "php -S localhost:8080 -t public/"
@@ -34,6 +35,7 @@
     "@types/inquirer": "0.0.35",
     "@types/minimist": "^1.2.0",
     "@types/rimraf": "0.0.28",
+    "adm-zip": "^0.4.7",
     "awesome-typescript-loader": "^3.0.4",
     "chalk": "^2.0.1",
     "cross-env": "^3.1.4",
@@ -72,5 +74,8 @@
     "nunjucks": "^3.0.0",
     "rxjs": "^5.4.3",
     "swiper": "^3.4.2"
+  },
+  "wp-plugins": {
+    "advanced-custom-fields": "https://downloads.wordpress.org/plugin/advanced-custom-fields.4.4.11.zip"
   }
 }

@@ -1,6 +1,8 @@
 // tslint:disable:max-line-length
 
 import * as fs from 'fs';
+import * as http from 'http';
+import * as https from 'https';
 import * as rimraf from 'rimraf';
 import * as minimist from 'minimist';
 
@@ -36,3 +38,38 @@ export function getCommandlineArgs(args: string[]): {[key: string]: string} {
   return options;
 }
 
+export function download(uri: string): Promise<Buffer> {
+  return new Promise<Buffer>((resolve, reject) => {
+    (/https:\/\/.*/.test(uri) ? https.get : http.get)(uri as any, res => {
+      const { statusCode } = res;
+      const contentType = res.headers['content-type'];
+
+      if (statusCode !== 200) {
+        // consume response data to free up memory
+        res.resume();
+        return reject(`Downloading ${uri} failed - StatusCode: ${statusCode}`);
+      }
+
+      const data = [];
+      let dataLen = 0;
+      res.on('data', chunk => {
+        data.push(chunk);
+        dataLen += chunk.length;
+      });
+      res.on('end', () => {
+        try {
+          const buf = new Buffer(dataLen);
+          for (let i = 0, len = data.length, pos = 0; i < len; i++) {
+            data[i].copy(buf, pos);
+            pos += data[i].length;
+          }
+          resolve(buf);
+        } catch (e) {
+          reject(e);
+        }
+      }).on('error', (e) => {
+        reject(e);
+      });
+    });
+  });
+}
