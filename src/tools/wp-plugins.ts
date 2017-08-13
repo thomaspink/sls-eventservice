@@ -25,7 +25,7 @@ export async function main(outdir: string, project?: string): Promise<number | v
         const buf = await util.download(url);
         console.log(`Installing plugin ${chalk.italic(name)}`);
         const zip = new AdmZip(buf);
-        zip.extractAllTo(pathUtil.join(outdir, name), /*overwrite*/true);
+        zip.extractAllTo(pathUtil.join(outdir), /*overwrite*/true);
         console.log(`Finished installing plugin ${chalk.italic(name)}`);
       }
     }
