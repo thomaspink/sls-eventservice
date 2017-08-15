@@ -1,10 +1,15 @@
-import { Type } from './type';
 import { findElements, stringify, genRandom } from '../util';
+import { Type } from './type';
+import { Provider } from './di/provider';
+import { Injector, StaticInjector } from './di/injector';
+import { InjectionToken } from './di/injection_token';
 
 const COMPONENT_IDS_ATTR_NAME = 'component-ids';
 const COMPONENT_IDS_SEPARATOR = ' ';
 const factories: ComponentFactory<any>[] = [];
 const refs: ComponentRef<any>[] = [];
+
+type TokenType = Type<any> | InjectionToken<any>;
 
 /**
  * Registers a component class on a specific selector.
@@ -13,9 +18,9 @@ const refs: ComponentRef<any>[] = [];
  * Returns a ComponentFactory for creating components on your own.
  * @param selector The element selector where the component will be created
  * @param component The component class
- * @param shouldUpdate Indicates if the dom should be crawled immediately and create components
  */
-export function registerComponent<C>(selector: string, component: Type<C>, shouldUpdate = false):
+export function registerComponent<C>(selector: string, component: Type<C>, providers?: Provider[],
+    deps?: TokenType[]):
   ComponentFactory<C> {
   // First check if component has already been registered
   if (factories && factories.length) {
@@ -26,11 +31,8 @@ export function registerComponent<C>(selector: string, component: Type<C>, shoul
       }
     });
   }
-  const factory = new ComponentFactory<C>(selector, component);
+  const factory = new ComponentFactory<C>(selector, component, providers, deps);
   factories.push(factory);
-  if (shouldUpdate) {
-    updateDOM();
-  }
   return factory;
 }
 
@@ -87,11 +89,21 @@ export function getComponentOnElement<C>(component: Type<C>, element: Element):
  * Call create on the factory to create a component of that type.
  */
 export class ComponentFactory<C> {
-  constructor(public selector: string, public componentType: Type<C>) { }
-  create(element: Element): ComponentRef<C> {
+  constructor(public selector: string, public componentType: Type<C>,
+    public providers?: Provider[], public deps?: TokenType[]) { }
+  create(element: Element, parent: ComponentRef<any>|null = null,
+      injector: Injector|null = null): ComponentRef<C> {
+    const providers = this.providers;
+    const parentInjector = injector || (parent && parent.injector || void 0);
     const id = genRandom(32);
-    const instance = new this.componentType(element);
-    const ref = new ComponentRef(element, instance, id);
+    const tokens = this.deps;
+    let deps: any[] = [];
+    injector = new ComponentInjector(element, providers, parentInjector);
+    if (tokens && tokens.length) {
+      deps = tokens.map(dep => injector.get(dep));
+    }
+    const instance = new this.componentType(...deps);
+    const ref = new ComponentRef(element, instance, id, injector);
     addComponentId(element, id);
     refs.push(ref);
     callLifecycleHook(instance, 'onInit');
@@ -104,17 +116,34 @@ export class ComponentFactory<C> {
  * it is created on.
  */
 export class ComponentRef<C> {
-  constructor(private _location: Element, private _component: C,  private _id: string) { }
+  constructor(private _location: Element, private _component: C,  private _id: string,
+    private _injector: Injector) { }
 
   get id(): string { return this._id; }
   get location(): Element { return this._location; };
   get instance(): C { return this._component; };
+  get injector(): Injector { return this._injector; };
   get componentType(): Type<C> { return <any>this._component.constructor; }
 
   /**
    * Destroys this component and removes it from the element
    */
   destroy(): void { destroyComponent(this); }
+}
+
+export const ELEMENT = new InjectionToken('ComponentElement');
+
+export class ComponentInjector extends StaticInjector {
+  constructor(private element: any, providers?: Provider[], parent?: Injector) {
+    super(providers, parent);
+  }
+
+  get<T>(token: any, notFoundValue?: any): T {
+    if (token === ELEMENT) {
+      return this.element;
+    }
+    return super.get(token, notFoundValue);
+  }
 }
 
 function callLifecycleHook(component: any, hook: string, ...args: any[]) {

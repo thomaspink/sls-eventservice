@@ -1,4 +1,4 @@
-import { registerComponent, OnInit, OnDestroy } from '../../core';
+import { registerComponent, OnInit, OnDestroy, ELEMENT } from '../../core';
 import { listen, findElement } from '../../util';
 
 export class DrawerComponent implements OnInit, OnDestroy {
@@ -149,4 +149,4 @@ export class DrawerComponent implements OnInit, OnDestroy {
     this.element.classList.remove('side-drawer--animatable');
   }
 }
-registerComponent('side-drawer', DrawerComponent);
+registerComponent('side-drawer', DrawerComponent, undefined, [ELEMENT]);
