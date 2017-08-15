@@ -25,4 +25,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.onOpenDrawer.emit();
   }
 }
-registerComponent('header', HeaderComponent, undefined, [ELEMENT]);
+registerComponent({
+  type: HeaderComponent,
+  selector: 'header',
+  deps: [ELEMENT]
+});

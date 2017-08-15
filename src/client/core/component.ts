@@ -3,6 +3,7 @@ import { Type } from './type';
 import { Provider } from './di/provider';
 import { Injector, StaticInjector } from './di/injector';
 import { InjectionToken } from './di/injection_token';
+import { ComponentMetadata } from './metadata/components';
 
 const COMPONENT_IDS_ATTR_NAME = 'component-ids';
 const COMPONENT_IDS_SEPARATOR = ' ';
@@ -19,9 +20,9 @@ type TokenType = Type<any> | InjectionToken<any>;
  * @param selector The element selector where the component will be created
  * @param component The component class
  */
-export function registerComponent<C>(selector: string, component: Type<C>, providers?: Provider[],
-    deps?: TokenType[]):
-  ComponentFactory<C> {
+export function registerComponent<C>(metadata: ComponentMetadata<C>): ComponentFactory<C> {
+  const selector = metadata.selector;
+  const component = metadata.type;
   // First check if component has already been registered
   if (factories && factories.length) {
     factories.forEach(factory => {
@@ -31,7 +32,7 @@ export function registerComponent<C>(selector: string, component: Type<C>, provi
       }
     });
   }
-  const factory = new ComponentFactory<C>(selector, component, providers, deps);
+  const factory = new ComponentFactory<C>(selector, component, metadata.providers, metadata.deps);
   factories.push(factory);
   return factory;
 }

@@ -149,4 +149,8 @@ export class DrawerComponent implements OnInit, OnDestroy {
     this.element.classList.remove('side-drawer--animatable');
   }
 }
-registerComponent('side-drawer', DrawerComponent, undefined, [ELEMENT]);
+registerComponent({
+  type: DrawerComponent,
+  selector: 'side-drawer',
+  deps: [ELEMENT]
+});

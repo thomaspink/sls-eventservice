@@ -5,6 +5,7 @@ import {
 import { listen, findElement } from '../util';
 import { HeaderComponent } from './components/header.component';
 import { DrawerComponent } from './components/drawer.component';
+import { Dialog } from './dialog/dialog';
 
 export class AppComponent implements OnInit, OnDestroy {
   private drawer: ComponentRef<DrawerComponent> | null;
@@ -27,4 +28,8 @@ export class AppComponent implements OnInit, OnDestroy {
     this.delegates.forEach(fn => fn());
   }
 }
-registerComponent('body', AppComponent, undefined, [ELEMENT]);
+registerComponent({
+  type: AppComponent,
+  selector: 'body',
+  deps: [ELEMENT]
+});
