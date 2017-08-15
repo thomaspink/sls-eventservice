@@ -1,6 +1,6 @@
 export * from './app/app.component';
-export * from './app/header.component';
-export * from './app/drawer.component';
+export * from './app/components/header.component';
+export * from './app/components/drawer.component';
 
 import { updateDOM } from './core';
 

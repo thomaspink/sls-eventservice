@@ -1,7 +1,7 @@
 import { registerComponent, OnInit, OnDestroy, getComponentOnElement, ComponentRef } from '../core';
 import {listen, findElement} from '../util';
-import {HeaderComponent} from './header.component';
-import {DrawerComponent} from './drawer.component';
+import {HeaderComponent} from './components/header.component';
+import {DrawerComponent} from './components/drawer.component';
 
 export class AppComponent implements OnInit, OnDestroy {
   private drawer: ComponentRef<DrawerComponent>|null;

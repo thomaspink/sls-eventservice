@@ -1,5 +1,5 @@
 import { registerComponent, OnInit, OnDestroy, EventEmitter } from '../core';
-import {listen, findElement} from '../util';
+import {listen, findElement} from '../../util';
 
 export class HeaderComponent implements OnInit, OnDestroy {
   public onOpenDrawer = new EventEmitter();

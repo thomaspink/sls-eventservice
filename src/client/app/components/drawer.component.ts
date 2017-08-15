@@ -1,5 +1,5 @@
-import { registerComponent, OnInit, OnDestroy } from '../core';
-import { listen, findElement } from '../util';
+import { registerComponent, OnInit, OnDestroy } from '../../core';
+import { listen, findElement } from '../../util';
 
 export class DrawerComponent implements OnInit, OnDestroy {
   private delegates: Function[] = [];
