@@ -171,7 +171,7 @@ class WordpressSetup {
 
   private function getHashes() {
 
-    $hashstring = file_get_contents( get_template_directory() . '/dist/build-manifest.json');
+    $hashstring = file_get_contents( get_template_directory() . '/assets/build-manifest.json');
     $hashfile = json_decode($hashstring, true);
 
     return $hashfile;

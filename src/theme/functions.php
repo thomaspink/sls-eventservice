@@ -18,7 +18,7 @@ if (class_exists('Timber')) {
   includeDir(  __DIR__ . '/core/classes/Timber/' );
 
   // Setting Environments
-  if($_SERVER['SERVER_NAME'] === 'localhost') {
+  if($_SERVER['SERVER_NAME'] === 'localhosts') {
     define('WP_ENV', 'development');
   } else {
     define('WP_ENV', 'production');
