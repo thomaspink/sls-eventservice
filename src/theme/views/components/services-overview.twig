@@ -1,14 +1,16 @@
-<div class="services-overview">
+<div class="container">
+  <div class="services-overview">
 
-  <h1>{{ page.title }}</h1>
-  <p>{{ page.content }}</p>
+    <h1>{{ page.title }}</h1>
+    <p>{{ page.content }}</p>
 
-  <div class="service-overview__list">
+    <div class="service-overview__list">
 
-  {% for service in services %}
-    {% include 'components/service-item.twig' %}
-  {% endfor %}
+    {% for service in services %}
+      {% include 'components/service-item.twig' %}
+    {% endfor %}
+
+    </div>
 
   </div>
-
 </div>
