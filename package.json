@@ -4,9 +4,10 @@
   "description": "Website for SLS Eventservice",
   "main": "index.js",
   "scripts": {
-    "postinstall": "npm run tools:build && npm run wp:install && npm run wp:plugins && npm run wp:theme:dev && npm run wp:config && composer install",
+    "postinstall": "composer install",
     "build": "",
-    "start": "npm run wp:theme:dev && npm run compile:dev -- --watch & npm run server:start",
+    "setup": "npm run tools:build && npm run wp:install && npm run wp:plugins && npm run wp:theme:dev && npm run wp:config",
+    "start": "npm run wp:theme:dev && node webpack.middleware.js & npm run server:start",
     "lint": "npm run lint:scripts && npm run lint:styles",
     "lint:scripts": "node_modules/tslint/bin/tslint -c ./tslint.json 'src/**/*.ts'",
     "lint:styles": "node_modules/stylelint/bin/stylelint.js src/client/**/*.scss --config .stylelintrc.json --syntax scss",
@@ -58,7 +59,8 @@
     "typescript": "^2.1.6",
     "webpack": "^2.2.1",
     "webpack-dev-middleware": "^1.10.1",
-    "webpack-hot-middleware": "^2.17.0",
+    "webpack-hot-middleware": "^2.18.0",
+    "webpack-manifest-plugin": "^1.1.0",
     "webpack-merge": "^2.6.1"
   },
   "dependencies": {
@@ -69,12 +71,12 @@
     "@types/nunjucks": "0.0.32",
     "compression": "^1.6.2",
     "core-js": "^2.4.1",
-    "express": "^4.14.1",
+    "cors": "^2.8.4",
+    "express": "^4.15.4",
     "helmet": "^3.4.0",
     "nunjucks": "^3.0.0",
     "rxjs": "^5.4.3",
     "swiper": "^3.4.2"
   },
-  "wp-plugins": {
-  }
+  "wp-plugins": {}
 }

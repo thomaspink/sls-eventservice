@@ -10,8 +10,8 @@ module.exports = {
     'app': helpers.root('src', 'client', 'main.ts'),
 
     // Style entry files
-    'internal': helpers.root('src', 'client', 'internal.scss'),
-    'external': helpers.root('src', 'client', 'external.scss'),
+    'inline': helpers.root('src', 'client', 'internal.scss'),
+    'main': helpers.root('src', 'client', 'external.scss'),
   },
 
   resolve: {

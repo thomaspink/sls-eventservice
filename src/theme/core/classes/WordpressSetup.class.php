@@ -10,12 +10,12 @@ class WordpressSetup {
   private static $ACF_PATH = '/core/acf';
 
   function __construct() {
-    $this->theme_path = get_template_directory() . '/dist/';
-    $this->theme_uri = get_template_directory_uri() . '/dist/';
+    $this->theme_path = get_template_directory() . '/assets/';
+    $this->theme_uri = get_template_directory_uri() . '/assets/';
     $this->assets_manifest = (WP_ENV === 'development')? '' : $this->getHashes();
 
     $this->version = wp_get_theme()->get( 'Version' );
-    $this->assets_path = (WP_ENV === 'development')? 'http://localhost:4000/': $this->theme_uri;
+    $this->assets_path = (WP_ENV === 'development')? 'http://localhost:4000/assets/': $this->theme_uri;
 
     load_theme_textdomain( 'sls-2017' );
 
@@ -37,7 +37,20 @@ class WordpressSetup {
 
     add_action( 'after_setup_theme', array($this, 'custom_header_setup'));
 
-    add_action('wp_enqueue_scripts',  array($this, 'add_theme_scripts_and_styles'));
+    // currently out of function -> does not work in case of any reasons…
+    wp_enqueue_script( 'polyfills-defer', $this->assets('polyfills.js'), array(), $this->version, true );
+    wp_enqueue_script( 'vendor-defer', $this->assets('vendor.js'), array('polyfills-defer'), $this->version, true );
+    wp_enqueue_script( 'app-defer', $this->assets('app.js'), array('vendor-defer'), $this->version, true );
+
+    // in development use .js files for HMR reloading styles
+    if(WP_ENV === 'development') {
+      wp_enqueue_script( 'inline', $this->assets('inline.js'), array('app-defer'), $this->version, true );
+      wp_enqueue_script( 'main', $this->assets('main.js'), array('inline'), $this->version, true );
+    } else {
+      wp_enqueue_style( 'inline', $this->assets('inline.css'), array(), $this->version);
+      wp_enqueue_style( 'main', $this->assets('main.css'), array(), $this->version);
+    }
+    // add_action( 'wp_enqueue_scripts',  array($this, 'add_theme_scripts_and_styles'));
 
     add_action( 'admin_menu', array($this, 'remove_menus'));
     add_action( 'admin_menu', array($this, 'remove_unused_menu_pages'));

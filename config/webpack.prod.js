@@ -2,6 +2,7 @@ const webpack = require('webpack');
 const webpackMerge = require('webpack-merge');
 const commonConfig = require('./webpack.common.js');
 const helpers = require('./helpers');
+const ManifestPlugin = require('webpack-manifest-plugin');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
@@ -41,6 +42,12 @@ module.exports = webpackMerge(commonConfig, {
   },
 
   plugins: [
+
+    new ManifestPlugin({
+      fileName: 'build-manifest.json',
+      prettyPrint: true
+    }),
+
     // Exludes asses specified in the excludeAssets array
     new HtmlWebpackExcludeAssetsPlugin(),
 
