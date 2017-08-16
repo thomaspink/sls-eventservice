@@ -17,9 +17,19 @@ class WordpressSetup {
     $this->version = wp_get_theme()->get( 'Version' );
     $this->assets_path = (WP_ENV === 'development')? 'http://localhost:4000/': $this->theme_uri;
 
+    load_theme_textdomain( 'sls-2017' );
+
+    add_theme_support( 'title-tag' );
     add_theme_support( 'post-formats' );
     add_theme_support( 'post-thumbnails' );
     add_theme_support( 'menus' );
+    add_theme_support( 'html5', array(
+      'comment-form',
+      'comment-list',
+      'gallery',
+      'caption',
+    ));
+
 
     add_action('init', array($this, 'register_custom_post_types'));
     add_action('init', array($this, 'register_custom_taxonomies'));
@@ -64,10 +74,16 @@ class WordpressSetup {
   public function register_menus() {
     register_nav_menus(
       array(
-        'page-menu'     => __( 'Seiten Men&uuml;', 'sls-2017' ),
+        'top'    => __( 'Top Menu', 'sls-2017' ),
+        'drawer' => __( 'Drawer Menu', 'sls-2017' ),
+        'social' => __( 'Social Links Menu', 'sls-2017' ),
+        'legal' => __( 'Footer Legal Links', 'sls-2017' ),
+        'partner' => __( 'Footer Partner Links', 'sls-2017' ),
+        'downloads' => __( 'Footer Download Links', 'sls-2017' ),
       )
     );
   }
+
   // Remove menus from the admin page
   public function remove_menus(){
       remove_menu_page('edit-tags.php?taxonomy=post_tag'); // Post tags
