@@ -32,4 +32,6 @@ if (class_exists('Timber')) {
   //   $query = 'post_type=song&p='.$params['id'];
   //   Routes::load('core/api/Track.class.php', null, $query, 200);
   // });
+
+}
 ?>
