@@ -1,9 +1,14 @@
-<div class="service-item">
+<grid-row class="service-item" gutter='medium'>
 
   {% set image = TimberImage(service.image) %}
 
-  {% include 'components/image.twig' with {image: image} %}
+  <grid-column medium-6>
+    {% include 'components/image.twig' with { image: image, style: 'service-item__image' } %}
+    {% include 'components/icon.twig' with { icon: service.icon, style: 'service-item__icon' } %}
+  </grid-column>
 
-  <h2>{{service.title}}</h2>
-  <p>{{service.content}}</p>
-</div>
+  <grid-column medium-6>
+    <h2>{{service.title}}</h2>
+    <p>{{service.content}}</p>
+  </grid-column>
+</grid-row>

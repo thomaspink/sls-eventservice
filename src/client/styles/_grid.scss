@@ -59,7 +59,7 @@ grid-column, [column] {
 
 @media all and (min-width:$breakpoint-mobile) {
     @for $i from 1 through ($grid-columns - 1) {
-        [small-#{$i}], [column='m-#{$i}'] {
+        [small-#{$i}], [column='s-#{$i}'] {
             flex-grow: 0;
             flex-shrink: 0;
             flex-basis: percentage($i / $grid-columns);

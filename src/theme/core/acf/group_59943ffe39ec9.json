@@ -40,14 +40,14 @@
                 "id": ""
             },
             "choices": {
-                "icon-buehnenbau": "Bühnenbau",
-                "icon-lichttechnik": "Lichttechnik",
-                "icon-lasertechnik": "Lasertechnik",
-                "icon-powerfactory": "Powerfactory",
-                "icon-pyrotechnik": "Pyrotechnik",
-                "icon-tontechnik": "Tontechnik",
-                "icon-videoproduktion": "Videoproduktion",
-                "icon-videotechnik": "Videotechnik"
+                "buehnenbau": "Bühnenbau",
+                "lichttechnik": "Lichttechnik",
+                "lasertechnik": "Lasertechnik",
+                "powerfactory": "Powerfactory",
+                "pyrotechnik": "Pyrotechnik",
+                "tontechnik": "Tontechnik",
+                "videoproduktion": "Videoproduktion",
+                "videotechnik": "Videotechnik"
             },
             "default_value": [],
             "allow_null": 0,
@@ -90,5 +90,5 @@
     ],
     "active": 1,
     "description": "",
-    "modified": 1502889173
+    "modified": 1502891503
 }

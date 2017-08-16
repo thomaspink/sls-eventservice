@@ -1,8 +1,8 @@
-<div class="image">
+<div class="image {{ style | join(' ') }} ">
 
   {% if image %}
 
-  <img class="image__src lazyload blur-up {{ image.classes | join(' ') }} " alt="{{ image.caption }}"
+  <img class="image__src lazyload blur-up" alt="{{ image.caption }}"
       src="{{ image.src | resize(10) }}"
       data-sizes="auto"
       data-srcset="

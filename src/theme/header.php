@@ -35,3 +35,5 @@
 
     <main id="main" role="main">
 
+
+    <?php Timber::render( 'components/icons.twig' ); ?>
