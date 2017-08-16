@@ -9,6 +9,7 @@
 
 # dependencies
 /node_modules
+/src/theme/core/vendor
 
 # IDEs and editors
 /.idea

@@ -1,0 +1,10 @@
+{
+  "name": "lukasholzer/sls-eventservice",
+  "description": "Wordpress theme with composer",
+  "require": {
+    "timber/timber": "^1.2"
+  },
+  "config": {
+    "vendor-dir": "src/theme/core/vendor"
+  }
+}

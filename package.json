@@ -4,7 +4,7 @@
   "description": "Website for SLS Eventservice",
   "main": "index.js",
   "scripts": {
-    "postinstall": "npm run tools:build && npm run wp:install && npm run wp:plugins && npm run wp:theme:dev && npm run wp:config",
+    "postinstall": "npm run tools:build && npm run wp:install && npm run wp:plugins && npm run wp:theme:dev && npm run wp:config && composer install",
     "build": "",
     "start": "npm run wp:theme:dev && npm run compile:dev -- --watch & npm run server:start",
     "lint": "npm run lint:scripts && npm run lint:styles",
