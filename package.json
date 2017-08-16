@@ -17,7 +17,6 @@
     "wp:theme:prod": "./scripts/wp-theme.sh",
     "wp:config": "node .tools/wp-config.js --template=public/wp-config-sample.php --out=public --generate-keys",
     "wp:plugins": "node .tools/wp-plugins.js --out=public/wp-content/plugins",
-    "compile:dev": "webpack --progress --profile --bail --config config/webpack.dev.js",
     "compile:prod": "webpack --progress --profile --bail --config config/webpack.prod.js",
     "server:start": "php -S localhost:8080 -t public/"
   },
