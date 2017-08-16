@@ -5,7 +5,7 @@ class CustomPostTypes {
     protected $args = array();
     protected $slug = '';
 
-    function __construct($slug, $name, $namePlural, $icon, $i18nDomain = 'sls-eventservice') {
+    function __construct($slug, $name, $namePlural, $icon, $i18nDomain = 'sls-2017') {
 
         $this->slug = $slug;
 

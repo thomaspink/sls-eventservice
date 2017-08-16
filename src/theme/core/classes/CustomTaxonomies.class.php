@@ -7,7 +7,7 @@ class CustomTaxonomies {
   protected $registerFor;
   protected $hirarchy;
 
-    function __construct($slug, $name, $namePlural, $hirarchy = false, $registerFor = array('post'), $i18nDomain = 'sls-eventservice') {
+    function __construct($slug, $name, $namePlural, $hirarchy = false, $registerFor = array('post'), $i18nDomain = 'sls-2017') {
       $this->slug = $slug;
       $this->registerFor = $registerFor;
       $this->hirarchy = $hirarchy;
