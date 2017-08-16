@@ -1,0 +1,18 @@
+<div class="image">
+
+  {% if image %}
+
+  <img class="image__src lazyload blur-up {{ image.classes | join(' ') }} " alt="{{ image.caption }}"
+      src="{{ image.src | resize(10) }}"
+      data-sizes="auto"
+      data-srcset="
+      {{ image.src | resize(400) }} 400w,
+      {{ image.src | resize(700) }} 700w"/>
+
+  {% else %}
+
+  <img class="image__src" alt="sls-eventservice" src="http://placehold.it/400x400" />
+
+  {% endif %}
+
+</div>

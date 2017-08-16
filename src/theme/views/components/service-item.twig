@@ -1,0 +1,9 @@
+<div class="service-item">
+
+  {% set image = TimberImage(service.image) %}
+
+  {% include 'components/image.twig' with {image: image} %}
+
+  <h2>{{service.title}}</h2>
+  <p>{{service.content}}</p>
+</div>

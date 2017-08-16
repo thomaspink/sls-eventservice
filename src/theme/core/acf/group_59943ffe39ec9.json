@@ -1,0 +1,94 @@
+{
+    "key": "group_59943ffe39ec9",
+    "title": "Leistungen",
+    "fields": [
+        {
+            "key": "field_5994400b61950",
+            "label": "Bild",
+            "name": "image",
+            "type": "image",
+            "instructions": "",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array",
+            "preview_size": "thumbnail",
+            "library": "all",
+            "min_width": 620,
+            "min_height": "",
+            "min_size": "",
+            "max_width": "",
+            "max_height": "",
+            "max_size": "",
+            "mime_types": ""
+        },
+        {
+            "key": "field_5994405f61951",
+            "label": "Icon",
+            "name": "icon",
+            "type": "select",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "icon-buehnenbau": "Bühnenbau",
+                "icon-lichttechnik": "Lichttechnik",
+                "icon-lasertechnik": "Lasertechnik",
+                "icon-powerfactory": "Powerfactory",
+                "icon-pyrotechnik": "Pyrotechnik",
+                "icon-tontechnik": "Tontechnik",
+                "icon-videoproduktion": "Videoproduktion",
+                "icon-videotechnik": "Videotechnik"
+            },
+            "default_value": [],
+            "allow_null": 0,
+            "multiple": 0,
+            "ui": 0,
+            "ajax": 0,
+            "return_format": "value",
+            "placeholder": ""
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "services"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "acf_after_title",
+    "style": "seamless",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": [
+        "permalink",
+        "excerpt",
+        "custom_fields",
+        "discussion",
+        "comments",
+        "revisions",
+        "slug",
+        "author",
+        "format",
+        "page_attributes",
+        "featured_image",
+        "categories",
+        "tags",
+        "send-trackbacks"
+    ],
+    "active": 1,
+    "description": "",
+    "modified": 1502889173
+}
