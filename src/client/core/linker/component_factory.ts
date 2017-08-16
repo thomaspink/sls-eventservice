@@ -133,12 +133,12 @@ export abstract class ComponentRef<C> {
   /**
    * Destroys the component instance and all of the data structures associated with it.
    */
-  // abstract destroy(): void;
+  abstract destroy(): void;
 
   /**
    * Allows to register a callback that will be called when the component is destroyed.
    */
-  // abstract onDestroy(callback: Function): void;
+  abstract onDestroy(callback: Function): void;
 }
 
 /**
@@ -155,9 +155,10 @@ export abstract class ComponentFactory<C> {
    * the outputs of the component.
    */
   // abstract get outputs(): { propName: string, templateName: string }[];
+
   /**
    * Creates a new component.
    */
-  abstract create(elementOrSelector: any|string, parent?: ComponentRef<any>,
-    injector?: Injector): ComponentRef<C>;
+  abstract create(element?: any|null, injector?: Injector|null,
+    parent?: ComponentRef<any>|null): ComponentRef<C>;
 }

@@ -5,7 +5,7 @@
       100
     ],
     "no-inferrable-types": [
-      true
+      false
     ],
     "class-name": true,
     "comment-format": [

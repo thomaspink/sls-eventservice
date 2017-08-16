@@ -1,30 +1,32 @@
-import { Injector } from '../di/injector';
+import { Type } from '../type';
 import { Provider } from '../di/provider';
-import { ViewRef } from '../linker/view_ref';
-import { RootRenderer } from '../linker/renderer';
-import { createRootRenderer, createViewRenderer } from './renderer';
-import { createViewRef, createComponentFactory, ELEMENT } from './refs';
+import { Renderer } from '../linker/renderer';
+import { createInjector } from './refs';
+import { ViewDefinition, ViewData } from './types';
 
-export function createView(elementOrSelector: Element | string,
-  rootRenderer: RootRenderer): ViewRef {
+import { DomRenderer } from '../platform-browser/dom_renderer';
 
-  let element: Element;
-  if (typeof elementOrSelector === 'string') {
-    element = rootRenderer.findElement(elementOrSelector);
-  } else {
-    element = elementOrSelector;
+export function createComponentView(parentView: ViewData, viewDef: ViewDefinition,
+  hostElement?: any): ViewData {
+  let compRenderer: Renderer = new DomRenderer();
+  if (!hostElement) {
+    hostElement = compRenderer.selectRootElement(viewDef.selector);
   }
-  const renderer = createViewRenderer(rootRenderer, element);
-  const view = createViewRef(element, renderer);
+  return createView(hostElement, compRenderer, null, viewDef);
+}
+
+function createView(hostElement: any, renderer: Renderer, parent: ViewData | null,
+  def: ViewDefinition): ViewData {
+  const view: ViewData = {
+    def,
+    renderer,
+    parent,
+    context: null,
+    hostElement,
+    component: null,
+    injector: null,
+    disposables: null
+  };
+  view.injector = createInjector(view);
   return view;
 }
-
-export function destroyView(view: ViewRef) {
-  // TODO
-}
-
-export { createComponentFactory, ELEMENT };
-
-export const VIEW_PROVIDERS: Provider[] = [
-  { provide: RootRenderer, useFactory: createRootRenderer, deps: [] }
-];
