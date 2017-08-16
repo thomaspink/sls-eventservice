@@ -76,6 +76,5 @@
     "swiper": "^3.4.2"
   },
   "wp-plugins": {
-    "advanced-custom-fields": "https://downloads.wordpress.org/plugin/advanced-custom-fields.4.4.11.zip"
   }
 }

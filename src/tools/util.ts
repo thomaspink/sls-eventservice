@@ -44,7 +44,7 @@ export function download(uri: string): Promise<Buffer> {
       const { statusCode } = res;
       const contentType = res.headers['content-type'];
 
-      if (statusCode !== 200) {
+      if (statusCode < 200 && statusCode >= 400) {
         // consume response data to free up memory
         res.resume();
         return reject(`Downloading ${uri} failed - StatusCode: ${statusCode}`);
