@@ -1,6 +1,10 @@
-import { registerComponent, OnInit, OnDestroy, ELEMENT } from '../../core';
+import { Component, OnInit, OnDestroy, ELEMENT } from '../../core';
 import { listen, findElement } from '../../util';
 
+@Component({
+  selector: 'side-drawer',
+  deps: [ELEMENT]
+})
 export class DrawerComponent implements OnInit, OnDestroy {
   private delegates: Function[] = [];
   private container: HTMLElement;
@@ -149,8 +153,3 @@ export class DrawerComponent implements OnInit, OnDestroy {
     this.element.classList.remove('side-drawer--animatable');
   }
 }
-registerComponent({
-  type: DrawerComponent,
-  selector: 'side-drawer',
-  deps: [ELEMENT]
-});

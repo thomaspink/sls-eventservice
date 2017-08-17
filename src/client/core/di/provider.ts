@@ -109,7 +109,7 @@ export interface FactoryProvider {
    * A list of `token`s which need to be resolved by the injector. The list of values is then
    * used as arguments to the `useFactory` function.
    */
-  deps?: any[];
+  deps: any[];
 }
 
 /**

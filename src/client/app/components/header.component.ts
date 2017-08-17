@@ -1,6 +1,10 @@
-import { registerComponent, OnInit, OnDestroy, EventEmitter, ELEMENT } from '../../core';
+import { Component, OnInit, OnDestroy, EventEmitter, ELEMENT } from '../../core';
 import {listen, findElement} from '../../util';
 
+@Component({
+  selector: 'header',
+  deps: [ELEMENT]
+})
 export class HeaderComponent implements OnInit, OnDestroy {
   public onOpenDrawer = new EventEmitter();
 
@@ -25,8 +29,3 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.onOpenDrawer.emit();
   }
 }
-registerComponent({
-  type: HeaderComponent,
-  selector: 'header',
-  deps: [ELEMENT]
-});

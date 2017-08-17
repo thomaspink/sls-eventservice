@@ -1,5 +1,5 @@
 import {Type} from '../type';
-import {stringify} from '../../util';
+import { stringify } from '../util';
 
 
 
