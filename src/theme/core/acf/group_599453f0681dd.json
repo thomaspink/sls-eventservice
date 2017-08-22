@@ -76,6 +76,11 @@
                                             },
                                             "choices": {
                                                 "12": "12\/12",
+                                                "11": "11\/12",
+                                                "10": "10\/12",
+                                                "9": "9\/12",
+                                                "8": "8\/12",
+                                                "7": "7\/12",
                                                 "6": "6\/12",
                                                 "5": "5\/12",
                                                 "4": "4\/12",
@@ -140,6 +145,11 @@
                                             },
                                             "choices": {
                                                 "12": "12\/12",
+                                                "11": "11\/12",
+                                                "10": "10\/12",
+                                                "9": "9\/12",
+                                                "8": "8\/12",
+                                                "7": "7\/12",
                                                 "6": "6\/12",
                                                 "5": "5\/12",
                                                 "4": "4\/12",
@@ -163,6 +173,31 @@
                             "button_label": "Spalte hinzufügen",
                             "min": "",
                             "max": ""
+                        },
+                        {
+                            "key": "field_599c8b0c1d5b4",
+                            "label": "Styles",
+                            "name": "styles",
+                            "type": "select",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "choices": {
+                                "gridFullScreen": "Volle Breite",
+                                "inverted": "Invertiert"
+                            },
+                            "default_value": [],
+                            "allow_null": 1,
+                            "multiple": 1,
+                            "ui": 0,
+                            "ajax": 0,
+                            "return_format": "value",
+                            "placeholder": ""
                         }
                     ],
                     "min": "",
@@ -271,5 +306,5 @@
     ],
     "active": 1,
     "description": "",
-    "modified": 1502894439
+    "modified": 1503431635
 }

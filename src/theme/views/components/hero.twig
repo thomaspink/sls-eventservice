@@ -1,0 +1,17 @@
+{# styles:
+
+  hero--outline
+  hero--large
+  hero--bg-bottom
+
+#}
+<div class="hero {{ style | join(' ') }} "
+  style="background-image: url('https://images.unsplash.com/photo-1475551824534-bf364636bd3d?dpr=2&auto=format&fit=crop&w=1080&h=810&q=80&cs=tinysrgb&crop=&bg=')">
+  <div class="container">
+    {% if title %}
+
+    <h1 class="hero__title">{{title}}</h1>
+
+    {% endif %}
+  </div>
+</div>
