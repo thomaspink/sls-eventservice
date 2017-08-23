@@ -109,22 +109,21 @@ export class DefaultDomRenderer implements Renderer {
     return () => target.removeEventListener(event, callback as any, false);
   }
 
-  parse() {
+  parse(view: any): void {
     throw new Error('Parse not available on the DefaultRenderer. Use ComponentRenderer instead.');
   }
 }
 
 export class ComponentDomRenderer extends DefaultDomRenderer {
   private _walker: NodeWalker;
-  constructor(private _view: any, private _visitor: Visitor) {
+  constructor(private _visitor: Visitor) {
     super();
     this._walker = new NodeWalker();
   }
 
-  parse() {
-    console.log(this._visitor);
-    ListWrapper.forEach(this._view.hostElement.childNodes, node => {
-      this._walker.traverse(node as any, this._visitor, this._view);
+  parse(view: any): void {
+    ListWrapper.forEach(view.hostElement.childNodes, node => {
+      this._walker.traverse(node as any, this._visitor, view);
     });
   }
 }
@@ -132,14 +131,13 @@ export class ComponentDomRenderer extends DefaultDomRenderer {
 const defaultRenderer = new DefaultDomRenderer();
 
 export class DomRendererFactory implements RendererFactory {
-  private _rendererByView = new Map<any, Renderer>();
+  // private _renderer = new Map<any, Renderer>();
 
   constructor(private visitor?: Visitor) { };
 
-  createRenderer(view: any): Renderer {
-    let renderer = this._rendererByView.get(view);
-    return renderer ||
-      (this.visitor ? new ComponentDomRenderer(view, this.visitor) : defaultRenderer);
+  createRenderer(): Renderer {
+    // let renderer = this._renderer.get(view);
+    return this.visitor ? new ComponentDomRenderer(this.visitor) : defaultRenderer;
   }
 }
 

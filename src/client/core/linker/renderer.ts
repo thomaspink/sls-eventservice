@@ -43,11 +43,11 @@ export abstract class Renderer {
     target: 'window' | 'document' | 'body' | any, eventName: string,
     callback: (event: any) => boolean | void): () => void;
 
-  abstract parse(): void;
+  abstract parse(view: any): void;
 }
 
 export abstract class RendererFactory {
-  abstract createRenderer(element: any): Renderer;
+  abstract createRenderer(): Renderer;
 }
 
 // tslint:disable-next-line:variable-name

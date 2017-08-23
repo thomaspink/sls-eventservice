@@ -1,23 +1,24 @@
 import { Type } from '../type';
 import { stringify } from '../util';
 import { ComponentResolver } from './component_resolver';
-import { Component } from '../metadata/components';
+import { Component, HostListener } from '../metadata/components';
 import { Reflector } from '../reflection/reflection';
 import { ComponentFactory, ComponentRef } from '../linker/component_factory';
 import {
   CodegenComponentFactoryResolver, ComponentFactoryResolver
 } from '../linker/component_factory_resolver';
 import { createComponentFactory } from '../view/refs';
-import { ViewDefinition } from '../view/types';
+import { ViewDefinition, BindingFlags, BindingDef } from '../view/types';
 import { CssSelector } from './selector';
 import { RendererFactory } from '../linker/renderer';
 import { Visitor } from '../linker/visitor';
 import { CodegenVisitor } from './visitor';
+import { BindingCompiler } from './binding_compiler';
 
 export class ComponentCompiler {
   private _viewDefs = new Map<Type<any>, ViewDefinition>();
 
-  constructor(private _resolver: ComponentResolver,
+  constructor(private _resolver: ComponentResolver, private bindingCompiler: BindingCompiler,
     private _rendererFactoryType: Type<RendererFactory>) { }
 
   compile(component: Type<any>, parentResolver?: ComponentFactoryResolver) {
@@ -71,6 +72,20 @@ export class ComponentCompiler {
     }
     const metadata = this._resolver.resolve(component);
 
+    const bindings: BindingDef[] = [];
+    let bindingFlags = 0;
+    if (metadata.host) {
+      const hostBindings = metadata.host;
+      for (var key in hostBindings) {
+        if (hostBindings.hasOwnProperty(key)) {
+          const binding = this.bindingCompiler.compile(key, hostBindings[key]);
+          bindings.push(binding);
+          // tslint:disable-next-line:no-bitwise
+          bindingFlags |= binding.flags;
+        }
+      }
+    }
+
     const def: ViewDefinition = {
       selector: metadata.selector,
       componentType: component,
@@ -81,7 +96,9 @@ export class ComponentCompiler {
       providers: metadata.providers || null,
       deps: metadata.deps || null,
       childComponents: metadata.components || null,
-      childDefs: null
+      childDefs: null,
+      bindings,
+      bindingFlags
     };
     def.factory = createComponentFactory(metadata.selector, component, def);
     this._viewDefs.set(component, def);

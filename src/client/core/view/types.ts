@@ -1,3 +1,4 @@
+// tslint:disable:no-bitwise
 import { Type } from '../type';
 import { Provider } from '../di/provider';
 import { Injector } from '../di/injector';
@@ -18,6 +19,24 @@ export interface ViewDefinition {
   deps: any[]|null;
   childComponents: Type<any>[]|null;
   childDefs: ViewDefinition[]|null;
+  bindings: BindingDef[];
+  bindingFlags: BindingFlags;
+}
+
+export interface BindingDef {
+  flags: BindingFlags;
+  ns: string|null;
+  name: string|null;
+  suffix: string|null;
+  expression: any;
+}
+
+export const enum BindingFlags {
+  TypeElementAttribute = 1 << 0,
+  TypeElementClass = 1 << 1,
+  TypeElementStyle = 1 << 2,
+  TypeProperty = 1 << 3,
+  TypeEvent = 1 << 4,
 }
 
 export interface ViewData {
@@ -30,4 +49,5 @@ export interface ViewData {
   context: any;
   injector: Injector;
   disposables: DisposableFn[]|null;
+  childViews: ViewData[]|null;
 }

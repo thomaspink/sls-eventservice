@@ -9,7 +9,7 @@ import { ComponentFactoryResolver } from '../linker/component_factory_resolver';
 import { ViewRef } from '../linker/view_ref';
 import { Renderer } from '../linker/renderer';
 import { callLifecycleHook } from '../lifecycle_hooks';
-import { createComponentView, initView } from './view';
+import { createComponentView, initView, destroyView } from './view';
 import { ViewDefinition, ViewData } from './types';
 import { createClass } from './util';
 
@@ -33,7 +33,7 @@ class ComponentFactory_ extends ComponentFactory<any> {
     const view = createComponentView(parentView, this.viewDef, element);
     const instance = createClass(this.componentType, view.injector, view.def.deps);
     initView(view, instance, null);
-    view.renderer.parse();
+    view.renderer.parse(view);
     callLifecycleHook(instance, 'onInit');
     return new ComponentRef_(view, new ViewRef_(view), instance);
   }
@@ -65,7 +65,7 @@ class ViewRef_ extends ViewRef {
   get renderer() { return this.view.renderer; };
 
   destroy(): void {
-    // TODO
+    destroyView(this.view);
   }
 
   get destroyed() {
@@ -74,7 +74,10 @@ class ViewRef_ extends ViewRef {
   }
 
   onDestroy(callback: Function): any {
-    // TODO
+    if (!this.view.disposables) {
+      this.view.disposables = [];
+    }
+    this.view.disposables.push(<any>callback);
   }
 }
 

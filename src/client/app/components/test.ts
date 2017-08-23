@@ -1,11 +1,16 @@
-import { Component } from '../../core';
+import { Component, ELEMENT, HostListener } from '../../core';
 
 @Component({
-  selector: '.social-nav',
-  deps: []
+  selector: '.toggle-drawer',
+  deps: [ELEMENT]
 })
 export class TestComponent {
-  constructor() {
-    console.log('test');
+  constructor(element: Element) {
+    console.log(element);
+  }
+
+  @HostListener('click')
+  onClick() {
+    alert('asdf');
   }
 }

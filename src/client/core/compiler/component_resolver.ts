@@ -1,7 +1,7 @@
 import { Type } from '../type';
 import { stringify } from '../util';
 import { Reflector } from '../reflection/reflection';
-import { Component } from '../metadata/components';
+import { Component, HostListener } from '../metadata/components';
 import { resolveForwardRef } from '../di/forward_ref';
 
 export class ComponentResolver {
@@ -22,17 +22,50 @@ export class ComponentResolver {
     const typeMetadata = this._reflector.annotations(resolveForwardRef(type));
     if (typeMetadata) {
       const metadata = findLast(typeMetadata, isComponentMetadata);
-      return metadata;
+      if (metadata) {
+        const propertyMetadata = this._reflector.propMetadata(type);
+        return this._mergeWithPropertyMetadata(metadata, propertyMetadata, type);
+      }
     }
 
     if (throwIfNotFound) {
       throw new Error(`No Component annotation found on ${stringify(type)}`);
     }
   }
+
+  private _mergeWithPropertyMetadata(comp: Component, propertyMetadata: { [key: string]: any[] },
+    componentType: Type<any>) {
+    const host: { [key: string]: string } = {};
+    Object.keys(propertyMetadata).forEach((propName: string) => {
+      const hostListeners = propertyMetadata[propName].filter(m => isTypeOf(m, HostListener));
+      hostListeners.forEach(hostListener => {
+        const args = hostListener.args || [];
+        host[`(${hostListener.eventName})`] = `${propName}(${args.join(',')})`;
+      });
+    });
+    return this._merge(comp, host, componentType);
+  }
+
+  private _merge(comp: Component, host: { [key: string]: string },
+    componentType: Type<any>): Component {
+    const mergedHost = comp.host ? { ...comp.host, ...host } : host;
+
+    return {
+      selector: comp.selector,
+      host: mergedHost,
+      providers: comp.providers,
+      deps: comp.deps,
+      components: comp.components,
+    };
+  }
 }
 
 function isComponentMetadata(type: any): type is Component {
   return type instanceof Component;
+}
+
+function isTypeOf(instance: any, type: Type<any>): boolean {
+  return instance instanceof type;
 }
 
 export function findLast<T>(arr: T[], condition: (value: T) => boolean): T | null {
