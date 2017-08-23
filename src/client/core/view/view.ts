@@ -60,11 +60,10 @@ export function destroyView(view: ViewData) {
 }
 
 export function attachView(parentView: ViewData, view: ViewData) {
-  if (parentView.childViews.indexOf(view)) {
-    throw new Error(`This view is already attached`);
-  }
   if (!parentView.childViews) {
     parentView.childViews = [];
+  } else if (parentView.childViews.indexOf(view)) {
+    throw new Error(`This view is already attached`);
   }
   parentView.childViews.push(view);
 }
