@@ -15,12 +15,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private _delegates: Function[] = [];
 
   constructor(private element: Element) {
-    this._drawerBtn = findElement('.toggle-drawer', element) as HTMLButtonElement;
-    this._drawer = findElement('side-drawer');
+    // this._drawerBtn = findElement('.toggle-drawer', element) as HTMLButtonElement;
+    // this._drawer = findElement('side-drawer');
+    console.log(element);
   }
 
   onInit() {
-    this._delegates.push(listen(this._drawerBtn, 'click', this.openDrawer.bind(this)));
+    // this._delegates.push(listen(this._drawerBtn, 'click', this.openDrawer.bind(this)));
   }
 
   onDestroy() {
@@ -28,6 +29,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   openDrawer() {
-    this.onOpenDrawer.emit();
+    // this.onOpenDrawer.emit();
   }
 }

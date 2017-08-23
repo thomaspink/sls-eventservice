@@ -52,7 +52,6 @@ export class DefaultDomRenderer implements Renderer {
     if (!el) {
       throw new Error(`The selector "${selectorOrNode}" did not match any elements`);
     }
-    el.textContent = '';
     return el;
   }
 
@@ -117,26 +116,30 @@ export class DefaultDomRenderer implements Renderer {
 
 export class ComponentDomRenderer extends DefaultDomRenderer {
   private _walker: NodeWalker;
-  constructor(private _hostElement: Element, private _visitor: Visitor) {
+  constructor(private _view: any, private _visitor: Visitor) {
     super();
     this._walker = new NodeWalker();
   }
 
   parse() {
-    ListWrapper.forEach(this._hostElement.childNodes, node => {
-      this._walker.traverse(node, this._visitor);
+    console.log(this._visitor);
+    ListWrapper.forEach(this._view.hostElement.childNodes, node => {
+      this._walker.traverse(node as any, this._visitor, this._view);
     });
   }
 }
 
+const defaultRenderer = new DefaultDomRenderer();
+
 export class DomRendererFactory implements RendererFactory {
-  private _rendererByElement = new Map<Element, Renderer>();
+  private _rendererByView = new Map<any, Renderer>();
 
-  constructor(private visitor: Visitor) { };
+  constructor(private visitor?: Visitor) { };
 
-  createRenderer(element: Element): Renderer {
-    let renderer = this._rendererByElement.get(element);
-    return renderer || new ComponentDomRenderer(element, this.visitor);
+  createRenderer(view: any): Renderer {
+    let renderer = this._rendererByView.get(view);
+    return renderer ||
+      (this.visitor ? new ComponentDomRenderer(view, this.visitor) : defaultRenderer);
   }
 }
 

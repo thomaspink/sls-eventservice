@@ -1,9 +1,11 @@
 import { Component } from '../../core';
 
 @Component({
-  selector: 'side-drawer',
+  selector: '.social-nav',
   deps: []
 })
 export class TestComponent {
-
+  constructor() {
+    console.log('test');
+  }
 }

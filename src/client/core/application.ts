@@ -23,9 +23,7 @@ export class ApplicationRef {
         this._componentFactoryResolver.resolveComponentFactory(componentOrFactory)!;
     }
     this._rootComponentTypes.push(componentFactory.componentType);
-    const compRef = componentFactory.create(componentFactory.selector, this._injector, null);
-    const renderer = compRef.hostView.renderer;
-    console.log(renderer);
+    const compRef = componentFactory.create(null, this._injector, null);
     return compRef;
   }
 }

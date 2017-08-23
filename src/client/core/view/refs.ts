@@ -9,8 +9,9 @@ import { ComponentFactoryResolver } from '../linker/component_factory_resolver';
 import { ViewRef } from '../linker/view_ref';
 import { Renderer } from '../linker/renderer';
 import { callLifecycleHook } from '../lifecycle_hooks';
-import { createComponentView } from './view';
+import { createComponentView, initView } from './view';
 import { ViewDefinition, ViewData } from './types';
+import { createClass } from './util';
 
 export function createComponentFactory(selector: string, componentType: Type<any>,
   viewDef: ViewDefinition) {
@@ -30,13 +31,9 @@ class ComponentFactory_ extends ComponentFactory<any> {
     }
     const parentView = parent ? (parent.hostView as ViewRef_).view : null;
     const view = createComponentView(parentView, this.viewDef, element);
-    const viewInj = new Injector_(view);
-    const tokens = this.viewDef.deps;
-    let deps: any[] = [];
-    if (tokens && tokens.length) {
-      deps = tokens.map(dep => view.injector.get(dep));
-    }
-    const instance = new this.componentType(...deps);
+    const instance = createClass(this.componentType, view.injector, view.def.deps);
+    initView(view, instance, null);
+    view.renderer.parse();
     callLifecycleHook(instance, 'onInit');
     return new ComponentRef_(view, new ViewRef_(view), instance);
   }

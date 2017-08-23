@@ -31,20 +31,20 @@ export class ComponentCompiler {
   private _recursivelyCompileViewDefs(component: Type<any>, parent?: ViewDefinition):
     { def: ViewDefinition, visitor: Visitor | null } {
     const def = this._createViewDef(component, parent);
+    const selectables: any[] = [];
+    const childVisitors = new Map<Type<any>, Visitor>();
     let visitor: CodegenVisitor | null = null;
     if (def.childComponents && def.childComponents.length) {
       const result = def.childComponents.map(c => this._recursivelyCompileViewDefs(c, def));
-      const childVisitors = new Map<Type<any>, Visitor>();
       result.forEach(r => {
         if (r.visitor) {
           childVisitors.set(r.def.componentType, r.visitor);
         }
+        selectables.push({selector: r.def.selector, context: r.def});
       });
-      visitor = new CodegenVisitor([
-        { selector: def.selector, context: def.factory }
-      ], childVisitors);
-      def.rendererFactory = new this._rendererFactoryType(visitor);
     }
+    visitor = new CodegenVisitor(selectables, childVisitors);
+    def.rendererFactory = new this._rendererFactoryType(visitor);
     return { def, visitor };
   }
 

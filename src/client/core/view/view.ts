@@ -4,16 +4,18 @@ import { Renderer } from '../linker/renderer';
 import { createInjector } from './refs';
 import { ViewDefinition, ViewData } from './types';
 
-export function createComponentView(parentView: ViewData, viewDef: ViewDefinition,
+export function createComponentView(parent: ViewData, viewDef: ViewDefinition,
   hostElement?: any): ViewData {
-  let compRenderer: Renderer = viewDef.rendererFactory.createRenderer(hostElement);
+  const view = createView(hostElement, null, parent, viewDef);
+  let compRenderer: Renderer = viewDef.rendererFactory.createRenderer(view);
+  view.renderer = compRenderer;
   if (!hostElement) {
-    hostElement = compRenderer.selectRootElement(viewDef.selector);
+    view.hostElement = compRenderer.selectRootElement(viewDef.selector);
   }
-  return createView(hostElement, compRenderer, null, viewDef);
+  return view;
 }
 
-function createView(hostElement: any, renderer: Renderer, parent: ViewData | null,
+function createView(hostElement: any, renderer: Renderer | null, parent: ViewData | null,
   def: ViewDefinition): ViewData {
   const view: ViewData = {
     def,
@@ -27,4 +29,9 @@ function createView(hostElement: any, renderer: Renderer, parent: ViewData | nul
   };
   view.injector = createInjector(view);
   return view;
+}
+
+export function initView(view: ViewData, component: any, context: any) {
+  view.component = component;
+  view.context = context;
 }
