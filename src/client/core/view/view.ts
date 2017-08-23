@@ -4,12 +4,9 @@ import { Renderer } from '../linker/renderer';
 import { createInjector } from './refs';
 import { ViewDefinition, ViewData } from './types';
 
-import { DomRenderer } from '../platform-browser/dom_renderer';
-
 export function createComponentView(parentView: ViewData, viewDef: ViewDefinition,
   hostElement?: any): ViewData {
-  // TODO: Rework so we don't have a platform dependency
-  let compRenderer: Renderer = new DomRenderer();
+  let compRenderer: Renderer = viewDef.rendererFactory.createRenderer(hostElement);
   if (!hostElement) {
     hostElement = compRenderer.selectRootElement(viewDef.selector);
   }

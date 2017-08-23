@@ -1,6 +1,9 @@
-import { Renderer } from '../linker/renderer';
+import { ListWrapper } from '../util/collection';
+import { Renderer, RendererFactory } from '../linker/renderer';
+import { Visitor } from '../linker/visitor';
+import { NodeWalker } from './node_walker';
 
-export const NAMESPACE_URIS: {[ns: string]: string} = {
+export const NAMESPACE_URIS: { [ns: string]: string } = {
   'svg': 'http://www.w3.org/2000/svg',
   'xhtml': 'http://www.w3.org/1999/xhtml',
   'xlink': 'http://www.w3.org/1999/xlink',
@@ -8,8 +11,8 @@ export const NAMESPACE_URIS: {[ns: string]: string} = {
   'xmlns': 'http://www.w3.org/2000/xmlns/',
 };
 
-export class DomRenderer implements Renderer {
-    data: { [key: string]: any } = Object.create(null);
+export class DefaultDomRenderer implements Renderer {
+  data: { [key: string]: any } = Object.create(null);
 
   constructor() { }
 
@@ -95,7 +98,7 @@ export class DomRenderer implements Renderer {
   setValue(node: any, value: string): void { node.nodeValue = value; }
 
   listen(target: 'window' | 'document' | 'body' | any, event: string,
-  callback: (event: any) => boolean | void): () => void {
+    callback: (event: any) => boolean | void): () => void {
     if (typeof target === 'string') {
       target = getGlobalEventTarget(target);
       if (!target) {
@@ -105,6 +108,35 @@ export class DomRenderer implements Renderer {
     callback = decoratePreventDefault(callback) as any;
     target.addEventListener(event, callback as any, false);
     return () => target.removeEventListener(event, callback as any, false);
+  }
+
+  parse() {
+    throw new Error('Parse not available on the DefaultRenderer. Use ComponentRenderer instead.');
+  }
+}
+
+export class ComponentDomRenderer extends DefaultDomRenderer {
+  private _walker: NodeWalker;
+  constructor(private _hostElement: Element, private _visitor: Visitor) {
+    super();
+    this._walker = new NodeWalker();
+  }
+
+  parse() {
+    ListWrapper.forEach(this._hostElement.childNodes, node => {
+      this._walker.traverse(node, this._visitor);
+    });
+  }
+}
+
+export class DomRendererFactory implements RendererFactory {
+  private _rendererByElement = new Map<Element, Renderer>();
+
+  constructor(private visitor: Visitor) { };
+
+  createRenderer(element: Element): Renderer {
+    let renderer = this._rendererByElement.get(element);
+    return renderer || new ComponentDomRenderer(element, this.visitor);
   }
 }
 
@@ -130,3 +162,4 @@ function getGlobalEventTarget(target: string): any {
   }
   return undefined;
 }
+

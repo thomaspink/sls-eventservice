@@ -3,7 +3,7 @@ import { Provider } from '../di/provider';
 import { Injector } from '../di/injector';
 import { ComponentFactory } from '../linker/component_factory';
 import { ComponentFactoryResolver } from '../linker/component_factory_resolver';
-import { Renderer } from '../linker/renderer';
+import { Renderer, RendererFactory } from '../linker/renderer';
 
 export interface DisposableFn { (): void; }
 
@@ -13,6 +13,7 @@ export interface ViewDefinition {
   parent: ViewDefinition|null;
   factory: ComponentFactory<any>;
   resolver: ComponentFactoryResolver|null;
+  rendererFactory: RendererFactory|null;
   providers: Provider[]|null;
   deps: any[]|null;
   childComponents: Type<any>[]|null;

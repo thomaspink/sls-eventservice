@@ -4,6 +4,7 @@ import { ComponentFactory, ComponentRef } from './linker/component_factory';
 import { Injector } from './di/injector';
 import { REFLECTIVE_PROVIDERS } from './reflection/reflection';
 import { COMPILER_PROVIDER, ComponentCompiler } from './compiler/compiler';
+import { PLATFORM_BROWSER_PROVIDER } from './platform-browser/platform';
 
 export class ApplicationRef {
   private _rootComponents: ComponentRef<any>[] = [];
@@ -23,12 +24,18 @@ export class ApplicationRef {
     }
     this._rootComponentTypes.push(componentFactory.componentType);
     const compRef = componentFactory.create(componentFactory.selector, this._injector, null);
+    const renderer = compRef.hostView.renderer;
+    console.log(renderer);
     return compRef;
   }
 }
 
 export function bootstrapComponent<C>(component: Type<C>) {
-  const appInjector = Injector.create([REFLECTIVE_PROVIDERS, COMPILER_PROVIDER]);
+  const appInjector = Injector.create([
+    PLATFORM_BROWSER_PROVIDER,
+    REFLECTIVE_PROVIDERS,
+    COMPILER_PROVIDER
+  ]);
   const compiler: ComponentCompiler = appInjector.get(ComponentCompiler);
   const resolver = compiler.compile(component);
   const app = new ApplicationRef(appInjector, resolver);

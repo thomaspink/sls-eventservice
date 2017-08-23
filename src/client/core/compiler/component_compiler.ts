@@ -9,30 +9,47 @@ import {
 } from '../linker/component_factory_resolver';
 import { createComponentFactory } from '../view/refs';
 import { ViewDefinition } from '../view/types';
+import { CssSelector } from './selector';
+import { RendererFactory } from '../linker/renderer';
+import { Visitor } from '../linker/visitor';
+import { CodegenVisitor } from './visitor';
 
 export class ComponentCompiler {
   private _viewDefs = new Map<Type<any>, ViewDefinition>();
 
-  constructor(private _resolver: ComponentResolver, private _reflector: Reflector) { }
+  constructor(private _resolver: ComponentResolver,
+    private _rendererFactoryType: Type<RendererFactory>) { }
 
   compile(component: Type<any>, parentResolver?: ComponentFactoryResolver) {
-    const def = this._recursivelyCompileViewDefs(component);
+    const { def, visitor } = this._recursivelyCompileViewDefs(component);
     const resolver = new CodegenComponentFactoryResolver([def.factory],
       parentResolver || ComponentFactoryResolver.NULL);
     this._recusivelyCompileFactoryResolver(def, resolver);
     return resolver;
   }
 
-  private _recursivelyCompileViewDefs(component: Type<any>, parent?: ViewDefinition) {
+  private _recursivelyCompileViewDefs(component: Type<any>, parent?: ViewDefinition):
+    { def: ViewDefinition, visitor: Visitor | null } {
     const def = this._createViewDef(component, parent);
+    let visitor: CodegenVisitor | null = null;
     if (def.childComponents && def.childComponents.length) {
-      def.childDefs = def.childComponents.map(c => this._recursivelyCompileViewDefs(c, def));
+      const result = def.childComponents.map(c => this._recursivelyCompileViewDefs(c, def));
+      const childVisitors = new Map<Type<any>, Visitor>();
+      result.forEach(r => {
+        if (r.visitor) {
+          childVisitors.set(r.def.componentType, r.visitor);
+        }
+      });
+      visitor = new CodegenVisitor([
+        { selector: def.selector, context: def.factory }
+      ], childVisitors);
+      def.rendererFactory = new this._rendererFactoryType(visitor);
     }
-    return def;
+    return { def, visitor };
   }
 
   private _recusivelyCompileFactoryResolver(viewDef: ViewDefinition,
-    parent: ComponentFactoryResolver)  {
+    parent: ComponentFactoryResolver) {
 
     if (viewDef.childDefs && viewDef.childDefs.length) {
       const factories = viewDef.childDefs.map(d => d.factory);
@@ -60,6 +77,7 @@ export class ComponentCompiler {
       parent: parent || null,
       factory: null,
       resolver: null,
+      rendererFactory: null,
       providers: metadata.providers || null,
       deps: metadata.deps || null,
       childComponents: metadata.components || null,

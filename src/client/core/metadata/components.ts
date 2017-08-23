@@ -55,7 +55,7 @@ export interface Component {
    * A list of `token`s which need to be resolved by the injector. The list of values is then
    * used as arguments to the constructor.
    */
-  deps?: (Type<any> | InjectionToken<any>)[];
+  deps?: (Type<any> | InjectionToken<any> | any)[];
 
   /**
    * A list of child components

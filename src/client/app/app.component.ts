@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ComponentRef, ELEMENT } from '../core';
+import { Component, OnInit, OnDestroy, ComponentRef, ELEMENT, Renderer } from '../core';
 import { listen, findElement } from '../util';
 import { HeaderComponent } from './components/header.component';
 import { DrawerComponent } from './components/drawer.component';
@@ -16,7 +16,6 @@ export class AppComponent implements OnInit, OnDestroy {
   private delegates: Function[] = [];
 
   constructor(private element: Element, dialog: Dialog) {
-    console.log(dialog);
     // const drawer = findElement('side-drawer');
     // this.drawer = getComponentOnElement(DrawerComponent, drawer);
     // const header = findElement('header');

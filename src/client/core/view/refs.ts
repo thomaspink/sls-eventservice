@@ -1,3 +1,4 @@
+// tslint:disable:class-name
 import { Type } from '../type';
 import { stringify } from '../util';
 import { Injector, StaticInjector } from '../di/injector';
@@ -22,7 +23,6 @@ class ComponentFactory_ extends ComponentFactory<any> {
   }
 
   create(element?: any|null, injector?: Injector|null, parent?: ComponentRef<any>|null) {
-
     const parentInjector = injector || (parent && parent.injector);
     if (!parentInjector) {
       throw new Error(`No injector or parent component provided for creating ` +
@@ -64,6 +64,8 @@ class ViewRef_ extends ViewRef {
   constructor(public view: ViewData) {
     super();
   }
+
+  get renderer() { return this.view.renderer; };
 
   destroy(): void {
     // TODO

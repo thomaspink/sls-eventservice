@@ -6,6 +6,7 @@ export { ApplicationRef, bootstrapComponent } from './application';
 export { ELEMENT } from './view/refs';
 export { ComponentFactory, ComponentRef } from './linker/component_factory';
 export { ComponentFactoryResolver } from './linker/component_factory_resolver';
+export { Renderer } from './linker/renderer';
 export {
   Provider, ClassProvider, ConstructorProvider, ExistingProvider, FactoryProvider,
   ValueProvider
