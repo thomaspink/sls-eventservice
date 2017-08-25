@@ -1,8 +1,10 @@
 import { ListWrapper } from '../../util/collection';
 import { isWhitespace, $PERIOD, $SEMICOLON } from '../chars';
-import { AST, EmptyExpr, PropertyRead, MethodCall, ParseSpan } from './ast';
+import { AST, EmptyExpr, PropertyRead, MethodCall, ParseSpan, ParserError } from './ast';
 import { ExpressionParser } from './parser';
 
+// Regex for parsing the expression. As it can only be a method call or
+// property access we can use a regex.
 const word = '[A-Za-z0-9_\\$&\\*]+';
 const regex = new RegExp( `^` +
                           `(` +
@@ -27,9 +29,21 @@ const KW_FN_CALL_IDX = 2;
 // Group 2 = "$event"
 const KW_FN_ARGS_IDX = 3;
 
+/**
+ * This simple parser should be used at runtime as the expression parser.
+ * It is way simpler and not that heavy.
+ * The downside is, that only method calls and property access is available
+ * in expressions.
+ *
+ * Examples:
+ * `myProperty`
+ * `obj.prop`
+ * `onClick()`
+ * `obj.onStart($event)`
+ */
 export class SimpleExpressionParser {
   parseBinding() {
-
+    // TODO
   }
 
   parseEvent(expression: string): AST {
@@ -57,21 +71,32 @@ export class SimpleExpressionParser {
         `Only method calls and properties are allowed'`);
     }
 
+    // If second group is set we know its a method call
     const isMethodCall = !!parts[KW_FN_CALL_IDX];
+
+    // Get props of chain by splitting on every period
     const props = parts[KW_NAME_IDX].split(String.fromCharCode($PERIOD));
+
+    // If it is a method call, remove last prop (the method name) from the
+    // property chain as it will be handled extra down below.
     const chain = isMethodCall ? props.slice(0, props.length - 1) : props;
+
+    // Build the property read chain
     let receiver: AST = new EmptyExpr(this._createSpan(-1, -1));
     if (chain.length) {
       receiver = this._chainPropRead(chain, 0);
     }
 
-    // if expression is just a property read, we are finished
+    // If expression is just a property read, we are finished
     if (!isMethodCall) {
       return receiver;
     }
 
-    // in this case the expression is a method call
+    // In this case the expression is a method call
+    // The last prop is the function name (we skipped it above)
     const fnName = props[props.length - 1];
+
+    // Construct args AST by splitting the third part on every semicolon
     const argsOffset = props.length;
     let index = -1;
     const args = (parts[KW_FN_ARGS_IDX] || '')
