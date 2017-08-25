@@ -39,6 +39,10 @@ export const enum BindingFlags {
   TypeEvent = 1 << 4,
 }
 
+export interface ExpressionDef {
+  nodes: string[];
+}
+
 export interface ViewData {
   def: ViewDefinition;
   // root: RootData;

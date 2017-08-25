@@ -1,7 +1,7 @@
 import { Type } from '../type';
 import { Provider } from '../di/provider';
 import { Renderer } from '../linker/renderer';
-import { createInjector } from './refs';
+import { createInjector, Expression } from './refs';
 import { ViewDefinition, ViewData, BindingFlags } from './types';
 import { callLifecycleHook } from '../lifecycle_hooks';
 
@@ -16,16 +16,7 @@ export function createComponentView(parent: ViewData, viewDef: ViewDefinition,
 
 function createView(hostElement: any, renderer: Renderer | null, parent: ViewData | null,
   def: ViewDefinition): ViewData {
-  console.log(hostElement, renderer);
   const disposables: Function[] = [];
-  def.bindings.forEach(binding => {
-    console.log(binding.flags, BindingFlags.TypeEvent);
-    if (binding.flags & BindingFlags.TypeEvent) {
-      disposables.push(renderer.listen(hostElement, binding.name, () => {
-        console.log('adsf');
-      }));
-    }
-  });
   const view: ViewData = {
     def,
     renderer,
@@ -41,6 +32,13 @@ function createView(hostElement: any, renderer: Renderer | null, parent: ViewDat
   if (parent) {
     attachView(parent, view);
   }
+  def.bindings.forEach(binding => {
+    // const expression = new Expression(binding.expression, view);
+    if (binding.flags & BindingFlags.TypeEvent) {
+      // disposables.push(renderer.listen(hostElement, binding.name,
+      //   (event) => expression.run(event)));
+    }
+  });
   return view;
 }
 

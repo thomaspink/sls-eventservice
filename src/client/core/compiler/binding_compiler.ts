@@ -1,4 +1,5 @@
 import { BindingDef, BindingFlags } from '../view/types';
+import { ExpressionParser } from './expression_parser/parser';
 
 // tslint:disable-next-line:max-line-length
 const BIND_NAME_REGEXP = /^(?:(?:(?:(bind-)|(let-)|(ref-|#)|(on-)|(bindon-))(.+))|\[\(([^\)]+)\)\]|\[([^\]]+)\]|\(([^\)]+)\))$/;
@@ -25,6 +26,8 @@ const IDENT_EVENT_IDX = 9;
 const CLASS_ATTR = 'class';
 
 export class BindingCompiler {
+  constructor(private _expressionParser: ExpressionParser) { }
+
   compile(declaration: string, expression: string): BindingDef {
     declaration = this._normalizeAttributeName(declaration);
 
@@ -53,7 +56,9 @@ export class BindingCompiler {
     }
   }
 
-  private _parseEvent(name: string, expression: string): BindingDef {
+  private _parseEvent(name: string, value: string): BindingDef {
+    const expression = this._expressionParser.parseEvent(value);
+    console.log(expression);
     return {
       flags: BindingFlags.TypeEvent,
       ns: null,

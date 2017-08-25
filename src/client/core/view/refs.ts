@@ -10,7 +10,7 @@ import { ViewRef } from '../linker/view_ref';
 import { Renderer } from '../linker/renderer';
 import { callLifecycleHook } from '../lifecycle_hooks';
 import { createComponentView, initView, destroyView } from './view';
-import { ViewDefinition, ViewData } from './types';
+import { ViewDefinition, ViewData, ExpressionDef } from './types';
 import { createClass } from './util';
 
 export function createComponentFactory(selector: string, componentType: Type<any>,
@@ -103,3 +103,12 @@ class Injector_ extends StaticInjector {
   }
 }
 export const ELEMENT = new InjectionToken('ComponentElement');
+
+export class Expression {
+  constructor(private def: ExpressionDef, private view: ViewData) { }
+  run(...args: any[]) {
+    const context = this.view.context || this.view.component;
+    const fn = new Function(...this.def.nodes);
+    return fn.call(context);
+  }
+}
