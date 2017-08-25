@@ -71,14 +71,15 @@ export class ComponentCompiler {
         `Please make sure a component is specified only once in the component tree`);
     }
     const metadata = this._resolver.resolve(component);
-
+    const context = Object.create({});
     const bindings: BindingDef[] = [];
     let bindingFlags = 0;
     if (metadata.host) {
       const hostBindings = metadata.host;
       for (var key in hostBindings) {
         if (hostBindings.hasOwnProperty(key)) {
-          const binding = this.bindingCompiler.compile(key, hostBindings[key]);
+          const binding =
+            this.bindingCompiler.compile(key, hostBindings[key], context, stringify(component));
           bindings.push(binding);
           // tslint:disable-next-line:no-bitwise
           bindingFlags |= binding.flags;

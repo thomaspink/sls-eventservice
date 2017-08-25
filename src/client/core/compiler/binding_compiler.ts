@@ -1,5 +1,7 @@
 import { BindingDef, BindingFlags } from '../view/types';
-import { ExpressionParser } from './expression_parser/parser';
+import { ExpressionParser } from './expression_parser/api';
+import { EmptyExpr, ParserError } from './expression_parser/ast';
+import { splitAtColon } from './util';
 
 // tslint:disable-next-line:max-line-length
 const BIND_NAME_REGEXP = /^(?:(?:(?:(bind-)|(let-)|(ref-|#)|(on-)|(bindon-))(.+))|\[\(([^\)]+)\)\]|\[([^\]]+)\]|\(([^\)]+)\))$/;
@@ -28,7 +30,7 @@ const CLASS_ATTR = 'class';
 export class BindingCompiler {
   constructor(private _expressionParser: ExpressionParser) { }
 
-  compile(declaration: string, expression: string): BindingDef {
+  compile(declaration: string, expression: string, context: {}, location: string): BindingDef {
     declaration = this._normalizeAttributeName(declaration);
 
     const bindParts = declaration.match(BIND_NAME_REGEXP);
@@ -43,7 +45,7 @@ export class BindingCompiler {
       } else if (bindParts[KW_REF_IDX]) {
         unsupported('Variable declaration', name, expression);
       } else if (bindParts[KW_ON_IDX]) {
-        return this._parseEvent(bindParts[KW_ON_IDX], expression);
+        return this._parseEvent(bindParts[KW_ON_IDX], expression, context, location);
       } else if (bindParts[KW_BINDON_IDX]) {
         unsupported('Two way binding', name, expression);
       } else if (bindParts[IDENT_BANANA_BOX_IDX]) {
@@ -51,21 +53,32 @@ export class BindingCompiler {
       } else if (bindParts[IDENT_PROPERTY_IDX]) {
         unsupported('Property binding', name, expression);
       } else if (bindParts[IDENT_EVENT_IDX]) {
-        return this._parseEvent(bindParts[IDENT_EVENT_IDX], expression);
+        return this._parseEvent(bindParts[IDENT_EVENT_IDX], expression, context, location);
       }
     }
   }
 
-  private _parseEvent(name: string, value: string): BindingDef {
-    const expression = this._expressionParser.parseEvent(value);
-    console.log(expression);
+  private _parseEvent(name: string, expression: string, context: {}, location: string): BindingDef {
+    const [target, eventName] = splitAtColon(name, [null !, name]);
+    const ast = this._parseAction(expression, location);
     return {
       flags: BindingFlags.TypeEvent,
       ns: null,
       name,
-      suffix: null,
-      expression
+      suffix: null
     };
+  }
+
+  private _parseAction(value: string, location: string) {
+    try {
+      const ast = this._expressionParser.parseAction(value, location);
+      if (!ast || ast.ast instanceof EmptyExpr) {
+        throw new ParserError(`Empty expressions are not allowed`, value, 'HostListener', location);
+      }
+      return ast;
+    } catch (e) {
+      throw new ParserError(`${e}`, value, 'HostListener', location);
+    }
   }
 
   private _normalizeAttributeName(attrName: string): string {

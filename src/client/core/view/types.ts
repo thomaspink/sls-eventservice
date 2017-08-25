@@ -28,7 +28,6 @@ export interface BindingDef {
   ns: string|null;
   name: string|null;
   suffix: string|null;
-  expression: any;
 }
 
 export const enum BindingFlags {
@@ -37,10 +36,6 @@ export const enum BindingFlags {
   TypeElementStyle = 1 << 2,
   TypeProperty = 1 << 3,
   TypeEvent = 1 << 4,
-}
-
-export interface ExpressionDef {
-  nodes: string[];
 }
 
 export interface ViewData {

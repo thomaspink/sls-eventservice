@@ -1,26 +1,29 @@
 import { ListWrapper } from '../../util/collection';
 import { isWhitespace, $PERIOD, $SEMICOLON } from '../chars';
-import { AST, EmptyExpr, PropertyRead, MethodCall, ParseSpan, ParserError } from './ast';
-import { ExpressionParser } from './parser';
+import {
+  AST, ASTWithSource, EmptyExpr, ImplicitReceiver, PropertyRead, MethodCall,
+  ParseSpan, ParserError
+} from './ast';
+import { ExpressionParser } from './api';
 
 // Regex for parsing the expression. As it can only be a method call or
 // property access we can use a regex.
 const word = '[A-Za-z0-9_\\$&\\*]+';
-const regex = new RegExp( `^` +
-                          `(` +
-                            `${word}` +         // obj
-                            `(?:\\.${word})*` + // .onClick
-                          `)` +
-                          `(` +
-                            `\\(` +             // (
-                            `(` +
-                              `${word}` +       // arg1
-                              `(?:,${word})*` + // , arg2
-                            `)?` +
-                            `\\)` +             // )
-                          `)?` +
-                          `$`
-                        );
+const regex = new RegExp(`^` +
+  `(` +
+  `${word}` +         // obj
+  `(?:\\.${word})*` + // .onClick
+  `)` +
+  `(` +
+  `\\(` +             // (
+  `(` +
+  `${word}` +       // arg1
+  `(?:,${word})*` + // , arg2
+  `)?` +
+  `\\)` +             // )
+  `)?` +
+  `$`
+);
 
 // Group 1 = "onClick" or "prop" or "prop1.prop2"
 const KW_NAME_IDX = 1;
@@ -41,21 +44,25 @@ const KW_FN_ARGS_IDX = 3;
  * `onClick()`
  * `obj.onStart($event)`
  */
-export class SimpleExpressionParser {
-  parseBinding() {
+export class SimpleExpressionParser extends ExpressionParser {
+
+  constructor() { super(); }
+
+  parseBinding(input: string, location: string): ASTWithSource  {
     // TODO
+    return new ASTWithSource(new EmptyExpr(this._createSpan(-1, -1)), input, location, []);
   }
 
-  parseEvent(expression: string): AST {
-    const ast = this._parse(expression);
+  parseAction(input: string, location: string): ASTWithSource  {
+    const ast = this._parse(input);
     if (ast instanceof EmptyExpr) {
       throw new Error(`No empty expressions are allowed on events!`);
     }
     if (!(ast instanceof MethodCall)) {
-      throw new Error(`Invalid expression '${expression}'! ` +
+      throw new Error(`Invalid expression '${input}'! ` +
         `Expressions on events can only be method calls, like 'onClick($event)'.`);
     }
-    return ast;
+    return new ASTWithSource(ast, input, location, []);
   }
 
   private _parse(expression: string) {
@@ -82,9 +89,9 @@ export class SimpleExpressionParser {
     const chain = isMethodCall ? props.slice(0, props.length - 1) : props;
 
     // Build the property read chain
-    let receiver: AST = new EmptyExpr(this._createSpan(-1, -1));
+    let receiver: AST = new ImplicitReceiver(this._createSpan(0, 0));
     if (chain.length) {
-      receiver = this._chainPropRead(chain, 0);
+      receiver = this._chainPropRead(chain, 0, receiver);
     }
 
     // If expression is just a property read, we are finished
@@ -102,13 +109,13 @@ export class SimpleExpressionParser {
     const args = (parts[KW_FN_ARGS_IDX] || '')
       .split(String.fromCharCode($SEMICOLON))
       .map(arg => new PropertyRead(this._createSpan(argsOffset + ++index, arg.length),
-          new EmptyExpr(this._createSpan(-1, -1)), arg));
+        new EmptyExpr(this._createSpan(-1, -1)), arg));
     return new MethodCall(this._createSpan(0, expression.length), receiver, fnName, args);
   }
 
   private _chainPropRead(props: string[], offset: number, receiver?: AST): AST {
     if (!receiver) {
-      receiver = new EmptyExpr(this._createSpan(-1, -1));
+      receiver = new ImplicitReceiver(this._createSpan(offset, offset));
     }
     let index = -1;
     props.forEach((prop, idx) => {

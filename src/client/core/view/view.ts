@@ -1,7 +1,7 @@
 import { Type } from '../type';
 import { Provider } from '../di/provider';
 import { Renderer } from '../linker/renderer';
-import { createInjector, Expression } from './refs';
+import { createInjector } from './refs';
 import { ViewDefinition, ViewData, BindingFlags } from './types';
 import { callLifecycleHook } from '../lifecycle_hooks';
 
