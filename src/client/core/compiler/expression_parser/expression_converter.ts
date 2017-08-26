@@ -22,7 +22,7 @@ export class RuntimeExpressionConverter implements AstVisitor {
   }
 
   visitImplicitReceiver(ast: ImplicitReceiver, context: any): any {
-
+    return null;
   }
 
   visitInterpolation(ast: Interpolation, context: any): any {
@@ -50,7 +50,11 @@ export class RuntimeExpressionConverter implements AstVisitor {
   }
 
   visitMethodCall(ast: MethodCall, context: any): any {
-
+    const r = ast.receiver.visit(this, context);
+    const a = ast.args.map(arg => arg.visit(this, context)).join(',');
+    if (r === null) {
+      return `context.${ast.name}(a);`;
+    }
   }
 
   visitPipe(ast: BindingPipe, context: any): any {
@@ -66,10 +70,20 @@ export class RuntimeExpressionConverter implements AstVisitor {
   }
 
   visitPropertyRead(ast: PropertyRead, context: any): any {
+    const r = ast.receiver.visit(this, context);
+    if (r === null) {
+      return ast.name === '$event' ? ast.name : `context.${ast.name};`;
+    }
+    return `${r}.${ast.name};`;
   }
 
   visitPropertyWrite(ast: PropertyWrite, context: any): any {
-
+    const r = ast.receiver.visit(this, context);
+    const v = ast.value.visit(this, context);
+    if (r === null) {
+      return `context.${ast.name} = ${v}`;
+    }
+    return `${r}.${ast.name} = ${v};`;
   }
 
   visitQuote(ast: Quote, context: any): any {
