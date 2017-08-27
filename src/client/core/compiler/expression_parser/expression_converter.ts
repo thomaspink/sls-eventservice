@@ -71,19 +71,15 @@ export class RuntimeExpressionConverter implements AstVisitor {
 
   visitPropertyRead(ast: PropertyRead, context: any): any {
     const r = ast.receiver.visit(this, context);
-    if (r === null) {
-      return ast.name === '$event' ? ast.name : `context.${ast.name};`;
-    }
-    return `${r}.${ast.name};`;
+    const ctx = r || context;
+    return ctx[ast.name];
+    // return ast.name === '$event' ? ast.name : `context.${ast.name};`;
   }
 
   visitPropertyWrite(ast: PropertyWrite, context: any): any {
     const r = ast.receiver.visit(this, context);
-    const v = ast.value.visit(this, context);
-    if (r === null) {
-      return `context.${ast.name} = ${v}`;
-    }
-    return `${r}.${ast.name} = ${v};`;
+    const ctx = r || context;
+    ctx[ast.name] = ast.value.visit(this, context);
   }
 
   visitQuote(ast: Quote, context: any): any {
@@ -91,15 +87,17 @@ export class RuntimeExpressionConverter implements AstVisitor {
   }
 
   visitSafeMethodCall(ast: SafeMethodCall, context: any): any {
-
+    return this.visitMethodCall(ast, context);
   }
 
   visitSafePropertyRead(ast: SafePropertyRead, context: any): any {
-
+    return this.visitPropertyRead(ast, context);
   }
 
-  visit?(ast: AST, context?: any): any {
+  visitAll(asts: AST[]): any { return asts.map(ast => this.visit(ast)); }
 
+  visit(ast: AST, context?: any): any {
+    return ast.visit(this, context);
   }
 
 }
