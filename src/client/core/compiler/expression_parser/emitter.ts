@@ -4,7 +4,7 @@ import {
   PrefixNot, NonNullAssert, PropertyRead, PropertyWrite, Quote, SafeMethodCall, SafePropertyRead
 } from './ast';
 
-export class RuntimeExpressionConverter implements AstVisitor {
+export class RuntimeEmitterVisitor implements AstVisitor {
   visitBinary(ast: Binary, context: any): any {
 
   }
