@@ -1,6 +1,7 @@
-import { BindingDef, BindingFlags } from '../view/types';
+import { BindingDef, BindingFlags, ViewData } from '../view/types';
 import { ExpressionParser } from './expression_parser/api';
-import { EmptyExpr, ParserError } from './expression_parser/ast';
+import { EmptyExpr, ParserError, AST } from './expression_parser/ast';
+import { ExpressionInterpreter } from './expression_parser/interpreter';
 import { splitAtColon } from './util';
 
 // tslint:disable-next-line:max-line-length
@@ -30,7 +31,7 @@ const CLASS_ATTR = 'class';
 export class BindingCompiler {
   constructor(private _expressionParser: ExpressionParser) { }
 
-  compile(declaration: string, expression: string, context: {}, location: string): BindingDef {
+  compile(declaration: string, expression: string, context: {}, location: string): { def: BindingDef, ast: AST } {
     declaration = this._normalizeAttributeName(declaration);
 
     const bindParts = declaration.match(BIND_NAME_REGEXP);
@@ -58,15 +59,22 @@ export class BindingCompiler {
     }
   }
 
-  private _parseEvent(name: string, expression: string, context: {}, location: string): BindingDef {
-    const [target, eventName] = splitAtColon(name, [null !, name]);
+  private _parseEvent(name: string, expression: string, context: {}, location: string): { def: BindingDef, ast: AST } {
+    const [target, eventName] = splitAtColon(name, [null!, name]);
+
     const ast = this._parseAction(expression, location);
-    return {
+    // console.log();
+    // const handleEventFn = function($event: any) {
+    //   return interpreter.visit(ast);
+    // };
+    const def: BindingDef = {
       flags: BindingFlags.TypeEvent,
-      ns: null,
+      ns: target,
       name,
       suffix: null
     };
+
+    return { def, ast };
   }
 
   private _parseAction(value: string, location: string) {

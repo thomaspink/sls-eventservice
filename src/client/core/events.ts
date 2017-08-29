@@ -1,11 +1,11 @@
-import {Subject} from 'rxjs/Subject';
+// import {Subject} from 'rxjs/Subject';
 
-export class EventEmitter<T> extends Subject<T> {
+export class EventEmitter<T> { //extends Subject<T> {
   constructor() {
-    super();
+    // super();
   }
 
   emit(value?: T) {
-    super.next(value);
+    // super.next(value);
   }
 }

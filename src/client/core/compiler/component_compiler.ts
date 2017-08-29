@@ -8,12 +8,14 @@ import {
   CodegenComponentFactoryResolver, ComponentFactoryResolver
 } from '../linker/component_factory_resolver';
 import { createComponentFactory } from '../view/refs';
-import { ViewDefinition, BindingFlags, BindingDef } from '../view/types';
+import { ViewDefinition, BindingFlags, BindingDef, ViewData, HandleEventFn } from '../view/types';
 import { CssSelector } from './selector';
 import { RendererFactory } from '../linker/renderer';
 import { Visitor } from '../linker/visitor';
 import { CodegenVisitor } from './visitor';
 import { BindingCompiler } from './binding_compiler';
+import { AST } from './expression_parser/ast';
+import { ExpressionContext, ExpressionInterpreter } from './expression_parser/interpreter';
 
 export class ComponentCompiler {
   private _viewDefs = new Map<Type<any>, ViewDefinition>();
@@ -73,16 +75,18 @@ export class ComponentCompiler {
     const metadata = this._resolver.resolve(component);
     const context = Object.create({});
     const bindings: BindingDef[] = [];
+    const handler: {def: BindingDef, eventAst: AST}[] = []
     let bindingFlags = 0;
     if (metadata.host) {
       const hostBindings = metadata.host;
       for (var key in hostBindings) {
         if (hostBindings.hasOwnProperty(key)) {
-          const binding =
+          const {def, ast} =
             this.bindingCompiler.compile(key, hostBindings[key], context, stringify(component));
-          bindings.push(binding);
+          bindings.push(def);
           // tslint:disable-next-line:no-bitwise
-          bindingFlags |= binding.flags;
+          bindingFlags |= def.flags;
+          handler.push({def, eventAst: ast});
         }
       }
     }
@@ -99,10 +103,36 @@ export class ComponentCompiler {
       childComponents: metadata.components || null,
       childDefs: null,
       bindings,
-      bindingFlags
+      bindingFlags,
+      handleEvent: this._createHandleEventFn(handler)
     };
     def.factory = createComponentFactory(metadata.selector, component, def);
     this._viewDefs.set(component, def);
     return def;
   }
+
+  private _createHandleEventFn(handler: {def: BindingDef, eventAst: AST}[]): HandleEventFn {
+    const interpreter = new ExpressionInterpreter();
+    const map = new Map();
+    handler.forEach(h => {
+      const fullEventName = eventFullName(h.def.ns, h.def.name);
+      map.set(fullEventName, function(context: ExpressionContext) { return interpreter.visit(h.eventAst, context); });
+    });
+    return function (view: ViewData, eventName: string, event: any) {
+      const vars = {};
+      if (event) {
+        vars['$event'] = event;
+      }
+      const context = new ExpressionContext(view, vars);
+      const fn = map.get(eventName);
+      if (typeof fn !== 'function') {
+        throw new Error(`No event handler for event ${eventName} found in ${stringify(view.component)}`);
+      }
+      return fn(context);
+    }
+  }
+}
+
+export function eventFullName(target: string | null, name: string): string {
+  return target ? `${target}:${name}` : name;
 }

@@ -11,9 +11,11 @@ import { ComponentCompiler } from './component_compiler';
 
 export const COMPILER_PROVIDER: Provider[] = [
   { provide: ComponentResolver, deps: [Reflector] },
+
   { provide: ExpressionParser, useClass: SimpleExpressionParser, deps: [] },
   // { provide: Lexer, deps: [] },
   // { provide: ExpressionParser, useClass: SuperExpressionParser, deps: [Lexer] },
+
   { provide: BindingCompiler, deps: [ExpressionParser] },
   { provide: ComponentCompiler, deps: [ComponentResolver, BindingCompiler, RendererFactoryType] }
 ];

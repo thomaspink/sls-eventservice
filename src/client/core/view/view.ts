@@ -33,10 +33,9 @@ function createView(hostElement: any, renderer: Renderer | null, parent: ViewDat
     attachView(parent, view);
   }
   def.bindings.forEach(binding => {
-    // const expression = new Expression(binding.expression, view);
     if (binding.flags & BindingFlags.TypeEvent) {
-      // disposables.push(renderer.listen(hostElement, binding.name,
-      //   (event) => expression.run(event)));
+      disposables.push(renderer.listen(hostElement, binding.name,
+        (event) => def.handleEvent(view, binding.name, event)));
     }
   });
   return view;

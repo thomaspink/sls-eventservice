@@ -8,6 +8,8 @@ import { Renderer, RendererFactory } from '../linker/renderer';
 
 export interface DisposableFn { (): void; }
 
+export interface HandleEventFn { (view: ViewData, eventName: string, event: any): boolean; }
+
 export interface ViewDefinition {
   selector: string;
   componentType: Type<any>;
@@ -21,6 +23,7 @@ export interface ViewDefinition {
   childDefs: ViewDefinition[]|null;
   bindings: BindingDef[];
   bindingFlags: BindingFlags;
+  handleEvent: HandleEventFn|null;
 }
 
 export interface BindingDef {

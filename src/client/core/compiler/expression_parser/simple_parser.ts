@@ -109,7 +109,7 @@ export class SimpleExpressionParser extends ExpressionParser {
     const args = (parts[KW_FN_ARGS_IDX] || '')
       .split(String.fromCharCode($SEMICOLON))
       .map(arg => new PropertyRead(this._createSpan(argsOffset + ++index, arg.length),
-        new EmptyExpr(this._createSpan(-1, -1)), arg));
+        new ImplicitReceiver(this._createSpan(++index, index)), arg));
     return new MethodCall(this._createSpan(0, expression.length), receiver, fnName, args);
   }
 
