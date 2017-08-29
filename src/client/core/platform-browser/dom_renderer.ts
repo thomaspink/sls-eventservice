@@ -125,6 +125,7 @@ export class ComponentDomRenderer extends DefaultDomRenderer {
     ListWrapper.forEach(view.hostElement.childNodes, node => {
       this._walker.traverse(node as any, this._visitor, view);
     });
+    this._visitor.finish(view);
   }
 }
 

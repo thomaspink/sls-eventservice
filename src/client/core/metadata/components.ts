@@ -162,6 +162,28 @@ export interface Component {
    * ```
    */
   host?: { [key: string]: string };
+
+  /**
+   * Configures the queries that will be injected into the directive.
+   *
+   * Content queries are set before the `ngAfterContentInit` callback is called.
+   * View queries are set before the `ngAfterViewInit` callback is called.
+   *
+   * ### Example
+   *
+   * ```
+   * @Component({
+   *   selector: 'someDir',
+   *   queries: {
+   *     viewChildren: new ViewChildren(ChildDirective)
+   *   },
+   *   template: '<child-directive></child-directive>'
+   * })
+   * class SomeDir {
+   *   viewChildren: QueryList<ChildDirective>
+   * ```
+   */
+  queries?: {[key: string]: any};
 }
 
 /**

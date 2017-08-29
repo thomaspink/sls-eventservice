@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ComponentRef, ELEMENT, Renderer } from '../core';
+import { Component, OnInit, OnDestroy, ComponentRef, ELEMENT, Renderer, ViewChild } from '../core';
 import { listen, findElement } from '../util';
 import { HeaderComponent } from './components/header.component';
 import { DrawerComponent } from './components/drawer.component';
@@ -11,20 +11,21 @@ import { Dialog } from './dialog/dialog';
   components: [HeaderComponent, DrawerComponent]
 })
 export class AppComponent implements OnInit, OnDestroy {
-  private drawer: ComponentRef<DrawerComponent> | null;
-  private header: ComponentRef<HeaderComponent> | null;
   private delegates: Function[] = [];
 
+  @ViewChild(HeaderComponent)
+  header: HeaderComponent;
+
+  @ViewChild(DrawerComponent)
+  drawer: DrawerComponent;
+
   constructor(private element: Element, dialog: Dialog) {
-    // const drawer = findElement('side-drawer');
-    // this.drawer = getComponentOnElement(DrawerComponent, drawer);
-    // const header = findElement('header');
-    // this.header = getComponentOnElement(HeaderComponent, header);
   }
 
   onInit() {
     // this.delegates.push(this.header.instance.onOpenDrawer.subscribe(_ =>
     //   this.drawer.instance.toggleDrawer()).unsubscribe);
+    console.log(this.header, this.drawer);
   }
 
   onDestroy() {

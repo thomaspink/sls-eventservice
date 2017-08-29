@@ -1,14 +1,14 @@
 import { Type } from '../type';
 import { stringify } from '../util';
 import { ComponentResolver } from './component_resolver';
-import { Component, HostListener } from '../metadata/components';
+import { ViewChildren, ViewChild } from '../metadata/di';
 import { Reflector } from '../reflection/reflection';
 import { ComponentFactory, ComponentRef } from '../linker/component_factory';
 import {
   CodegenComponentFactoryResolver, ComponentFactoryResolver
 } from '../linker/component_factory_resolver';
 import { createComponentFactory } from '../view/refs';
-import { ViewDefinition, BindingFlags, BindingDef, ViewData, HandleEventFn } from '../view/types';
+import { ViewDefinition, BindingFlags, BindingDef, ViewData, HandleEventFn, QueryDef, QueryBindingDef, QueryBindingType, QueryValueType } from '../view/types';
 import { CssSelector } from './selector';
 import { RendererFactory } from '../linker/renderer';
 import { Visitor } from '../linker/visitor';
@@ -46,6 +46,9 @@ export class ComponentCompiler {
         selectables.push({selector: r.def.selector, context: r.def});
       });
     }
+    if (def.queries && def.queries.length) {
+      selectables.push(...def.queries);
+    }
     visitor = new CodegenVisitor(selectables, childVisitors);
     def.rendererFactory = new this._rendererFactoryType(visitor);
     return { def, visitor };
@@ -77,16 +80,41 @@ export class ComponentCompiler {
     const bindings: BindingDef[] = [];
     const handler: {def: BindingDef, eventAst: AST}[] = []
     let bindingFlags = 0;
+    const queries: QueryDef[] = [];
+
     if (metadata.host) {
-      const hostBindings = metadata.host;
-      for (var key in hostBindings) {
-        if (hostBindings.hasOwnProperty(key)) {
+      for (var key in metadata.host) {
+        if (metadata.host.hasOwnProperty(key)) {
           const {def, ast} =
-            this.bindingCompiler.compile(key, hostBindings[key], context, stringify(component));
+            this.bindingCompiler.compile(key, metadata.host[key], context, stringify(component));
           bindings.push(def);
           // tslint:disable-next-line:no-bitwise
           bindingFlags |= def.flags;
           handler.push({def, eventAst: ast});
+        }
+      }
+    }
+
+    if(metadata.queries) {
+      for (var key in metadata.queries) {
+        if (metadata.queries.hasOwnProperty(key)) {
+          const query = metadata.queries[key];
+          let def = queries.find(q => q.selector === query.selector);
+          if (!def) {
+            def = { selector: query.selector, bindings: [] }
+            queries.push(def);
+          }
+          let valueType = -1;
+          if(query instanceof ViewChild || query instanceof ViewChildren) {
+            valueType = QueryValueType.Component
+          } else {
+            throw new Error(`Unknown query type: ${stringify(query.constructor)}`);
+          }
+          def.bindings.push({
+            propName: key,
+            bindingType: query.first ? QueryBindingType.First : QueryBindingType.All,
+            valueType
+          });
         }
       }
     }
@@ -104,6 +132,7 @@ export class ComponentCompiler {
       childDefs: null,
       bindings,
       bindingFlags,
+      queries,
       handleEvent: this._createHandleEventFn(handler)
     };
     def.factory = createComponentFactory(metadata.selector, component, def);

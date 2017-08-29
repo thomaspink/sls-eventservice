@@ -24,6 +24,7 @@ export interface ViewDefinition {
   bindings: BindingDef[];
   bindingFlags: BindingFlags;
   handleEvent: HandleEventFn|null;
+  queries: QueryDef[]|null;
 }
 
 export interface BindingDef {
@@ -39,6 +40,21 @@ export const enum BindingFlags {
   TypeElementStyle = 1 << 2,
   TypeProperty = 1 << 3,
   TypeEvent = 1 << 4,
+}
+
+export interface QueryDef {
+  selector: any;
+  bindings: QueryBindingDef[];
+}
+export interface QueryBindingDef {
+  propName: string;
+  bindingType: QueryBindingType;
+  valueType: QueryValueType;
+}
+export const enum QueryBindingType {First = 0, All = 1}
+export const enum QueryValueType {
+  Element = 0,
+  Component = 1
 }
 
 export interface ViewData {
