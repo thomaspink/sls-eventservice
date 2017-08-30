@@ -30,7 +30,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  @ChildListener(TestComponent, 'click')
+  @ChildListener('.toggle-drawer', 'clickEmitter')
   testClicked() {
     console.log('testClicked');
   }

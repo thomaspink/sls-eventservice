@@ -58,7 +58,7 @@ export class ExpressionInterpreter implements AstVisitor {
     if (ast.args) {
       args = this.visitAll(ast.args, context);
     }
-    return fn.apply(fn, args);
+    return fn.apply(context.view.component, args);
   }
 
   visitPipe(ast: BindingPipe, context: ExpressionContext): any {
@@ -107,7 +107,7 @@ export class ExpressionInterpreter implements AstVisitor {
 }
 
 export class ExpressionContext {
-  constructor(private view: ViewData, private vars: {[name: string]: any} = {}) { }
+  constructor(public view: ViewData, private vars: {[name: string]: any} = {}) { }
   get(name: string) {
     let result: any = this.vars[name];
     if (typeof result !== 'undefined') {

@@ -15,7 +15,8 @@ export const enum NodeTypes {
   ViewDefinition = 1 << 0,
   Provider = 1 << 1,
   Binding = 1 << 2,
-  Query = 1 << 3
+  Query = 1 << 3,
+  Output = 1 << 4
 }
 
 /**
@@ -34,8 +35,9 @@ export interface ViewDefinition extends Node {
   childDefs: ViewDefinition[] | null;
   bindings: BindingDef[];
   bindingFlags: BindingFlags;
-  handleEvent: HandleEventFn | null;
+  outputs: OutputDef[];
   queries: QueryDef[] | null;
+  handleEvent: HandleEventFn | null;
 }
 export function isViewDefinition(node: Node) { return !!(node.type & NodeTypes.ViewDefinition); }
 export interface HandleEventFn {
@@ -49,6 +51,13 @@ export interface Provider extends Node {
   provider: ClassProvider|ConstructorProvider|ExistingProvider|FactoryProvider|ValueProvider;
 }
 export function isProvider(node: Node) { return !!(node.type & NodeTypes.Provider); }
+
+export interface OutputDef extends Node {
+  target: 'window'|'document'|'body'|'component'|null;
+  eventName: string;
+  propName: string|null;
+}
+
 
 /**
  * Bindings

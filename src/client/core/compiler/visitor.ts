@@ -12,6 +12,7 @@ import {
   Node, isBinding, isQuery, isViewDefinition, BindingDef, BindingFlags
 } from '../view/types';
 import { callLifecycleHook } from '../lifecycle_hooks';
+import { EventEmitter } from '../events';
 
 export interface Selectable {
   selector: any;
@@ -74,13 +75,13 @@ export class CodegenVisitor implements Visitor {
     }
 
     if (this._ctorBindings.size && view && this._ctorBindings.has(view.def.componentType)) {
-      const bindings = this._ctorQueries.get(view.def.componentType);
-      this._visitComponentBinding();
+      const binding = this._ctorBindings.get(view.def.componentType);
+      this._visitComponentBinding(context, view, binding);
     }
     if (bindings && bindings.length) {
       bindings.forEach(binding => {
         if (view) {
-          this._visitComponentBinding();
+          this._visitComponentBinding(context, view, binding);
         } else {
           this._visitElementBinding(element, context, binding);
         }
@@ -135,13 +136,27 @@ export class CodegenVisitor implements Visitor {
     });
   }
 
-  private _visitComponentBinding() {
-
+  private _visitComponentBinding(view: ViewData, childView: ViewData, binding: BindingDef) {
+    if (binding.flags & BindingFlags.TypeEvent) {
+      const output = ListWrapper.findFirst(childView.def.outputs,
+        o => o.eventName === binding.name && !binding.ns && o.target === 'component');
+      if (output) {
+        console.log(output);
+        const emitter = childView.component[output.propName];
+        if (!(emitter instanceof EventEmitter)) {
+          throw new Error(`Output property ${output.propName} on ${stringify(childView.def.componentType)} has to be an EventEmitter`);
+        }
+        const subscription = emitter.subscribe(value => {
+          view.def.handleEvent(view, binding.name, binding.index, value);
+        });
+        view.disposables.push(subscription.unsubscribe);
+      }
+    }
   }
 
 
   private _visitElementBinding(element: Element, view: ViewData, binding: BindingDef) {
-    if(binding.flags & BindingFlags.TypeEvent) {
+    if (binding.flags & BindingFlags.TypeEvent) {
       view.disposables.push(view.renderer.listen(element, binding.name,
         (event) => view.def.handleEvent(view, binding.name, binding.index, event)));
     }

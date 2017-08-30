@@ -1,5 +1,6 @@
 import { Type } from '../type';
 import { stringify } from '../util';
+import { splitAtColon } from './util';
 import { ObjectWrapper, ListWrapper } from '../util/collection';
 import { ComponentResolver } from './component_resolver';
 import { ViewChildren, ViewChild } from '../metadata/di';
@@ -11,7 +12,7 @@ import {
 import { createComponentFactory } from '../view/refs';
 import {
   ViewDefinition, BindingFlags, BindingDef, ViewData, HandleEventFn, QueryDef, QueryBindingDef,
-  QueryBindingType, QueryValueType, isQuery, NodeTypes, Provider
+  QueryBindingType, QueryValueType, isQuery, NodeTypes, Provider, OutputDef
 } from '../view/types';
 import { CssSelector } from './selector';
 import { RendererFactory } from '../linker/renderer';
@@ -82,6 +83,7 @@ export class ComponentCompiler {
     const selectables: Selectable[] = [];
     const providers: Provider[] = [];
     const childComponents: Provider[] = [];
+    const outputs: OutputDef[] = [];
     const queries: QueryDef[] = [];
     const bindings: BindingDef[] = [];
     let index = 0;
@@ -111,6 +113,17 @@ export class ComponentCompiler {
         });
       });
     }
+
+    ListWrapper.forEach(metadata.outputs, output => {
+      const [propName, eventName] = splitAtColon(output, [output, output]);
+      outputs.push({
+        index: index++,
+        type: NodeTypes.Output,
+        target: 'component',
+        propName,
+        eventName
+      });
+    });
 
     ObjectWrapper.forEach(metadata.host, (binding, key) => {
       const { def, ast } = this.bindingCompiler.compile(key, metadata.host[key], index++,
@@ -170,6 +183,7 @@ export class ComponentCompiler {
       bindings,
       bindingFlags,
       queries,
+      outputs,
       handleEvent: this._createHandleEventFn(handler)
     };
     def.factory = createComponentFactory(metadata.selector, component, def);

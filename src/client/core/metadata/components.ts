@@ -63,6 +63,50 @@ export interface Component {
    */
   components?: Type<any>[];
 
+  /**
+   * Enumerates the set of event-bound output properties.
+   *
+   * When an output property emits an event, an event handler attached to that event
+   * the template is invoked.
+   *
+   * The `outputs` property defines a set of `directiveProperty` to `bindingProperty`
+   * configuration:
+   *
+   * - `directiveProperty` specifies the component property that emits events.
+   * - `bindingProperty` specifies the DOM property the event handler is attached to.
+   *
+   * ### Example
+   *
+   * ```typescript
+   * @Component({
+   *   selector: 'interval-dir',
+   *   outputs: ['everySecond', 'five5Secs: everyFiveSeconds']
+   * })
+   * class IntervalComponent {
+   *   everySecond = new EventEmitter();
+   *   five5Secs = new EventEmitter();
+   *
+   *   constructor() {
+   *     setInterval(() => this.everySecond.emit("event"), 1000);
+   *     setInterval(() => this.five5Secs.emit("event"), 5000);
+   *   }
+   * }
+   *
+   * @Component({
+   *   selector: 'app',
+   *   template: `
+   *     <interval-dir (everySecond)="everySecond()" (everyFiveSeconds)="everyFiveSeconds()">
+   *     </interval-dir>
+   *   `
+   * })
+   * class App {
+   *   everySecond() { console.log('second'); }
+   *   everyFiveSeconds() { console.log('five seconds'); }
+   * }
+   * ```
+   *
+   */
+  outputs?: string[];
 
   /**
    * Specify the events, actions, properties and attributes related to the host element.
@@ -193,6 +237,72 @@ export interface Component {
  */
 export const Component: ComponentDecorator =
   makeDecorator('Component', (comp: Component = { selector: '' }) => comp);
+
+/**
+ * Type of the Output decorator / constructor function.
+ *
+ * @stable
+ */
+export interface OutputDecorator {
+  /**
+   * Declares an event-bound output property.
+   *
+   * When an output property emits an event, an event handler attached to that event
+   * the template is invoked.
+   *
+   * `Output` takes an optional parameter that specifies the name
+   * used when instantiating a component in the template. When not provided,
+   * the name of the decorated property is used.
+   *
+   * ### Example
+   *
+   * ```typescript
+   * @Directive({
+   *   selector: 'interval-dir',
+   * })
+   * class IntervalDir {
+   *   @Output() everySecond = new EventEmitter();
+   *   @Output('everyFiveSeconds') five5Secs = new EventEmitter();
+   *
+   *   constructor() {
+   *     setInterval(() => this.everySecond.emit("event"), 1000);
+   *     setInterval(() => this.five5Secs.emit("event"), 5000);
+   *   }
+   * }
+   *
+   * @Component({
+   *   selector: 'app',
+   *   template: `
+   *     <interval-dir (everySecond)="everySecond()" (everyFiveSeconds)="everyFiveSeconds()">
+   *     </interval-dir>
+   *   `
+   * })
+   * class App {
+   *   everySecond() { console.log('second'); }
+   *   everyFiveSeconds() { console.log('five seconds'); }
+   * }
+   * ```
+   * @stable
+   */
+  (bindingPropertyName?: string): any;
+  new(bindingPropertyName?: string): any;
+}
+
+/**
+ * Type of the Output metadata.
+ *
+ * @stable
+ */
+export interface Output { bindingPropertyName?: string; }
+
+/**
+ * Output decorator and metadata.
+ *
+ * @stable
+ * @Annotation
+ */
+export const Output: OutputDecorator =
+  makePropDecorator('Output', (bindingPropertyName?: string) => ({ bindingPropertyName }));
 
 
 /**
