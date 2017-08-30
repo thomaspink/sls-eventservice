@@ -1,43 +1,23 @@
-import { Component, OnInit, OnDestroy, ELEMENT } from '../../core';
+import { Component, OnInit, OnDestroy, ELEMENT, HostListener, ChildListener, ViewChild } from '../../core';
 import { listen, findElement } from '../../util';
 
 @Component({
   selector: 'side-drawer',
   deps: [ELEMENT]
 })
-export class DrawerComponent implements OnInit, OnDestroy {
-  private delegates: Function[] = [];
-  private container: HTMLElement;
-  private closeBtn: Element;
+export class DrawerComponent {
   private startX = 0;
   private currentX = 0;
   private touchingDrawer = false;
   private trashhold = 0.5;
-  private transitionEndDisp: Function|null = null;
+  private transitionEndDisp: Function | null = null;
+
+  @ViewChild('.side-drawer__nav', { read: ELEMENT })
+  private container: HTMLElement;
 
   constructor(private element: Element) {
-    this.container = findElement('.side-drawer__nav', element) as HTMLElement;
-    this.closeBtn = findElement('.side-drawer__close', element);
-    this.hideDrawer = this.hideDrawer.bind(this);
-    this.onTouchStart = this.onTouchStart.bind(this);
-    this.onTouchMove = this.onTouchMove.bind(this);
-    this.onTouchEnd = this.onTouchEnd.bind(this);
-    this.blockClicks = this.blockClicks.bind(this);
-    this.onTransitionEnd = this.onTransitionEnd.bind(this);
     this.update = this.update.bind(this);
-  }
-
-  onInit() {
-    this.delegates.push(listen(this.element, 'click', this.hideDrawer));
-    this.delegates.push(listen(this.element, 'touchstart', this.onTouchStart));
-    this.delegates.push(listen(this.element, 'touchmove', this.onTouchMove));
-    this.delegates.push(listen(this.element, 'touchend', this.onTouchEnd));
-    this.delegates.push(listen(this.container, 'click', this.blockClicks));
-    this.delegates.push(listen(this.closeBtn, 'click', this.hideDrawer));
-  }
-
-  onDestroy() {
-    this.delegates.forEach(fn => fn());
+    this.onTransitionEnd = this.onTransitionEnd.bind(this);
   }
 
   toggleDrawer() {
@@ -61,6 +41,8 @@ export class DrawerComponent implements OnInit, OnDestroy {
     });
   }
 
+  @HostListener('click')
+  @ChildListener('.side-drawer__close', 'click')
   hideDrawer() {
     this.disableAnimatable();
     this.element.setAttribute('aria-hidden', 'true');
@@ -68,7 +50,8 @@ export class DrawerComponent implements OnInit, OnDestroy {
     this.enableScroll();
   }
 
-  private blockClicks(evt: MouseEvent) {
+  @ChildListener('.side-drawer__nav', 'click', ['$event'])
+  private blockClicks(evt: MouseEvent, ) {
     evt.stopPropagation();
   }
 
@@ -85,9 +68,10 @@ export class DrawerComponent implements OnInit, OnDestroy {
     document.body.parentElement.classList.remove('noscroll');
   }
 
+  @HostListener('touchstart', ['$event'])
   private onTouchStart(evt: TouchEvent) {
-    if (!this.isDrawerVisible) {
-      return;
+    if (!this.isDrawerVisible)  {
+      return false;
     }
 
     this.disableAnimatable();
@@ -99,6 +83,7 @@ export class DrawerComponent implements OnInit, OnDestroy {
     requestAnimationFrame(this.update);
   }
 
+  @HostListener('touchmove', ['$event'])
   private onTouchMove(evt: TouchEvent) {
     if (!this.touchingDrawer) {
       return;
@@ -107,13 +92,14 @@ export class DrawerComponent implements OnInit, OnDestroy {
     const translateX = Math.max(0, this.currentX - this.startX);
 
     if (translateX > 290 * this.trashhold) {
-      evt.preventDefault();
+      return false;
     }
   }
 
+  @HostListener('touchend')
   private onTouchEnd() {
     if (!this.touchingDrawer) {
-      return;
+      return false;
     }
     this.touchingDrawer = false;
 

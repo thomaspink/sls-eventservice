@@ -49,7 +49,7 @@ export class CodegenVisitor implements Visitor {
 
   visitElement(element: Element, context: ViewData): any {
     const elementSelector = CssSelector.fromElement(element);
-    let view: ViewData;
+    let view: ViewData|null = null;
     let queries: QueryDef[] = [];
     let bindings: BindingDef[] = [];
     this._selectorMatcher.match(elementSelector, (selector, selectable: Node) => {
@@ -68,10 +68,10 @@ export class CodegenVisitor implements Visitor {
 
     if (this._ctorQueries.size && view && this._ctorQueries.has(view.def.componentType)) {
       const bindings = this._ctorQueries.get(view.def.componentType);
-      this._visitQuery(view, bindings);
+      this._visitQuery(element, view, bindings);
     }
     if (queries && queries.length) {
-      queries.forEach(q => this._visitQuery(view, q.queryBindings));
+      queries.forEach(q => this._visitQuery(element, view, q.queryBindings));
     }
 
     if (this._ctorBindings.size && view && this._ctorBindings.has(view.def.componentType)) {
@@ -119,19 +119,19 @@ export class CodegenVisitor implements Visitor {
     return view;
   }
 
-  private _visitQuery(view: ViewData, bindings: QueryBindingDef[]) {
+  private _visitQuery(element: Element, view: ViewData|null, bindings: QueryBindingDef[]) {
     bindings.forEach(b => {
       let value = this._queries.get(b.propName);
       if (b.bindingType === QueryBindingType.First) {
         if (!value) {
-          this._queries.set(b.propName, this._getQueryValue(view, b));
+          this._queries.set(b.propName, this._getQueryValue(element, view, b));
         }
       } else {
         if (!value) {
           value = [];
           this._queries.set(b.propName, value);
         }
-        value.push(this._getQueryValue(view, b));
+        value.push(this._getQueryValue(element, view, b));
       }
     });
   }
@@ -161,12 +161,14 @@ export class CodegenVisitor implements Visitor {
     }
   }
 
-  private _getQueryValue(view: ViewData, query: QueryBindingDef) {
-    switch (query.valueType) {
-      case QueryValueType.Component:
-        return view.component;
-      case QueryValueType.Element:
-        return view.hostElement;
+  private _getQueryValue(element: Element, view: ViewData|null, query: QueryBindingDef) {
+    if(query.valueType === QueryValueType.Element) {
+      return element
+    } else if(query.valueType === QueryValueType.Component && view) {
+      return view.component;
+    } else {
+      throw new Error('Unknown query value type. If you want to query an elment add `{ read: ELEMENT }` ' +
+        'to the @ViewChild or @ViewChildren arguments');
     }
   }
 

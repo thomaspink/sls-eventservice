@@ -9,7 +9,7 @@ import { ComponentFactory, ComponentRef } from '../linker/component_factory';
 import {
   CodegenComponentFactoryResolver, ComponentFactoryResolver
 } from '../linker/component_factory_resolver';
-import { createComponentFactory } from '../view/refs';
+import { createComponentFactory, ELEMENT } from '../view/refs';
 import {
   ViewDefinition, BindingFlags, BindingDef, ViewData, HandleEventFn, QueryDef, QueryBindingDef,
   QueryBindingType, QueryValueType, isQuery, NodeTypes, Provider, OutputDef
@@ -38,7 +38,7 @@ export class ComponentCompiler {
 
   private _recursivelyCompileViewDefs(component: Type<any>, index: number, parent?: ViewDefinition):
     { def: ViewDefinition, visitor: Visitor | null } {
-    const {def, selectables } = this._createViewDef(component, index, parent);
+    const { def, selectables } = this._createViewDef(component, index, parent);
     const childVisitors = new Map<Type<any>, Visitor>();
     let visitor: CodegenVisitor | null = null;
     if (def.childComponents && def.childComponents.length) {
@@ -153,7 +153,7 @@ export class ComponentCompiler {
       }
       let valueType = -1;
       if (query instanceof ViewChild || query instanceof ViewChildren) {
-        valueType = QueryValueType.Component;
+        valueType = query.read === ELEMENT ? QueryValueType.Element : QueryValueType.Component;
       } else {
         throw new Error(`Unknown query type: ${stringify(query.constructor)}`);
       }
@@ -188,7 +188,7 @@ export class ComponentCompiler {
     };
     def.factory = createComponentFactory(metadata.selector, component, def);
     this._viewDefs.set(component, def);
-    return { def, selectables};
+    return { def, selectables };
   }
 
   private _createHandleEventFn(handler: { def: BindingDef, eventAst: AST }[]): HandleEventFn {
