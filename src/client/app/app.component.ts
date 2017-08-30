@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild, ChildListener } from '../core';
 import { HeaderComponent } from './components/header.component';
 import { DrawerComponent } from './components/drawer.component';
-// import { Dialog } from './dialog/dialog';
+import { Dialog } from './dialog/dialog';
 
 @Component({
   selector: 'body',
