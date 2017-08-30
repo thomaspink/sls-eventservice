@@ -1,32 +1,16 @@
-import { registerComponent, OnInit, OnDestroy, EventEmitter, ELEMENT } from '../../core';
-import {listen, findElement} from '../../util';
+import { Component, EventEmitter, ChildListener, Output } from '../../core';
+import { listen, findElement } from '../../util';
 
-export class HeaderComponent implements OnInit, OnDestroy {
-  public onOpenDrawer = new EventEmitter();
+@Component({
+  selector: 'header'
+})
+export class HeaderComponent {
+  @Output()
+  onToggleDrawer = new EventEmitter();
 
-  private _drawerBtn: HTMLButtonElement;
-  private _drawer: Element;
-  private _delegates: Function[] = [];
-
-  constructor(private element: Element) {
-    this._drawerBtn = findElement('.toggle-drawer', element) as HTMLButtonElement;
-    this._drawer = findElement('side-drawer');
-  }
-
-  onInit() {
-    this._delegates.push(listen(this._drawerBtn, 'click', this.openDrawer.bind(this)));
-  }
-
-  onDestroy() {
-    this._delegates.forEach(fn => fn());
-  }
-
-  openDrawer() {
-    this.onOpenDrawer.emit();
+  @ChildListener('.toggle-drawer', 'click')
+  drawerBtnClicked() {
+    this.onToggleDrawer.emit();
+    return false;
   }
 }
-registerComponent({
-  type: HeaderComponent,
-  selector: 'header',
-  deps: [ELEMENT]
-});

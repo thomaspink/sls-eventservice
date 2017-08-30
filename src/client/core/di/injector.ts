@@ -1,6 +1,6 @@
 // tslint:disable:no-bitwise
 
-import { stringify } from '../../util';
+import { stringify } from '../util';
 import { Type } from '../type';
 import { InjectionToken } from './injection_token';
 import { resolveForwardRef } from './forward_ref';
