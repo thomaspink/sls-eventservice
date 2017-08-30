@@ -21,6 +21,8 @@ export interface ViewDefinition {
   deps: any[]|null;
   childComponents: Type<any>[]|null;
   childDefs: ViewDefinition[]|null;
+  hostBindings: BindingDef[];
+  hostBindingFlags: BindingFlags;
   bindings: BindingDef[];
   bindingFlags: BindingFlags;
   handleEvent: HandleEventFn|null;

@@ -1,7 +1,7 @@
 import { Type } from '../type';
 import { stringify } from '../util';
 import { Reflector } from '../reflection/reflection';
-import { Component, HostListener } from '../metadata/components';
+import { Component, HostListener, ChildListener } from '../metadata/components';
 import { ViewChild, ViewChildren } from '../metadata/di';
 import { resolveForwardRef } from '../di/forward_ref';
 
@@ -37,6 +37,7 @@ export class ComponentResolver {
   private _mergeWithPropertyMetadata(comp: Component, propertyMetadata: { [key: string]: any[] },
     componentType: Type<any>) {
     const host: { [key: string]: string } = {};
+    const bindings: { [key: string]: any } = {};
     const queries: { [key: string]: any } = {};
 
     Object.keys(propertyMetadata).forEach((propName: string) => {
@@ -45,22 +46,36 @@ export class ComponentResolver {
         const args = hostListener.args || [];
         host[`(${hostListener.eventName})`] = `${propName}(${args.join(',')})`;
       });
-      const query = findLast(propertyMetadata[propName], (a) => isTypeOf(a, ViewChildren) || isTypeOf(a, ViewChild));
+      const childListeners = propertyMetadata[propName].filter(m => isTypeOf(m, ChildListener));
+      childListeners.forEach((childListener: any) => {
+        const args = childListener.args || [];
+        let binding = bindings[childListener.selector];
+        if (!binding) {
+          binding = Object.create({});
+          bindings[childListener.selector] = binding;
+        }
+        binding[`(${childListener.eventName})`] = `${propName}(${args.join(',')})`;
+      });
+      const query = findLast(propertyMetadata[propName],
+        (a) => isTypeOf(a, ViewChildren) || isTypeOf(a, ViewChild));
       if (query) {
         queries[propName] = query;
       }
     });
-    return this._merge(comp, host, queries, componentType);
+    return this._merge(comp, host, bindings, queries, componentType);
   }
 
-  private _merge(comp: Component, host: { [key: string]: string }, queries: { [key: string]: any },
+  private _merge(comp: Component, host: { [key: string]: string },
+    bindings: { [key: string]: string }, queries: { [key: string]: any },
     componentType: Type<any>): Component {
     const mergedHost = comp.host ? { ...comp.host, ...host } : host;
+    const mergedBindings = comp.bindings ? { ...comp.bindings, ...bindings } : bindings;
     const mergedQueries = comp.queries ? {...comp.queries, ...queries} : queries;
 
     return {
       selector: comp.selector,
       host: mergedHost,
+      bindings: mergedBindings,
       queries: mergedQueries,
       providers: comp.providers,
       deps: comp.deps,

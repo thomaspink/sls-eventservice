@@ -32,7 +32,7 @@ function createView(hostElement: any, renderer: Renderer | null, parent: ViewDat
   if (parent) {
     attachView(parent, view);
   }
-  def.bindings.forEach(binding => {
+  def.hostBindings.forEach(binding => {
     if (binding.flags & BindingFlags.TypeEvent) {
       disposables.push(renderer.listen(hostElement, binding.name,
         (event) => def.handleEvent(view, binding.name, event)));

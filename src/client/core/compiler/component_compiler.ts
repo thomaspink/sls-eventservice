@@ -43,7 +43,7 @@ export class ComponentCompiler {
         if (r.visitor) {
           childVisitors.set(r.def.componentType, r.visitor);
         }
-        selectables.push({selector: r.def.selector, context: r.def});
+        selectables.push({ selector: r.def.selector, context: r.def });
       });
     }
     if (def.queries && def.queries.length) {
@@ -77,36 +77,52 @@ export class ComponentCompiler {
     }
     const metadata = this._resolver.resolve(component);
     const context = Object.create({});
+    const hostBindings: BindingDef[] = [];
     const bindings: BindingDef[] = [];
-    const handler: {def: BindingDef, eventAst: AST}[] = []
-    let bindingFlags = 0;
+    const handler: { def: BindingDef, eventAst: AST }[] = []
+    let hostBindingFlags = 0;
     const queries: QueryDef[] = [];
 
     if (metadata.host) {
-      for (var key in metadata.host) {
+      for (let key in metadata.host) {
         if (metadata.host.hasOwnProperty(key)) {
-          const {def, ast} =
-            this.bindingCompiler.compile(key, metadata.host[key], context, stringify(component));
-          bindings.push(def);
+          const { def, ast } = this.bindingCompiler.compile(key, metadata.host[key],
+            context, stringify(component));
+          hostBindings.push(def);
           // tslint:disable-next-line:no-bitwise
-          bindingFlags |= def.flags;
-          handler.push({def, eventAst: ast});
+          hostBindingFlags |= def.flags;
+          handler.push({ def, eventAst: ast });
         }
       }
     }
 
-    if(metadata.queries) {
-      for (var key in metadata.queries) {
+    if (metadata.bindings) {
+      for (let selector in metadata.bindings) {
+        if (metadata.bindings.hasOwnProperty(selector)) {
+          const group = metadata.bindings[selector];
+          for (let key in group) {
+            if (group.hasOwnProperty(key)) {
+              const { def, ast } = this.bindingCompiler.compile(key, group[key],
+                context, stringify(component));
+              console.log(def);
+            }
+          }
+        }
+      }
+    }
+
+    if (metadata.queries) {
+      for (let key in metadata.queries) {
         if (metadata.queries.hasOwnProperty(key)) {
           const query = metadata.queries[key];
           let def = queries.find(q => q.selector === query.selector);
           if (!def) {
-            def = { selector: query.selector, bindings: [] }
+            def = { selector: query.selector, bindings: [] };
             queries.push(def);
           }
           let valueType = -1;
-          if(query instanceof ViewChild || query instanceof ViewChildren) {
-            valueType = QueryValueType.Component
+          if (query instanceof ViewChild || query instanceof ViewChildren) {
+            valueType = QueryValueType.Component;
           } else {
             throw new Error(`Unknown query type: ${stringify(query.constructor)}`);
           }
@@ -130,8 +146,10 @@ export class ComponentCompiler {
       deps: metadata.deps || null,
       childComponents: metadata.components || null,
       childDefs: null,
-      bindings,
-      bindingFlags,
+      hostBindings,
+      hostBindingFlags,
+      bindings: null,
+      bindingFlags: null,
       queries,
       handleEvent: this._createHandleEventFn(handler)
     };
@@ -140,12 +158,12 @@ export class ComponentCompiler {
     return def;
   }
 
-  private _createHandleEventFn(handler: {def: BindingDef, eventAst: AST}[]): HandleEventFn {
+  private _createHandleEventFn(handler: { def: BindingDef, eventAst: AST }[]): HandleEventFn {
     const interpreter = new ExpressionInterpreter();
     const map = new Map();
     handler.forEach(h => {
       const fullEventName = eventFullName(h.def.ns, h.def.name);
-      map.set(fullEventName, function(context: ExpressionContext) { return interpreter.visit(h.eventAst, context); });
+      map.set(fullEventName, function (context: ExpressionContext) { return interpreter.visit(h.eventAst, context); });
     });
     return function (view: ViewData, eventName: string, event: any) {
       const vars = {};

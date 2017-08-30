@@ -163,6 +163,8 @@ export interface Component {
    */
   host?: { [key: string]: string };
 
+  bindings?: { [key: string]: any };
+
   /**
    * Configures the queries that will be injected into the directive.
    *
@@ -183,22 +185,19 @@ export interface Component {
    *   viewChildren: QueryList<ChildDirective>
    * ```
    */
-  queries?: {[key: string]: any};
+  queries?: { [key: string]: any };
 }
 
 /**
  * Component decorator and metadata.
- *
- * @stable
- * @Annotation
  */
 export const Component: ComponentDecorator =
   makeDecorator('Component', (comp: Component = { selector: '' }) => comp);
 
 
 /**
-* Type of the HostListener decorator / constructor function.
-*/
+ * Type of the HostListener decorator / constructor function.
+ */
 export interface HostListenerDecorator {
   /**
    * Declares a host listener.
@@ -224,3 +223,35 @@ export interface HostListener {
  */
 export const HostListener: HostListenerDecorator =
   makePropDecorator('HostListener', (eventName?: string, args?: string[]) => ({ eventName, args }));
+
+/**
+* Type of the HostListener decorator / constructor function.
+*/
+export interface ChildListenerDecorator {
+  /**
+   * Declares a child listener.
+   *
+   * Mojito will invoke the decorated method when the child element emits the specified event.
+   *
+   * If the decorated method returns `false`, then `preventDefault` is applied on the DOM event.
+   */
+  (selector: string | Type<any>, eventName: string, args?: string[]): any;
+  new(selector: string | Type<any>, eventName: string, args?: string[]): any;
+}
+
+/**
+ * Type of the ChildListener metadata.
+ */
+export interface ChildListener {
+  selector: string | Type<any>;
+  eventName?: string;
+  args?: string[];
+}
+
+/**
+ * ChildListener decorator and metadata.
+ */
+export const ChildListener: ChildListenerDecorator =
+  makePropDecorator('ChildListener',
+    (selector: string | Type<any>, eventName?: string, args?: string[]) =>
+      ({ selector, eventName, args }));

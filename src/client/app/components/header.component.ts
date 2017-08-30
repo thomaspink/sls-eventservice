@@ -1,11 +1,11 @@
-import { Component, OnInit, OnDestroy, EventEmitter, ELEMENT } from '../../core';
+import { Component, OnInit, OnDestroy, EventEmitter, ELEMENT, ChildListener } from '../../core';
 import {listen, findElement} from '../../util';
-import {TestComponent} from './test';
+// import {TestComponent} from './test';
 
 @Component({
   selector: 'header',
   deps: [ELEMENT],
-  components: [TestComponent]
+  // components: [TestComponent]
 })
 export class HeaderComponent implements OnInit, OnDestroy {
   public onOpenDrawer = new EventEmitter();
@@ -23,6 +23,16 @@ export class HeaderComponent implements OnInit, OnDestroy {
   onInit() {
     // this._delegates.push(listen(this._drawerBtn, 'click', this.openDrawer.bind(this)));
   }
+
+ @ChildListener('.toggle-drawer', 'click')
+  test() {
+    alert('asdf');
+  }
+
+   @ChildListener('.toggle-drawer1', 'click')
+    test1() {
+      alert('asdf');
+    }
 
   onDestroy() {
     this._delegates.forEach(fn => fn());
