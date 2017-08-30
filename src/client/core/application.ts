@@ -36,6 +36,7 @@ export function bootstrapComponent<C>(component: Type<C>) {
   ]);
   const compiler: ComponentCompiler = appInjector.get(ComponentCompiler);
   const resolver = compiler.compile(component);
+  console.log(resolver);
   const app = new ApplicationRef(appInjector, resolver);
   app.bootstrap(component);
 }

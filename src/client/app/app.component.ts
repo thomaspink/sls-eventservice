@@ -1,11 +1,11 @@
 import { Component, OnInit, OnDestroy, ViewChild, ChildListener } from '../core';
 import { HeaderComponent } from './components/header.component';
 import { DrawerComponent } from './components/drawer.component';
-import { Dialog } from './dialog/dialog';
+import { DIALOG_COMPONENTS, DIALOG_PROVIDERS, Dialog } from './dialog/dialog';
 
 @Component({
   selector: 'body',
-  providers: [{provide: Dialog, deps: []}],
+  providers: [DIALOG_PROVIDERS],
   deps: [Dialog],
   components: [HeaderComponent, DrawerComponent]
 })

@@ -32,6 +32,7 @@ export class ComponentCompiler {
     const { def, visitor } = this._recursivelyCompileViewDefs(component, 0);
     const resolver = new CodegenComponentFactoryResolver([def.factory],
       parentResolver || ComponentFactoryResolver.NULL);
+    def.resolver = resolver;
     this._recusivelyCompileFactoryResolver(def, resolver);
     return resolver;
   }

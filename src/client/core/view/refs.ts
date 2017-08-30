@@ -97,6 +97,7 @@ class Injector_ extends StaticInjector {
       return this.view.renderer;
     }
     if (token === ComponentFactoryResolver) {
+      console.log('sadfsa');
       return this.view.def.resolver || this.view.def.parent.resolver;
     }
     return super.get(token);
