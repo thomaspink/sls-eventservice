@@ -20,6 +20,7 @@ export class AppComponent implements OnInit, OnDestroy {
   drawer: DrawerComponent;
 
   constructor(private element: Element, dialog: Dialog) {
+    console.log(element, dialog);
   }
 
   onInit() {

@@ -86,7 +86,7 @@ export function createInjector(view: ViewData): Injector {
 }
 class Injector_ extends StaticInjector {
   constructor(private view: ViewData, parent?: Injector) {
-    super(view.def.providers, parent || (view.parent && view.parent.injector));
+    super(view.def.providers.map(p => p.provider), parent || (view.parent && view.parent.injector));
   }
 
   get(token: any, notFoundValue?: any): any {

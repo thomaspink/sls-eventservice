@@ -1,5 +1,6 @@
 import { Type } from '../type';
 import { stringify } from '../util';
+import { ObjectWrapper, ListWrapper } from '../util/collection';
 import { ComponentResolver } from './component_resolver';
 import { ViewChildren, ViewChild } from '../metadata/di';
 import { Reflector } from '../reflection/reflection';
@@ -8,11 +9,14 @@ import {
   CodegenComponentFactoryResolver, ComponentFactoryResolver
 } from '../linker/component_factory_resolver';
 import { createComponentFactory } from '../view/refs';
-import { ViewDefinition, BindingFlags, BindingDef, ViewData, HandleEventFn, QueryDef, QueryBindingDef, QueryBindingType, QueryValueType } from '../view/types';
+import {
+  ViewDefinition, BindingFlags, BindingDef, ViewData, HandleEventFn, QueryDef, QueryBindingDef,
+  QueryBindingType, QueryValueType, isQuery, NodeTypes, Provider
+} from '../view/types';
 import { CssSelector } from './selector';
 import { RendererFactory } from '../linker/renderer';
 import { Visitor } from '../linker/visitor';
-import { CodegenVisitor } from './visitor';
+import { CodegenVisitor, Selectable } from './visitor';
 import { BindingCompiler } from './binding_compiler';
 import { AST } from './expression_parser/ast';
 import { ExpressionContext, ExpressionInterpreter } from './expression_parser/interpreter';
@@ -24,30 +28,27 @@ export class ComponentCompiler {
     private _rendererFactoryType: Type<RendererFactory>) { }
 
   compile(component: Type<any>, parentResolver?: ComponentFactoryResolver) {
-    const { def, visitor } = this._recursivelyCompileViewDefs(component);
+    const { def, visitor } = this._recursivelyCompileViewDefs(component, 0);
     const resolver = new CodegenComponentFactoryResolver([def.factory],
       parentResolver || ComponentFactoryResolver.NULL);
     this._recusivelyCompileFactoryResolver(def, resolver);
     return resolver;
   }
 
-  private _recursivelyCompileViewDefs(component: Type<any>, parent?: ViewDefinition):
+  private _recursivelyCompileViewDefs(component: Type<any>, index: number, parent?: ViewDefinition):
     { def: ViewDefinition, visitor: Visitor | null } {
-    const def = this._createViewDef(component, parent);
-    const selectables: any[] = [];
+    const {def, selectables } = this._createViewDef(component, index, parent);
     const childVisitors = new Map<Type<any>, Visitor>();
     let visitor: CodegenVisitor | null = null;
     if (def.childComponents && def.childComponents.length) {
-      const result = def.childComponents.map(c => this._recursivelyCompileViewDefs(c, def));
+      const result = def.childComponents.map(c =>
+        this._recursivelyCompileViewDefs(c.provider.provide, c.index, def));
       result.forEach(r => {
         if (r.visitor) {
           childVisitors.set(r.def.componentType, r.visitor);
         }
-        selectables.push({ selector: r.def.selector, context: r.def });
+        selectables.unshift({ selector: r.def.selector, context: r.def });
       });
-    }
-    if (def.queries && def.queries.length) {
-      selectables.push(...def.queries);
     }
     visitor = new CodegenVisitor(selectables, childVisitors);
     def.rendererFactory = new this._rendererFactoryType(visitor);
@@ -60,8 +61,8 @@ export class ComponentCompiler {
     if (viewDef.childDefs && viewDef.childDefs.length) {
       const factories = viewDef.childDefs.map(d => d.factory);
       const resolver = new CodegenComponentFactoryResolver(factories, parent);
-      viewDef.childComponents.forEach(comp => {
-        const def = this._viewDefs.get(comp);
+      viewDef.childComponents.forEach(compProvider => {
+        const def = this._viewDefs.get(compProvider.provider.provide);
         return this._recusivelyCompileFactoryResolver(def, resolver);
       });
       viewDef.resolver = resolver;
@@ -70,110 +71,130 @@ export class ComponentCompiler {
     return null;
   }
 
-  private _createViewDef(component: Type<any>, parent?: ViewDefinition): ViewDefinition {
+  private _createViewDef(component: Type<any>, compIndex: number, parent?: ViewDefinition):
+    { def: ViewDefinition, selectables: Selectable[] } {
     if (this._viewDefs.has(component)) {
       throw new Error(`Component ${stringify(component)} is has been declared multiple times. ` +
         `Please make sure a component is specified only once in the component tree`);
     }
     const metadata = this._resolver.resolve(component);
-    const context = Object.create({});
-    const hostBindings: BindingDef[] = [];
-    const bindings: BindingDef[] = [];
-    const handler: { def: BindingDef, eventAst: AST }[] = []
-    let hostBindingFlags = 0;
+    const handler: { def: BindingDef, eventAst: AST }[] = [];
+    const selectables: Selectable[] = [];
+    const providers: Provider[] = [];
+    const childComponents: Provider[] = [];
     const queries: QueryDef[] = [];
+    const bindings: BindingDef[] = [];
+    let index = 0;
+    let bindingFlags = 0;
 
-    if (metadata.host) {
-      for (let key in metadata.host) {
-        if (metadata.host.hasOwnProperty(key)) {
-          const { def, ast } = this.bindingCompiler.compile(key, metadata.host[key],
-            context, stringify(component));
-          hostBindings.push(def);
-          // tslint:disable-next-line:no-bitwise
-          hostBindingFlags |= def.flags;
-          handler.push({ def, eventAst: ast });
-        }
-      }
+    if (metadata.providers && metadata.providers.length) {
+      ListWrapper.forEach(ListWrapper.flatten(metadata.providers), provider => {
+        providers.push({
+          index: index++,
+          type: NodeTypes.Provider,
+          provider
+        });
+      });
     }
 
-    if (metadata.bindings) {
-      for (let selector in metadata.bindings) {
-        if (metadata.bindings.hasOwnProperty(selector)) {
-          const group = metadata.bindings[selector];
-          for (let key in group) {
-            if (group.hasOwnProperty(key)) {
-              const { def, ast } = this.bindingCompiler.compile(key, group[key],
-                context, stringify(component));
-              console.log(def);
-            }
+    if (metadata.components && metadata.components.length) {
+      ListWrapper.forEach(metadata.components, childComp => {
+        const childMeta = this._resolver.resolve(childComp);
+        childComponents.push({
+          index: index++,
+          type: NodeTypes.Provider,
+          provider: {
+            provide: childComp,
+            useClass: childComp,
+            deps: childMeta.deps
           }
-        }
-      }
+        });
+      });
     }
 
-    if (metadata.queries) {
-      for (let key in metadata.queries) {
-        if (metadata.queries.hasOwnProperty(key)) {
-          const query = metadata.queries[key];
-          let def = queries.find(q => q.selector === query.selector);
-          if (!def) {
-            def = { selector: query.selector, bindings: [] };
-            queries.push(def);
-          }
-          let valueType = -1;
-          if (query instanceof ViewChild || query instanceof ViewChildren) {
-            valueType = QueryValueType.Component;
-          } else {
-            throw new Error(`Unknown query type: ${stringify(query.constructor)}`);
-          }
-          def.bindings.push({
-            propName: key,
-            bindingType: query.first ? QueryBindingType.First : QueryBindingType.All,
-            valueType
-          });
-        }
+    ObjectWrapper.forEach(metadata.host, (binding, key) => {
+      const { def, ast } = this.bindingCompiler.compile(key, metadata.host[key], index++,
+        true, stringify(component));
+      bindings.push(def);
+      bindingFlags |= def.flags;
+      handler.push({ def, eventAst: ast });
+    });
+
+    ObjectWrapper.forEach(metadata.bindings, (group, selector) => {
+      ObjectWrapper.forEach(group, (binding, key) => {
+        const { def, ast } = this.bindingCompiler.compile(key, group[key], index++,
+          false, stringify(component));
+        bindings.push(def);
+        bindingFlags |= def.flags;
+        handler.push({ def, eventAst: ast });
+        selectables.push({ selector, context: def });
+      });
+    });
+
+    ObjectWrapper.forEach(metadata.queries, (query: any, key) => {
+      const selectable = selectables.find(s => s.selector === query.selector && isQuery(s.context));
+      let def: QueryDef = selectable ? selectable.context : null;
+      if (!def) {
+        def = { index: index++, type: NodeTypes.Query, queryBindings: [] };
+        queries.push(def);
       }
-    }
+      let valueType = -1;
+      if (query instanceof ViewChild || query instanceof ViewChildren) {
+        valueType = QueryValueType.Component;
+      } else {
+        throw new Error(`Unknown query type: ${stringify(query.constructor)}`);
+      }
+      def.queryBindings.push({
+        propName: key,
+        bindingType: query.first ? QueryBindingType.First : QueryBindingType.All,
+        valueType
+      });
+      if (!selectable) {
+        selectables.push({ selector: query.selector, context: def });
+      }
+    });
 
     const def: ViewDefinition = {
+      index: compIndex,
+      type: NodeTypes.ViewDefinition,
       selector: metadata.selector,
       componentType: component,
       parent: parent || null,
       factory: null,
       resolver: null,
       rendererFactory: null,
-      providers: metadata.providers || null,
+      providers,
       deps: metadata.deps || null,
-      childComponents: metadata.components || null,
+      childComponents,
       childDefs: null,
-      hostBindings,
-      hostBindingFlags,
-      bindings: null,
-      bindingFlags: null,
+      bindings,
+      bindingFlags,
       queries,
       handleEvent: this._createHandleEventFn(handler)
     };
     def.factory = createComponentFactory(metadata.selector, component, def);
     this._viewDefs.set(component, def);
-    return def;
+    return { def, selectables};
   }
 
   private _createHandleEventFn(handler: { def: BindingDef, eventAst: AST }[]): HandleEventFn {
     const interpreter = new ExpressionInterpreter();
-    const map = new Map();
+    const fns: Function[] = [];
     handler.forEach(h => {
-      const fullEventName = eventFullName(h.def.ns, h.def.name);
-      map.set(fullEventName, function (context: ExpressionContext) { return interpreter.visit(h.eventAst, context); });
+      fns[h.def.index] = function (context: ExpressionContext) {
+        return interpreter.visit(h.eventAst, context);
+      };
     });
-    return function (view: ViewData, eventName: string, event: any) {
+    return function (view: ViewData, eventName: string, index: number, event: any) {
       const vars = {};
       if (event) {
         vars['$event'] = event;
       }
       const context = new ExpressionContext(view, vars);
-      const fn = map.get(eventName);
+      const fn = fns[index];
       if (typeof fn !== 'function') {
-        throw new Error(`No event handler for event ${eventName} found in ${stringify(view.component)}`);
+        throw new Error(
+          `No event handler for event ${eventName} found in ${stringify(view.component)}`);
       }
       return fn(context);
     }

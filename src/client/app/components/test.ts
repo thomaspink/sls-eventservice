@@ -2,12 +2,7 @@ import { Component, ELEMENT, HostListener } from '../../core';
 
 @Component({
   selector: '.toggle-drawer',
-  deps: [ELEMENT],
-
-  host: {
-    '(touchstart)': 'a()',
-    '(touchend)': 'a.b($event)'
-  }
+  deps: [ELEMENT]
 })
 export class TestComponent {
   constructor(element: Element) {

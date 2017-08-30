@@ -53,8 +53,22 @@ export class ListWrapper {
   }
 
   static forEach<T>(list: ArrayLike<T>, callback: (item: T, index: number) => void): void {
-    for (let i = 0, max = list.length; i < max; i++) {
-      callback.call(callback, list[i], i);
+    if (list && list.length) {
+      for (let i = 0, max = list.length; i < max; i++) {
+        callback.call(callback, list[i], i);
+      }
+    }
+  }
+}
+
+export class ObjectWrapper {
+  static forEach<T>(obj: {}, callback: (item: T, key: string) => void) {
+    if (obj) {
+      for (let key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          callback.call(callback, obj[key], key);
+        }
+      }
     }
   }
 }

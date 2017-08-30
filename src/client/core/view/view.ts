@@ -2,7 +2,7 @@ import { Type } from '../type';
 import { Provider } from '../di/provider';
 import { Renderer } from '../linker/renderer';
 import { createInjector } from './refs';
-import { ViewDefinition, ViewData, BindingFlags } from './types';
+import { ViewDefinition, ViewData, BindingFlags, DisposableFn } from './types';
 import { callLifecycleHook } from '../lifecycle_hooks';
 
 export function createComponentView(parent: ViewData, viewDef: ViewDefinition,
@@ -16,7 +16,7 @@ export function createComponentView(parent: ViewData, viewDef: ViewDefinition,
 
 function createView(hostElement: any, renderer: Renderer | null, parent: ViewData | null,
   def: ViewDefinition): ViewData {
-  const disposables: Function[] = [];
+  const disposables: DisposableFn[] = [];
   const view: ViewData = {
     def,
     renderer,
@@ -25,19 +25,20 @@ function createView(hostElement: any, renderer: Renderer | null, parent: ViewDat
     hostElement,
     component: null,
     injector: null,
-    disposables: null,
+    disposables,
     childViews: null
   };
   view.injector = createInjector(view);
   if (parent) {
     attachView(parent, view);
   }
-  def.hostBindings.forEach(binding => {
-    if (binding.flags & BindingFlags.TypeEvent) {
-      disposables.push(renderer.listen(hostElement, binding.name,
-        (event) => def.handleEvent(view, binding.name, event)));
-    }
-  });
+  if (def.bindings)
+    def.bindings.forEach(binding => {
+      if (binding.isHost && binding.flags & BindingFlags.TypeEvent) {
+        disposables.push(renderer.listen(hostElement, binding.name,
+          (event) => def.handleEvent(view, binding.name, binding.index, event)));
+      }
+    });
   return view;
 }
 

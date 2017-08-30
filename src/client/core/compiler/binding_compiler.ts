@@ -1,4 +1,4 @@
-import { BindingDef, BindingFlags, ViewData } from '../view/types';
+import { BindingDef, BindingFlags, ViewData, NodeTypes } from '../view/types';
 import { ExpressionParser } from './expression_parser/api';
 import { EmptyExpr, ParserError, AST } from './expression_parser/ast';
 import { ExpressionInterpreter } from './expression_parser/interpreter';
@@ -31,7 +31,8 @@ const CLASS_ATTR = 'class';
 export class BindingCompiler {
   constructor(private _expressionParser: ExpressionParser) { }
 
-  compile(declaration: string, expression: string, context: {}, location: string): { def: BindingDef, ast: AST } {
+  compile(declaration: string, expression: string, index: number, isHost: boolean,
+    location: string): { def: BindingDef, ast: AST } {
     declaration = this._normalizeAttributeName(declaration);
 
     const bindParts = declaration.match(BIND_NAME_REGEXP);
@@ -46,7 +47,7 @@ export class BindingCompiler {
       } else if (bindParts[KW_REF_IDX]) {
         unsupported('Variable declaration', name, expression);
       } else if (bindParts[KW_ON_IDX]) {
-        return this._parseEvent(bindParts[KW_ON_IDX], expression, context, location);
+        return this._parseEvent(bindParts[KW_ON_IDX], expression, index, isHost, location);
       } else if (bindParts[KW_BINDON_IDX]) {
         unsupported('Two way binding', name, expression);
       } else if (bindParts[IDENT_BANANA_BOX_IDX]) {
@@ -54,12 +55,13 @@ export class BindingCompiler {
       } else if (bindParts[IDENT_PROPERTY_IDX]) {
         unsupported('Property binding', name, expression);
       } else if (bindParts[IDENT_EVENT_IDX]) {
-        return this._parseEvent(bindParts[IDENT_EVENT_IDX], expression, context, location);
+        return this._parseEvent(bindParts[IDENT_EVENT_IDX], expression, index, isHost, location);
       }
     }
   }
 
-  private _parseEvent(name: string, expression: string, context: {}, location: string): { def: BindingDef, ast: AST } {
+  private _parseEvent(name: string, expression: string, index: number, isHost: boolean,
+    location: string): { def: BindingDef, ast: AST } {
     const [target, eventName] = splitAtColon(name, [null!, name]);
 
     const ast = this._parseAction(expression, location);
@@ -68,10 +70,13 @@ export class BindingCompiler {
     //   return interpreter.visit(ast);
     // };
     const def: BindingDef = {
+      index,
+      type: NodeTypes.Binding,
       flags: BindingFlags.TypeEvent,
       ns: target,
       name,
-      suffix: null
+      suffix: null,
+      isHost
     };
 
     return { def, ast };

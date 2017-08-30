@@ -106,10 +106,10 @@ export class SimpleExpressionParser extends ExpressionParser {
     // Construct args AST by splitting the third part on every semicolon
     const argsOffset = props.length;
     let index = -1;
-    const args = (parts[KW_FN_ARGS_IDX] || '')
-      .split(String.fromCharCode($SEMICOLON))
+    const argParts = parts[KW_FN_ARGS_IDX];
+    const args = argParts ? parts[KW_FN_ARGS_IDX].split(String.fromCharCode($SEMICOLON))
       .map(arg => new PropertyRead(this._createSpan(argsOffset + ++index, arg.length),
-        new ImplicitReceiver(this._createSpan(++index, index)), arg));
+        new ImplicitReceiver(this._createSpan(++index, index)), arg)) : [];
     return new MethodCall(this._createSpan(0, expression.length), receiver, fnName, args);
   }
 
