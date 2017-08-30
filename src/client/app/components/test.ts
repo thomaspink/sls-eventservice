@@ -15,6 +15,6 @@ export class TestComponent {
 
   @HostListener('click', ['$event'])
   onClick($event: any) {
-    this.clickEmitter.emit();
+    this.clickEmitter.emit({a: 1, b: 2});
   }
 }

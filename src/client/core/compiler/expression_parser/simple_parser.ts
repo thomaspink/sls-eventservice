@@ -1,5 +1,5 @@
 import { ListWrapper } from '../../util/collection';
-import { isWhitespace, $PERIOD, $SEMICOLON } from '../chars';
+import { isWhitespace, $PERIOD, $COMMA } from '../chars';
 import {
   AST, ASTWithSource, EmptyExpr, ImplicitReceiver, PropertyRead, MethodCall,
   ParseSpan, ParserError
@@ -9,18 +9,18 @@ import { ExpressionParser } from './api';
 // Regex for parsing the expression. As it can only be a method call or
 // property access we can use a regex.
 const word = '[A-Za-z0-9_\\$&\\*]+';
+const readProp = `${word}(?:\\.${word})*`;
 const regex = new RegExp(`^` +
   `(` +
-  `${word}` +         // obj
-  `(?:\\.${word})*` + // .onClick
+  `${readProp}` +         // obj.onClick
   `)` +
   `(` +
-  `\\(` +             // (
+  `\\(` +                 // (
   `(` +
-  `${word}` +       // arg1
-  `(?:,${word})*` + // , arg2
+  `${readProp}` +         // $event.a
+  `(?:,${readProp})*` +   // $event.b
   `)?` +
-  `\\)` +             // )
+  `\\)` +                 // )
   `)?` +
   `$`
 );
@@ -107,9 +107,9 @@ export class SimpleExpressionParser extends ExpressionParser {
     const argsOffset = props.length;
     let index = -1;
     const argParts = parts[KW_FN_ARGS_IDX];
-    const args = argParts ? parts[KW_FN_ARGS_IDX].split(String.fromCharCode($SEMICOLON))
-      .map(arg => new PropertyRead(this._createSpan(argsOffset + ++index, arg.length),
-        new ImplicitReceiver(this._createSpan(++index, index)), arg)) : [];
+    const args = argParts ? argParts
+      .split(String.fromCharCode($COMMA))
+      .map(arg => this._chainPropRead(arg.split(String.fromCharCode($PERIOD)), argsOffset)) : [];
     return new MethodCall(this._createSpan(0, expression.length), receiver, fnName, args);
   }
 

@@ -141,7 +141,6 @@ export class CodegenVisitor implements Visitor {
       const output = ListWrapper.findFirst(childView.def.outputs,
         o => o.eventName === binding.name && !binding.ns && o.target === 'component');
       if (output) {
-        console.log(output);
         const emitter = childView.component[output.propName];
         if (!(emitter instanceof EventEmitter)) {
           throw new Error(`Output property ${output.propName} on ${stringify(childView.def.componentType)} has to be an EventEmitter`);
