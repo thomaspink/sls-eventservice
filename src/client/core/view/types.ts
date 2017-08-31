@@ -38,6 +38,7 @@ export interface ViewDefinition extends Node {
   outputs: OutputDef[];
   queries: QueryDef[] | null;
   handleEvent: HandleEventFn | null;
+  template: string|null;
 }
 export function isViewDefinition(node: Node) { return !!(node.type & NodeTypes.ViewDefinition); }
 export interface HandleEventFn {

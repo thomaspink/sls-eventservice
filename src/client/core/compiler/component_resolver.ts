@@ -110,6 +110,7 @@ export class ComponentResolver {
       providers: comp.providers,
       deps: comp.deps,
       components: comp.components,
+      template: comp.template,
     };
   }
 }

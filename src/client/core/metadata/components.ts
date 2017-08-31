@@ -230,6 +230,13 @@ export interface Component {
    * ```
    */
   queries?: { [key: string]: any };
+
+  /**
+   * Specifies an inline template for an Angular component.
+   *
+   * Only one of `templateUrl` or `template` can be defined per Component.
+   */
+  template?: string;
 }
 
 /**

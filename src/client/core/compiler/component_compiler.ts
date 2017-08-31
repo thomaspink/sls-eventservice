@@ -195,6 +195,7 @@ export class ComponentCompiler {
       bindingFlags,
       queries,
       outputs,
+      template: metadata.template,
       handleEvent: this._createHandleEventFn(handler)
     };
     def.factory = createComponentFactory(metadata.selector, component, def);
