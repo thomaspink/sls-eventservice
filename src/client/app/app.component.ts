@@ -7,7 +7,7 @@ import { DIALOG_COMPONENTS, DIALOG_PROVIDERS, Dialog } from './dialog/dialog';
   selector: 'body',
   providers: [DIALOG_PROVIDERS],
   deps: [Dialog],
-  components: [HeaderComponent, DrawerComponent]
+  components: [HeaderComponent, DrawerComponent, DIALOG_COMPONENTS]
 })
 export class AppComponent implements OnInit, OnDestroy {
   private delegates: Function[] = [];

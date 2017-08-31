@@ -1,8 +1,8 @@
 // tslint:disable:class-name
 import { Type } from '../type';
 import { stringify } from '../util';
-import { Injector, StaticInjector } from '../di/injector';
-import { Provider } from '../di/provider';
+import { Injector } from '../di/injector';
+import { Provider, ClassProvider } from '../di/provider';
 import { InjectionToken } from '../di/injection_token';
 import { ComponentFactory, ComponentRef } from '../linker/component_factory';
 import { ComponentFactoryResolver } from '../linker/component_factory_resolver';
@@ -30,8 +30,8 @@ class ComponentFactory_ extends ComponentFactory<any> {
         `the component ${stringify(this.componentType)}`);
     }
     const parentView = parent ? (parent.hostView as ViewRef_).view : null;
-    const view = createComponentView(parentView, this.viewDef, element);
-    const instance = createClass(this.componentType, view.injector, view.def.deps);
+    const view = createComponentView(parentView, this.viewDef, element, parentInjector);
+    const instance = createClass(this.componentType, new Injector_(view), view.def.deps);
     initView(view, instance, null);
     view.renderer.parse(view);
     callLifecycleHook(instance, 'onInit');
@@ -46,7 +46,7 @@ class ComponentRef_ extends ComponentRef<any> {
 
   get location() { return this._view.hostElement; };
   get instance() { return this._view.component; };
-  get injector() { return this._view.injector; };
+  get injector() { return new Injector_(this._view); };
   get hostView() { return this._viewRef; };
   get componentType() { return <any>this._component.constructor; }
 
@@ -81,12 +81,14 @@ class ViewRef_ extends ViewRef {
   }
 }
 
-export function createInjector(view: ViewData): Injector {
+export function createInjector(view: ViewData, parent?: Injector): Injector {
   return new Injector_(view);
 }
-class Injector_ extends StaticInjector {
-  constructor(private view: ViewData, parent?: Injector) {
-    super(view.def.providers.map(p => p.provider), parent || (view.parent && view.parent.injector));
+class Injector_ extends Injector {
+  private parent: Injector;
+  constructor(private view: ViewData, _parent?: Injector) {
+    super();
+    this.parent = _parent || view.injector || Injector.NULL;
   }
 
   get(token: any, notFoundValue?: any): any {
@@ -97,10 +99,9 @@ class Injector_ extends StaticInjector {
       return this.view.renderer;
     }
     if (token === ComponentFactoryResolver) {
-      console.log('sadfsa');
       return this.view.def.resolver || this.view.def.parent.resolver;
     }
-    return super.get(token);
+    return this.parent.get(token, notFoundValue);
   }
 }
 

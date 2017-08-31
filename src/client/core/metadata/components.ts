@@ -61,7 +61,7 @@ export interface Component {
   /**
    * A list of child components
    */
-  components?: Type<any>[];
+  components?: (Type<any>|any[])[];
 
   /**
    * Enumerates the set of event-bound output properties.

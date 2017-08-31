@@ -32,7 +32,6 @@ export class ComponentCompiler {
     const { def, visitor } = this._recursivelyCompileViewDefs(component, 0);
     const resolver = new CodegenComponentFactoryResolver([def.factory],
       parentResolver || ComponentFactoryResolver.NULL);
-    def.resolver = resolver;
     this._recusivelyCompileFactoryResolver(def, resolver);
     return resolver;
   }
@@ -45,11 +44,15 @@ export class ComponentCompiler {
     if (def.childComponents && def.childComponents.length) {
       const result = def.childComponents.map(c =>
         this._recursivelyCompileViewDefs(c.provider.provide, c.index, def));
+      if (!def.childDefs) {
+        def.childDefs = [];
+      }
       result.forEach(r => {
         if (r.visitor) {
           childVisitors.set(r.def.componentType, r.visitor);
         }
         selectables.unshift({ selector: r.def.selector, context: r.def });
+        def.childDefs.push(r.def);
       });
     }
     visitor = new CodegenVisitor(selectables, childVisitors);
@@ -60,14 +63,21 @@ export class ComponentCompiler {
   private _recusivelyCompileFactoryResolver(viewDef: ViewDefinition,
     parent: ComponentFactoryResolver) {
 
-    if (viewDef.childDefs && viewDef.childDefs.length) {
-      const factories = viewDef.childDefs.map(d => d.factory);
-      const resolver = new CodegenComponentFactoryResolver(factories, parent);
+    const resolver = this._createFactoryResolver(viewDef, parent);
+    if(resolver) {
       viewDef.childComponents.forEach(compProvider => {
         const def = this._viewDefs.get(compProvider.provider.provide);
         return this._recusivelyCompileFactoryResolver(def, resolver);
       });
-      viewDef.resolver = resolver;
+    }
+    viewDef.resolver = resolver;
+    return resolver;
+  }
+
+  private _createFactoryResolver(viewDef: ViewDefinition, parent: ComponentFactoryResolver) {
+    if (viewDef.childDefs && viewDef.childDefs.length) {
+      const factories = viewDef.childDefs.map(d => d.factory);
+      const resolver = new CodegenComponentFactoryResolver(factories, parent);
       return resolver;
     }
     return null;
@@ -101,7 +111,7 @@ export class ComponentCompiler {
     }
 
     if (metadata.components && metadata.components.length) {
-      ListWrapper.forEach(metadata.components, childComp => {
+      ListWrapper.forEach(ListWrapper.flatten(metadata.components), childComp => {
         const childMeta = this._resolver.resolve(childComp);
         childComponents.push({
           index: index++,

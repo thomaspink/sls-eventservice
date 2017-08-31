@@ -1,14 +1,15 @@
-import {Component, Provider, ComponentFactoryResolver} from '../../core';
+import {Component, Provider, ComponentFactoryResolver, Injector, ComponentRef} from '../../core';
 
 export class Dialog {
   private _openDialogs: DialogRef<any>[] = [];
+  private _container: ComponentRef<DialogContainer>;
 
   get openDialogs(): DialogRef<any>[] {
     return this._openDialogs;
   }
 
-  constructor(resolver: ComponentFactoryResolver) {
-    console.log(resolver);
+  constructor(private _resolver: ComponentFactoryResolver, private _injector: Injector) {
+    this._createContainer();
   }
 
   open<T>(component: ComponentType<T>) {
@@ -19,6 +20,18 @@ export class Dialog {
     while (i--) {
       this.openDialogs[i].close();
     }
+  }
+
+  private _createContainer() {
+    if (this._container) {
+      throw new Error(`Can not create dialog container component. It already exists`);
+    }
+    const factory = this._resolver.resolveComponentFactory(DialogContainer);
+    const el = document.createElement('dialog-container');
+    document.body.appendChild(el);
+    const ref = factory.create(el, this._injector);
+    this._container = ref;
+    return ref;
   }
 }
 
@@ -40,7 +53,7 @@ export interface ComponentType<T> {
 }
 
 export const DIALOG_PROVIDERS: Provider[] = [
-  { provide: Dialog, deps: [ComponentFactoryResolver]}
+  { provide: Dialog, deps: [ComponentFactoryResolver, Injector]}
 ];
 export const DIALOG_COMPONENTS: ComponentType<any>[] = [
   DialogContainer

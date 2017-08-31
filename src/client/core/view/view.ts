@@ -1,21 +1,32 @@
 import { Type } from '../type';
 import { Provider } from '../di/provider';
+import { Injector } from '../di/injector';
 import { Renderer } from '../linker/renderer';
 import { createInjector } from './refs';
 import { ViewDefinition, ViewData, BindingFlags, DisposableFn } from './types';
 import { callLifecycleHook } from '../lifecycle_hooks';
+import { ComponentFactoryResolver } from '../linker/component_factory_resolver';
 
 export function createComponentView(parent: ViewData, viewDef: ViewDefinition,
-  hostElement?: any): ViewData {
+  hostElement?: any, injector?: Injector): ViewData {
   const renderer: Renderer = viewDef.rendererFactory.createRenderer();
   if (!hostElement) {
     hostElement = renderer.selectRootElement(viewDef.selector);
   }
-  return createView(hostElement, renderer, parent, viewDef);
+  const providers = viewDef.providers.map(p => p.provider);
+  if (viewDef.resolver) {
+    providers.unshift({
+      provide: ComponentFactoryResolver,
+      useValue: viewDef.resolver
+    });
+  }
+  const parentInjector = injector || (parent && parent.injector) || void 0;
+  const inj = Injector.create(providers, parentInjector);
+  return createView(hostElement, renderer, parent, viewDef, inj);
 }
 
 function createView(hostElement: any, renderer: Renderer | null, parent: ViewData | null,
-  def: ViewDefinition): ViewData {
+  def: ViewDefinition, injector: Injector|null): ViewData {
   const disposables: DisposableFn[] = [];
   const view: ViewData = {
     def,
@@ -24,11 +35,10 @@ function createView(hostElement: any, renderer: Renderer | null, parent: ViewDat
     context: null,
     hostElement,
     component: null,
-    injector: null,
+    injector,
     disposables,
     childViews: null
   };
-  view.injector = createInjector(view);
   if (parent) {
     attachView(parent, view);
   }

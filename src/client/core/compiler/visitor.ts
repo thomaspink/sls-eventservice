@@ -6,6 +6,7 @@ import { ComponentFactory, ComponentRef } from '../linker/component_factory';
 import { QueryList } from '../linker/query_list';
 import { SelectorMatcher, CssSelector } from './selector';
 import { createComponentView, initView } from '../view/view';
+import { createInjector } from '../view/refs';
 import { createClass } from '../view/util';
 import {
   ViewDefinition, ViewData, QueryDef, QueryBindingDef, QueryBindingType, QueryValueType,
@@ -114,7 +115,7 @@ export class CodegenVisitor implements Visitor {
 
   private _visitComponent(element: Element, def: ViewDefinition, context: any) {
     const view = createComponentView(context, def, element);
-    const instance = createClass(def.componentType, view.injector, view.def.deps);
+    const instance = createClass(def.componentType, createInjector(view), view.def.deps);
     initView(view, instance, null);
     return view;
   }
