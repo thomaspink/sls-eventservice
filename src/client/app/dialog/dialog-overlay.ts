@@ -66,10 +66,10 @@ export class DialogOverlayRef {
     if (this._componentRef) {
       throw new Error(`Can not attach component to overlay, because there is already a component attached!`);
     }
+    this.pane.appendChild(element);
     const factory = this._resolver.resolveComponentFactory(compType);
     const ref = factory.create(element, this._injector);
     this._componentRef = ref;
-    this.pane.appendChild(element);
     return ref;
   }
 
@@ -115,6 +115,7 @@ export class DialogOverlayRef {
   @ChildListener('dialog-overlay-backdrop', 'transitionend')
   private _backdropTransitionEnd() {
     if(this._hidePromiseResolve) {
+      console.log('trans end');
       this._hidePromiseResolve();
       this._hidePromiseResolve = null;
     }
@@ -122,6 +123,7 @@ export class DialogOverlayRef {
 
   @ChildListener('dialog-overlay-backdrop', 'click')
   private _backdropClicked() {
+    console.log('backdrop clicked');
     this.onBackdropClick.emit();
     this.onBackdropClick.complete();
     return false;
