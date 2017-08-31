@@ -7,12 +7,14 @@ import { DialogOverlay, DialogOverlayRef } from './dialog-overlay';
 export class Dialog {
   private _openDialogs: DialogRef<any>[] = [];
 
+  /**
+   * Returns an array of all open dialogs
+   */
   get openDialogs(): DialogRef<any>[] {
     return this._openDialogs;
   }
 
-  constructor(private _overlay: DialogOverlay) {
-  }
+  constructor(private _overlay: DialogOverlay) { }
 
   open<T>(component: ComponentType<T>, config?: DialogConfig): DialogRef<T> {
     config = _applyConfigDefaults(config);
@@ -21,15 +23,20 @@ export class Dialog {
       throw Error(`Dialog with id "${config.id}" exists already. The dialog id must be unique.`);
     }
 
+    // Create the overlay, container and the component itself
     const overlayRef = this._createOverlay(config);
     const dialogContainer = this._attachDialogContainer(overlayRef, config);
     const ref = this._attachDialogContent(component, dialogContainer, overlayRef, config);
 
+    // show the overlay so everything becomes visible
     overlayRef.show();
 
     return ref;
   }
 
+  /**
+   * Closes all open dialogs
+   */
   closeAll(): void {
     let i = this.openDialogs.length;
     while (i--) {
@@ -79,7 +86,10 @@ export class Dialog {
     const contentRef = dialogContainer.attachComponent(component, injector);
     dialogRef.componentInstance = contentRef.instance;
 
+    // add newly created dialog to the open dialogs array
     this._openDialogs.push(dialogRef);
+
+    // listen for the after close so we can remove it from the array
     dialogRef.afterClosed().subscribe(() => {
       remove(this._openDialogs, dialogRef);
     });
