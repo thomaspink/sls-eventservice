@@ -1,12 +1,13 @@
 // tslint:disable:class-name
 import { Type } from '../type';
 import { stringify } from '../util';
+import { ApplicationRef } from '../application';
 import { Injector } from '../di/injector';
 import { Provider, ClassProvider } from '../di/provider';
 import { InjectionToken } from '../di/injection_token';
 import { ComponentFactory, ComponentRef } from '../linker/component_factory';
 import { ComponentFactoryResolver } from '../linker/component_factory_resolver';
-import { ViewRef } from '../linker/view_ref';
+import { ViewRef, InternalViewRef } from '../linker/view_ref';
 import { Renderer } from '../linker/renderer';
 import { callLifecycleHook } from '../lifecycle_hooks';
 import { createComponentView, initView, destroyView } from './view';
@@ -57,9 +58,12 @@ class ComponentRef_ extends ComponentRef<any> {
   onDestroy(callback: Function): void { this._viewRef.onDestroy(callback); }
 }
 
-class ViewRef_ extends ViewRef {
+class ViewRef_ extends ViewRef implements InternalViewRef {
+  private _appRef: ApplicationRef|null;
+
   constructor(public view: ViewData) {
     super();
+    this._appRef = null;
   }
 
   get renderer() { return this.view.renderer; };
@@ -79,6 +83,15 @@ class ViewRef_ extends ViewRef {
     }
     this.view.disposables.push(<any>callback);
   }
+
+  detachFromAppRef() {
+    this._appRef = null;
+  }
+
+  attachToAppRef(appRef: ApplicationRef) {
+    this._appRef = appRef;
+  }
+
 }
 
 export function createInjector(view: ViewData, parent?: Injector): Injector {
