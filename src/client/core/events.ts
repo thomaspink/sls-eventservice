@@ -35,7 +35,9 @@ export class EventEmitter<T> {
     const len = observers.length;
     const copy = observers.slice();
     for (let i = 0; i < len; i++) {
-      copy[i].error(err);
+      if (copy[i].error) {
+        copy[i].error(err);
+      }
     }
     this.observers.length = 0;
   }
@@ -49,7 +51,9 @@ export class EventEmitter<T> {
     const len = observers.length;
     const copy = observers.slice();
     for (let i = 0; i < len; i++) {
-      copy[i].complete();
+      if (copy[i].complete) {
+        copy[i].complete();
+      }
     }
     this.observers.length = 0;
   }

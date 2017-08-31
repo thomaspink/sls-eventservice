@@ -1,33 +1,29 @@
-import { Component, OnInit, OnDestroy, ViewChild, ChildListener } from '../core';
+import { Component, ViewChild, ChildListener } from '../core';
 import { HeaderComponent } from './components/header.component';
 import { DrawerComponent } from './components/drawer.component';
+import { ImageSliderComponent } from './components/image-slider.component';
 import { DIALOG_COMPONENTS, DIALOG_PROVIDERS, Dialog } from './dialog/dialog';
 
 @Component({
   selector: 'body',
   providers: [DIALOG_PROVIDERS],
   deps: [Dialog],
-  components: [HeaderComponent, DrawerComponent, DIALOG_COMPONENTS]
+  components: [HeaderComponent, DrawerComponent, ImageSliderComponent, DIALOG_COMPONENTS]
 })
-export class AppComponent implements OnInit, OnDestroy {
+export class AppComponent {
   private delegates: Function[] = [];
 
   @ViewChild(DrawerComponent)
   drawer: DrawerComponent;
 
-  constructor(dialog: Dialog) {
-  }
-
-  onInit() {
+  constructor(private dialog: Dialog) {
   }
 
   @ChildListener('header', 'onToggleDrawer')
   onToggleDrawer() {
+    this.dialog.open(ImageSliderComponent);
     if (this.drawer) {
       this.drawer.showDrawer();
     }
-  }
-
-  onDestroy() {
   }
 }
