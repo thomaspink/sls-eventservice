@@ -46,7 +46,7 @@ class ComponentRef_ extends ComponentRef<any> {
   }
 
   get location() { return this._view.hostElement; };
-  get instance() { return this._view.component; };
+  get instance() { return this._component; };
   get injector() { return new Injector_(this._view); };
   get hostView() { return this._viewRef; };
   get componentType() { return <any>this._component.constructor; }
@@ -73,8 +73,8 @@ class ViewRef_ extends ViewRef implements InternalViewRef {
   }
 
   get destroyed() {
-    // TODO
-    return false;
+    // TODO change to state
+    return !!this.view.hostElement;
   }
 
   onDestroy(callback: Function): any {
@@ -107,6 +107,9 @@ class Injector_ extends Injector {
   get(token: any, notFoundValue?: any): any {
     if (token === ELEMENT) {
       return this.view.hostElement;
+    }
+    if (token === ComponentRef) {
+      return new ComponentRef_(this.view, new ViewRef_(this.view), this.view.component);
     }
     if (token === Renderer) {
       return this.view.renderer;

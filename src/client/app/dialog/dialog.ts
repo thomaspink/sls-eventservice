@@ -76,8 +76,13 @@ export class Dialog {
     }
 
     const injector = this._createInjector<T>(config, dialogRef, dialogContainer);
-    const contentRef = dialogContainer.attachComponent(component);
+    const contentRef = dialogContainer.attachComponent(component, injector);
     dialogRef.componentInstance = contentRef.instance;
+
+    this._openDialogs.push(dialogRef);
+    dialogRef.afterClosed().subscribe(() => {
+      remove(this._openDialogs, dialogRef);
+    });
 
     return dialogRef;
   }
@@ -141,4 +146,13 @@ export function extendObject(dest: any, ...sources: any[]): any {
   }
 
   return dest;
+}
+
+function remove<T>(list: T[], el: T): boolean {
+  const index = list.indexOf(el);
+  if (index > -1) {
+    list.splice(index, 1);
+    return true;
+  }
+  return false;
 }

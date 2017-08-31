@@ -43,11 +43,15 @@ export class DialogOverlay {
 
 @Component({
   selector: 'dialog-overlay-wrapper',
-  deps: [ComponentFactoryResolver, Injector]
+  deps: [ComponentFactoryResolver, Injector, ComponentRef]
 })
 export class DialogOverlayRef {
 
-  constructor(private _resolver: ComponentFactoryResolver, private _injector: Injector) { }
+  private _hidePromiseResolve: () => void = null;
+  private _isVisible = false;
+  private _componentRef: ComponentRef<any> = null;
+
+  constructor(private _resolver: ComponentFactoryResolver, private _injector: Injector, private _ref: ComponentRef<DialogOverlayRef>) { }
 
   @Output()
   readonly onBackdropClick = new EventEmitter<void>();
@@ -59,13 +63,31 @@ export class DialogOverlayRef {
   readonly backdrop: Element;
 
   attach<T>(compType: ComponentType<T>, element: Element): ComponentRef<T> {
+    if (this._componentRef) {
+      throw new Error(`Can not attach component to overlay, because there is already a component attached!`);
+    }
     const factory = this._resolver.resolveComponentFactory(compType);
     const ref = factory.create(element, this._injector);
+    this._componentRef = ref;
     this.pane.appendChild(element);
     return ref;
   }
 
+  detach() {
+    if (!this._componentRef) {
+      throw new Error(`Can not detach component from overlay, because nothing is attached!`);
+    }
+    this._componentRef.destroy();
+    this._componentRef = null;
+  }
+
+  destroy() {
+    // TODO: Maybe don't self destroy
+    this._ref.destroy();
+  }
+
   show() {
+    this._isVisible = true;
     requestAnimationFrame(() => {
       if (this.backdrop) {
         this.backdrop.classList.add('dialog-overlay-backdrop-showing');
@@ -74,17 +96,28 @@ export class DialogOverlayRef {
     });
   }
 
-  hide() {
+  hide(): Promise<void> {
     requestAnimationFrame(() => {
       if (this.backdrop) {
         this.backdrop.classList.remove('dialog-overlay-backdrop-showing');
       }
       this.pane.classList.remove('dialog-overlay-pane-showing');
     });
+    if (!this._isVisible) {
+      this._isVisible = false;
+      this._hidePromiseResolve = null;
+      return Promise.resolve();
+    }
+    this._isVisible = false;
+    return new Promise(resolve => this._hidePromiseResolve = resolve);
   }
 
   @ChildListener('dialog-overlay-backdrop', 'transitionend')
   private _backdropTransitionEnd() {
+    if(this._hidePromiseResolve) {
+      this._hidePromiseResolve();
+      this._hidePromiseResolve = null;
+    }
   }
 
   @ChildListener('dialog-overlay-backdrop', 'click')

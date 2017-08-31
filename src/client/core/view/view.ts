@@ -67,6 +67,11 @@ export function destroyView(view: ViewData) {
   if (view.childViews) {
     view.childViews.forEach(v => destroyView(v));
   }
+
+  // TODO: Maybe change this in a later stage
+  const el = view.hostElement;
+  view.renderer.removeChild(view.renderer.parentNode(el), el);
+  view.hostElement = null;
 }
 
 export function attachView(parentView: ViewData, view: ViewData) {
