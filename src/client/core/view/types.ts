@@ -133,7 +133,14 @@ export interface OutputDef {
   type: OutputType;
   target: 'window'|'document'|'body'|'component'|null;
   eventName: string;
-  propName: string|null;
+  propName: string | null;
+}
+
+export interface ElementDef {
+  name: string | null;
+  ns: string | null;
+  /** ns, name, value */
+  attrs: [string, string, string][] | null;
 }
 
 export const enum OutputType {ElementOutput, ComponentOutput}
