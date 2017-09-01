@@ -19,7 +19,7 @@ type TypeTextNode = [VmType.Text, string];
 type TypeCommentNode = [VmType.Comment, string];
 type TypeAttributeNode = [VmType.Attribute, string, string];
 type TypeEOFNode = [VmType.EOF];
-type Node = TypeElementNode | TypeTextNode | TypeCommentNode | TypeAttributeNode | TypeEOFNode;
+type TypeNode = TypeElementNode | TypeTextNode | TypeCommentNode | TypeAttributeNode | TypeEOFNode;
 
 export class SimpleTemplateParser extends TemplateParser {
   parse(templateString: string, fileName: string): TemplateParseResult {
@@ -37,7 +37,7 @@ export class Parser_ {
   private _openNodeIndex: -1;
   private _openNodeType: VmType = VmType.Void;
 
-  private _nodes: Node[] = [];
+  private _nodes: TypeNode[] = [];
   private _errors: TemplateParseError[] = [];
 
   constructor(private _input: string, private _file: string) { }
@@ -84,8 +84,8 @@ export class Parser_ {
     return false;
   }
 
-  private _visitTokenUntilFn(predicate: (token: Token) => boolean): Node[] {
-    const nodes: Node[] = [];
+  private _visitTokenUntilFn(predicate: (token: Token) => boolean): TypeNode[] {
+    const nodes: TypeNode[] = [];
     while (!predicate(this._peek)) {
       if (this._attemptToken(TokenType.TAG_OPEN_START)) {
         nodes.push(this._visitTag());
@@ -178,5 +178,5 @@ export class Parser_ {
 
 
 function isEmptyText(text: string) {
-  return !!text.replace(/[\n\r]/g, '').trim().length
+  return !text.replace(/[\n\r]/g, '').trim().length
 }
