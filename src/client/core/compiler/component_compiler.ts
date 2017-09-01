@@ -12,7 +12,7 @@ import {
 import { createComponentFactory, ELEMENT } from '../view/refs';
 import {
   ViewDefinition, BindingFlags, BindingDef, ViewData, HandleEventFn, QueryDef, QueryBindingDef,
-  QueryBindingType, QueryValueType, isQuery, NodeTypes, Provider, OutputDef
+  QueryBindingType, QueryValueType, isQuery, NodeTypes, Provider, OutputDef, ElementDef
 } from '../view/types';
 import { CssSelector } from './selector';
 import { RendererFactory } from '../linker/renderer';
@@ -99,8 +99,27 @@ export class ComponentCompiler {
     const queries: QueryDef[] = [];
     const bindings: BindingDef[] = [];
     const template = metadata.template ? metadata.template.trim() : null;
+    let element: ElementDef | null = null;
     let index = 0;
     let bindingFlags = 0;
+
+    if (metadata.selector) {
+      const parsedSelector = CssSelector.parse(metadata.selector)[0];
+      const attrs: [string, string, string][] | null = [];
+      if (parsedSelector.classNames.length) {
+        attrs.push(['', 'class', parsedSelector.classNames.join(', ')]);
+      }
+      if (parsedSelector.attrs.length) {
+        for (let i = 0; i < parsedSelector.attrs.length; i += 2) {
+          attrs.push(['', parsedSelector.attrs[i], parsedSelector.attrs[i + 1]]);
+        }
+      }
+      element = {
+        ns: null,
+        name: parsedSelector.element,
+        attrs: attrs.length ? attrs : null
+      };
+    }
 
     if (metadata.providers && metadata.providers.length) {
       ListWrapper.forEach(ListWrapper.flatten(metadata.providers), provider => {
@@ -204,6 +223,7 @@ export class ComponentCompiler {
       queries,
       outputs,
       template,
+      element,
       handleEvent: this._createHandleEventFn(handler)
     };
     def.factory = createComponentFactory(metadata.selector, component, def);

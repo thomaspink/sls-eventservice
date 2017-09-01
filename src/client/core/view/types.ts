@@ -38,7 +38,8 @@ export interface ViewDefinition extends Node {
   outputs: OutputDef[];
   queries: QueryDef[] | null;
   handleEvent: HandleEventFn | null;
-  template: string|null;
+  element: ElementDef | null;
+  template: string | null;
 }
 export function isViewDefinition(node: Node) { return !!(node.type & NodeTypes.ViewDefinition); }
 export interface HandleEventFn {
@@ -49,14 +50,21 @@ export interface HandleEventFn {
  * Provider
  */
 export interface Provider extends Node {
-  provider: ClassProvider|ConstructorProvider|ExistingProvider|FactoryProvider|ValueProvider;
+  provider: ClassProvider | ConstructorProvider | ExistingProvider | FactoryProvider | ValueProvider;
 }
 export function isProvider(node: Node) { return !!(node.type & NodeTypes.Provider); }
 
 export interface OutputDef extends Node {
-  target: 'window'|'document'|'body'|'component'|null;
+  target: 'window' | 'document' | 'body' | 'component' | null;
   eventName: string;
-  propName: string|null;
+  propName: string | null;
+}
+
+export interface ElementDef {
+  name: string | null;
+  ns: string | null;
+  /** ns, name, value */
+  attrs: [string, string, string][] | null;
 }
 
 
