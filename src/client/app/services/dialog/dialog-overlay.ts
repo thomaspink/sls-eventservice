@@ -45,7 +45,17 @@ export class DialogOverlay {
 
 @Component({
   selector: 'dialog-overlay-wrapper',
-  deps: [ComponentFactoryResolver, Injector, ComponentRef]
+  deps: [ComponentFactoryResolver, Injector, ComponentRef],
+  template: `
+    <div disabled><!-- some comment -->
+      <span class="test"></span>
+    </div>
+    <section>
+      <input type="text">
+      <input type="password"/>
+      <textarea>some text</textarea>
+    </section>
+  `
 })
 export class DialogOverlayRef {
 
@@ -66,9 +76,14 @@ export class DialogOverlayRef {
   readonly backdrop: Element;
 
   attach<T>(compType: ComponentType<T>, element: Element): ComponentRef<T> {
+<<<<<<< HEAD:src/client/app/services/dialog/dialog-overlay.ts
     if (this._componentRef) {
       throw new Error(
         `Can not attach component to overlay, because there is already a component attached!`);
+=======
+    if (this._componentRef)  {
+      throw new Error(`Can not attach component to overlay, because there is already a component attached!`);
+>>>>>>> 05dc47e... template parser:src/client/app/dialog/dialog-overlay.ts
     }
     this.pane.appendChild(element);
     const factory = this._resolver.resolveComponentFactory(compType);
@@ -78,7 +93,7 @@ export class DialogOverlayRef {
   }
 
   detach() {
-    if (!this._componentRef) {
+    if (!this._componentRef)  {
       throw new Error(`Can not detach component from overlay, because nothing is attached!`);
     }
     this._componentRef.destroy();
@@ -118,7 +133,7 @@ export class DialogOverlayRef {
 
   @ChildListener('dialog-overlay-backdrop', 'transitionend')
   private _backdropTransitionEnd() {
-    if(this._hidePromiseResolve) {
+    if (this._hidePromiseResolve)  {
       console.log('trans end');
       this._hidePromiseResolve();
       this._hidePromiseResolve = null;
