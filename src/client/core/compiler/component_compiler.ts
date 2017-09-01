@@ -21,12 +21,13 @@ import { CodegenVisitor, Selectable } from './visitor';
 import { BindingCompiler } from './binding_compiler';
 import { AST } from './expression_parser/ast';
 import { ExpressionContext, ExpressionInterpreter } from './expression_parser/interpreter';
+import { TemplateParser } from './template_parser/parser';
 
 export class ComponentCompiler {
   private _viewDefs = new Map<Type<any>, ViewDefinition>();
 
   constructor(private _resolver: ComponentResolver, private bindingCompiler: BindingCompiler,
-    private _rendererFactoryType: Type<RendererFactory>) { }
+    private templateParser: TemplateParser, private _rendererFactoryType: Type<RendererFactory>) { }
 
   compile(component: Type<any>, parentResolver?: ComponentFactoryResolver) {
     const { def, visitor } = this._recursivelyCompileViewDefs(component, 0);
@@ -64,7 +65,7 @@ export class ComponentCompiler {
     parent: ComponentFactoryResolver) {
 
     const resolver = this._createFactoryResolver(viewDef, parent);
-    if(resolver) {
+    if (resolver) {
       viewDef.childComponents.forEach(compProvider => {
         const def = this._viewDefs.get(compProvider.provider.provide);
         return this._recusivelyCompileFactoryResolver(def, resolver);
@@ -97,6 +98,7 @@ export class ComponentCompiler {
     const outputs: OutputDef[] = [];
     const queries: QueryDef[] = [];
     const bindings: BindingDef[] = [];
+    const template = metadata.template ? metadata.template.trim() : null;
     let index = 0;
     let bindingFlags = 0;
 
@@ -178,6 +180,12 @@ export class ComponentCompiler {
       }
     });
 
+    if (template && template.length) {
+      const result = this.templateParser.parse(template, stringify(component));
+      console.log(JSON.stringify(result.vm));
+      console.log(result);
+    }
+
     const def: ViewDefinition = {
       index: compIndex,
       type: NodeTypes.ViewDefinition,
@@ -195,7 +203,7 @@ export class ComponentCompiler {
       bindingFlags,
       queries,
       outputs,
-      template: metadata.template,
+      template,
       handleEvent: this._createHandleEventFn(handler)
     };
     def.factory = createComponentFactory(metadata.selector, component, def);
