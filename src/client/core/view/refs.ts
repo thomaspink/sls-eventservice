@@ -11,27 +11,20 @@ import { ViewRef, InternalViewRef } from '../linker/view_ref';
 import { Renderer } from '../linker/renderer';
 import { callLifecycleHook } from '../lifecycle_hooks';
 import { createComponentView, initView, destroyView } from './view';
-import { ViewDefinition, ViewData } from './types';
+import { ViewDefinitionOld, ViewData } from './types';
 import { createClass } from './util';
 
 export function createComponentFactory(selector: string, componentType: Type<any>,
-  viewDef: ViewDefinition) {
+  viewDef: ViewDefinitionOld) {
   return new ComponentFactory_(selector, componentType, viewDef);
 }
 class ComponentFactory_ extends ComponentFactory<any> {
   constructor(public selector: string, public componentType: Type<any>,
-    private viewDef: ViewDefinition) {
+    private viewDef: ViewDefinitionOld) {
     super();
   }
-
-  create(element?: any|null, injector?: Injector|null, parent?: ComponentRef<any>|null) {
-    const parentInjector = injector || (parent && parent.injector);
-    if (!parentInjector) {
-      throw new Error(`No injector or parent component provided for creating ` +
-        `the component ${stringify(this.componentType)}`);
-    }
-    const parentView = parent ? (parent.hostView as ViewRef_).view : null;
-    const view = createComponentView(parentView, this.viewDef, element, null, parentInjector);
+  create(injector: Injector, rootSelectorOrNode?: string|any) {
+    const view = createComponentView(null, this.viewDef, rootSelectorOrNode, null, injector);
     const instance = createClass(this.componentType, new Injector_(view), view.def.deps);
     initView(view, instance, null);
     view.renderer.parse(view);
