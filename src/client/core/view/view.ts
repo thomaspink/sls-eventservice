@@ -4,15 +4,16 @@ import { Injector } from '../di/injector';
 import { Renderer } from '../linker/renderer';
 import { createInjector } from './refs';
 import { ViewDefinition, ViewData, BindingFlags, DisposableFn } from './types';
+import { createElement } from './element';
 import { callLifecycleHook } from '../lifecycle_hooks';
 import { ComponentFactoryResolver } from '../linker/component_factory_resolver';
 
 export function createComponentView(parent: ViewData, viewDef: ViewDefinition,
-  hostElement?: any, injector?: Injector): ViewData {
+  hostElement?: any, renderHost?: any, injector?: Injector): ViewData {
   const renderer: Renderer = viewDef.rendererFactory.createRenderer();
-  if (!hostElement) {
-    hostElement = renderer.selectRootElement(viewDef.selector);
-  }
+  // if (!hostElement) {
+  //   hostElement = renderer.selectRootElement(viewDef.selector);
+  // }
   const providers = viewDef.providers.map(p => p.provider);
   if (viewDef.resolver) {
     providers.unshift({
@@ -22,12 +23,25 @@ export function createComponentView(parent: ViewData, viewDef: ViewDefinition,
   }
   const parentInjector = injector || (parent && parent.injector) || void 0;
   const inj = Injector.create(providers, parentInjector);
-  return createView(hostElement, renderer, parent, viewDef, inj);
+  const view = createView(null, renderer, parent, viewDef, inj);
+  if (!hostElement) {
+    hostElement = createElement(view, renderHost, viewDef);
+  }
+  view.hostElement = hostElement;
+  const disposables: DisposableFn[] = [];
+  if (viewDef.bindings)
+    viewDef.bindings.forEach(binding => {
+      if (binding.isHost && binding.flags & BindingFlags.TypeEvent) {
+        disposables.push(renderer.listen(hostElement, binding.name,
+          (event) => viewDef.handleEvent(view, binding.name, binding.index, event)));
+      }
+    });
+  view.disposables = disposables;
+  return view;
 }
 
 function createView(hostElement: any, renderer: Renderer | null, parent: ViewData | null,
   def: ViewDefinition, injector: Injector|null): ViewData {
-  const disposables: DisposableFn[] = [];
   const view: ViewData = {
     def,
     renderer,
@@ -36,19 +50,12 @@ function createView(hostElement: any, renderer: Renderer | null, parent: ViewDat
     hostElement,
     component: null,
     injector,
-    disposables,
+    disposables: null,
     childViews: null
   };
   if (parent) {
     attachView(parent, view);
   }
-  if (def.bindings)
-    def.bindings.forEach(binding => {
-      if (binding.isHost && binding.flags & BindingFlags.TypeEvent) {
-        disposables.push(renderer.listen(hostElement, binding.name,
-          (event) => def.handleEvent(view, binding.name, binding.index, event)));
-      }
-    });
   return view;
 }
 
@@ -82,3 +89,4 @@ export function attachView(parentView: ViewData, view: ViewData) {
   }
   parentView.childViews.push(view);
 }
+
