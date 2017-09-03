@@ -136,6 +136,28 @@ export interface OutputDef {
   propName: string | null;
 }
 
+export interface ProviderDef {
+  token: any;
+  value: any;
+  deps: DepDef[];
+}
+
+export interface DepDef {
+  flags: DepFlags;
+  token: any;
+  tokenKey: string;
+}
+
+/**
+ * Bitmask for DI flags
+ */
+export const enum DepFlags {
+  None = 0,
+  SkipSelf = 1 << 0,
+  Optional = 1 << 1,
+  Value = 2 << 2,
+}
+
 /**
  * Element
  */
@@ -251,11 +273,6 @@ export const enum DepFlags {
   Optional = 1 << 1,
   Value = 2 << 2,
 }
-<<<<<<< HEAD
-
-=======
-export function isQuery(node: Node) { return node.type === NodeTypes.Query; }
->>>>>>> 7fcb5ad... wip
 
 /**
  * ViewData

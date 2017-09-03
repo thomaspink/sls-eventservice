@@ -122,15 +122,3 @@ export function viewDef(nodes: NodeDef[]) {
 //   parentView.childViews.push(view);
 // }
 
-<<<<<<< HEAD
-=======
-export function attachView(parentView: ViewData, view: ViewData) {
-  if (!parentView.childViews) {
-    parentView.childViews = [];
-  } else if (parentView.childViews.indexOf(view) !== -1) {
-    throw new Error(`This view is already attached`);
-  }
-  parentView.childViews.push(view);
-}
-
->>>>>>> 7fcb5ad... wip
