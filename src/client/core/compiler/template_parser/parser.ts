@@ -1,8 +1,10 @@
-import {Provider} from '../../di/provider';
-import {SimpleTemplateParser} from './simple_parser';
+import { Provider } from '../../di/provider';
+import { SimpleTemplateParser } from './simple_parser';
+import { TemplateNodeDef } from '../../view/types';
 
 export class TemplateParseResult {
-  constructor(public fileName: string, templateString: string, public vm: Node[], public errors: TemplateParseError[]) { }
+  constructor(public fileName: string, templateString: string,
+    public nodes: TemplateNodeDef[], public errors: TemplateParseError[]) { }
 }
 
 export class TemplateParseError extends Error {

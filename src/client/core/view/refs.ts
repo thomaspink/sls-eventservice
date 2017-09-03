@@ -31,7 +31,7 @@ class ComponentFactory_ extends ComponentFactory<any> {
         `the component ${stringify(this.componentType)}`);
     }
     const parentView = parent ? (parent.hostView as ViewRef_).view : null;
-    const view = createComponentView(parentView, this.viewDef, element, parentInjector);
+    const view = createComponentView(parentView, this.viewDef, element, null, parentInjector);
     const instance = createClass(this.componentType, new Injector_(view), view.def.deps);
     initView(view, instance, null);
     view.renderer.parse(view);
