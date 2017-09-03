@@ -11,7 +11,7 @@ import {
 } from '../linker/component_factory_resolver';
 import { createComponentFactory, ELEMENT } from '../view/refs';
 import {
-  ViewDefinition, BindingFlags, BindingDef, ViewData, HandleEventFn, QueryDef, QueryBindingDef, Node,
+  ViewDefinitionOld, BindingFlags, BindingDef, ViewData, HandleEventFn, QueryDef, QueryBindingDef, Node,
   QueryBindingType, QueryValueType, isQuery, NodeTypes, Provider, OutputDef, ElementDef, TemplateNodeDef
 } from '../view/types';
 import { CssSelector } from './selector';
@@ -24,7 +24,7 @@ import { ExpressionContext, ExpressionInterpreter } from './expression_parser/in
 import { TemplateParser, TemplateParseError } from './template_parser/parser';
 
 export class ComponentCompiler {
-  private _viewDefs = new Map<Type<any>, ViewDefinition>();
+  private _viewDefs = new Map<Type<any>, ViewDefinitionOld>();
 
   constructor(private _resolver: ComponentResolver, private bindingCompiler: BindingCompiler,
     private templateParser: TemplateParser, private _rendererFactoryType: Type<RendererFactory>) { }
@@ -37,8 +37,8 @@ export class ComponentCompiler {
     return resolver;
   }
 
-  private _recursivelyCompileViewDefs(component: Type<any>, index: number, parent?: ViewDefinition):
-    { def: ViewDefinition, visitor: Visitor | null } {
+  private _recursivelyCompileViewDefs(component: Type<any>, index: number, parent?: ViewDefinitionOld):
+    { def: ViewDefinitionOld, visitor: Visitor | null } {
     const { def, selectables } = this._createViewDef(component, index, parent);
     const childVisitors = new Map<Type<any>, Visitor>();
     let visitor: CodegenVisitor | null = null;
@@ -61,7 +61,7 @@ export class ComponentCompiler {
     return { def, visitor };
   }
 
-  private _recusivelyCompileFactoryResolver(viewDef: ViewDefinition,
+  private _recusivelyCompileFactoryResolver(viewDef: ViewDefinitionOld,
     parent: ComponentFactoryResolver) {
 
     const resolver = this._createFactoryResolver(viewDef, parent);
@@ -75,7 +75,7 @@ export class ComponentCompiler {
     return resolver;
   }
 
-  private _createFactoryResolver(viewDef: ViewDefinition, parent: ComponentFactoryResolver) {
+  private _createFactoryResolver(viewDef: ViewDefinitionOld, parent: ComponentFactoryResolver) {
     if (viewDef.childDefs && viewDef.childDefs.length) {
       const factories = viewDef.childDefs.map(d => d.factory);
       const resolver = new CodegenComponentFactoryResolver(factories, parent);
@@ -84,8 +84,8 @@ export class ComponentCompiler {
     return null;
   }
 
-  private _createViewDef(component: Type<any>, compIndex: number, parent?: ViewDefinition):
-    { def: ViewDefinition, selectables: Selectable[] } {
+  private _createViewDef(component: Type<any>, compIndex: number, parent?: ViewDefinitionOld):
+    { def: ViewDefinitionOld, selectables: Selectable[] } {
     if (this._viewDefs.has(component)) {
       throw new Error(`Component ${stringify(component)} is has been declared multiple times. ` +
         `Please make sure a component is specified only once in the component tree`);
@@ -211,7 +211,7 @@ export class ComponentCompiler {
       }
     });
 
-    const def: ViewDefinition = {
+    const def: ViewDefinitionOld = {
       index: compIndex,
       type: NodeTypes.ViewDefinition,
       selector: metadata.selector,

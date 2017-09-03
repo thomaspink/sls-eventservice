@@ -70,6 +70,5 @@ export abstract class ComponentFactory<C> {
   /**
    * Creates a new component.
    */
-  abstract create(element?: any|null, injector?: Injector|null,
-    parent?: ComponentRef<any>|null): ComponentRef<C>;
+  abstract create(injector: Injector, rootSelectorOrNode?: string|any): ComponentRef<C>;
 }

@@ -1,6 +1,6 @@
-import { ViewData, ViewDefinition } from './types';
+import { ViewData, ViewDefinitionOld } from './types';
 
-export function createElement(view: ViewData, renderHost: any, def: ViewDefinition): any {
+export function createElement(view: ViewData, renderHost: any, def: ViewDefinitionOld): any {
   const elDef = def.element!;
   const renderer = view.renderer;
   let el: any;

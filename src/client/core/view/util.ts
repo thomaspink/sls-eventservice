@@ -1,7 +1,21 @@
 import { Type } from '../type';
+import { stringify } from '../util';
 import { Injector } from '../di/injector';
 import { createComponentView, initView } from './view';
-import { ViewData, ViewDefinition } from './types';
+import { Definition, DefinitionFactory, ViewData, ViewDefinitionOld, DepFlags, DepDef, BindingDef, BindingFlags, NodeFlags } from './types';
+
+export const NOOP: any = () => {};
+
+const _tokenKeyCache = new Map<any, string>();
+
+export function tokenKey(token: any): string {
+  let key = _tokenKeyCache.get(token);
+  if (!key) {
+    key = stringify(token) + '_' + _tokenKeyCache.size;
+    _tokenKeyCache.set(token, key);
+  }
+  return key;
+}
 
 export function createClass<C>(ctor: Type<C>, injector: Injector, deps: any[] = []): C {
   let resolvedDeps: any[] = [];
@@ -12,3 +26,50 @@ export function createClass<C>(ctor: Type<C>, injector: Injector, deps: any[] = 
   return instance;
 }
 
+export function isComponentView(view: ViewData): boolean {
+  return !!(view.flags & NodeFlags.Component);
+}
+
+export function splitDepsDsl(deps: ([DepFlags, any] | any)[]): DepDef[] {
+  return deps.map(value => {
+    let token: any;
+    let flags: DepFlags;
+    if (Array.isArray(value)) {
+      [flags, token] = value;
+    } else {
+      flags = DepFlags.None;
+      token = value;
+    }
+    return {flags, token, tokenKey: tokenKey(token)};
+  });
+}
+
+const DEFINITION_CACHE = new WeakMap<any, Definition<any>>();
+
+export function resolveDefinition<D extends Definition<any>>(factory: DefinitionFactory<D>): D {
+  let value = DEFINITION_CACHE.get(factory) !as D;
+  if (!value) {
+    value = factory();
+    value.factory = factory;
+    DEFINITION_CACHE.set(factory, value);
+  }
+  return value;
+}
+
+const NS_PREFIX_RE = /^:([^:]+):(.+)$/;
+
+export function splitNamespace(name: string): string[] {
+  if (name[0] === ':') {
+    const match = name.match(NS_PREFIX_RE) !;
+    return [match[1], match[2]];
+  }
+  return ['', name];
+}
+
+export function calcBindingFlags(bindings: BindingDef[]): BindingFlags {
+  let flags = 0;
+  for (let i = 0; i < bindings.length; i++) {
+    flags |= bindings[i].flags;
+  }
+  return flags;
+}

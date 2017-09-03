@@ -6,6 +6,10 @@ import { ComponentFactory } from '../linker/component_factory';
 import { ComponentFactoryResolver } from '../linker/component_factory_resolver';
 import { Renderer, RendererFactory } from '../linker/renderer';
 
+export interface DefinitionFactory<D extends Definition<any>> { (): D; }
+
+export interface Definition<DF extends DefinitionFactory<any>> { factory: DF|null; }
+
 export interface Node {
   index: number;
   type: NodeTypes;
@@ -53,7 +57,7 @@ export interface NodeDef {
    */
   // childMatchedQueries: number;
   element: ElementDef|null;
-  // provider: ProviderDef|null;
+  provider: ProviderDef|null;
   // text: TextDef|null;
   // query: QueryDef|null;
   // ngContent: NgContentDef|null;
@@ -83,11 +87,11 @@ export const enum NodeFlags {
   TypeUseExistingProvider = 1 << 11,
   LazyProvider = 1 << 12,
   PrivateProvider = 1 << 13,
-  // TypeDirective = 1 << 14,
-  // Component = 1 << 15,
+  TypeComponent = 1 << 14,
+  Component = 1 << 15,
   CatProviderNoDirective =
       TypeValueProvider | TypeClassProvider | TypeFactoryProvider | TypeUseExistingProvider,
-  // CatProvider = CatProviderNoDirective | TypeDirective,
+  CatProvider = CatProviderNoDirective | TypeComponent,
   OnInit = 1 << 16,
   OnDestroy = 1 << 17,
   // DoCheck = 1 << 18,
@@ -105,7 +109,7 @@ export const enum NodeFlags {
   CatQuery = /*TypeContentQuery | */TypeViewQuery,
 
   // mutually exclusive values...
-  // Types = CatRenderNode | TypeNgContent | TypePipe | CatPureExpression | CatProvider | CatQuery
+  Types = CatRenderNode | /*TypeNgContent | *//*TypePipe | *//*CatPureExpression | */CatProvider | CatQuery;
 }
 
 export const enum NodeTypes {
@@ -120,17 +124,47 @@ export const enum NodeTypes {
 /**
  * ViewDefinition
  */
-export interface ViewDefinition extends Node {
+export interface ViewDefinitionFactory extends DefinitionFactory<ViewDefinition> {}
+
+export interface ViewDefinition extends Definition<ViewDefinitionFactory> {
+  // flags: ViewFlags;
+  // updateDirectives: ViewUpdateFn;
+  // updateRenderer: ViewUpdateFn;
+  handleEvent: ViewHandleEventFn;
+  /**
+   * Order: Depth first.
+   * Especially providers are before elements / anchors.
+   */
+  nodes: NodeDef[];
+  /** aggregated NodeFlags for all nodes **/
+  nodeFlags: NodeFlags;
+  rootNodeFlags: NodeFlags;
+  lastRenderRootNode: NodeDef|null;
+  bindingCount: number;
+  outputCount: number;
+  /**
+   * Binary or of all query ids that are matched by one of the nodes.
+   * This includes query ids from templates as well.
+   * Used as a bloom filter.
+   */
+  nodeMatchedQueries: number;
+}
+
+export interface ViewHandleEventFn {
+  (view: ViewData, nodeIndex: number, eventName: string, event: any): boolean;
+}
+
+export interface ViewDefinitionOld extends Node {
   selector: string;
   componentType: Type<any>;
-  parent: ViewDefinition | null;
+  parent: ViewDefinitionOld | null;
   factory: ComponentFactory<any>;
   resolver: ComponentFactoryResolver | null;
   rendererFactory: RendererFactory | null;
   providers: Provider[] | null;
   deps: any[] | null;
   childComponents: Provider[] | null;
-  childDefs: ViewDefinition[] | null;
+  childDefs: ViewDefinitionOld[] | null;
   bindings: BindingDef[];
   bindingFlags: BindingFlags;
   outputs: OutputDef[];
@@ -155,6 +189,28 @@ export interface OutputDef extends Node {
   target: 'window' | 'document' | 'body' | 'component' | null;
   eventName: string;
   propName: string | null;
+}
+
+export interface ProviderDef {
+  token: any;
+  value: any;
+  deps: DepDef[];
+}
+
+export interface DepDef {
+  flags: DepFlags;
+  token: any;
+  tokenKey: string;
+}
+
+/**
+ * Bitmask for DI flags
+ */
+export const enum DepFlags {
+  None = 0,
+  SkipSelf = 1 << 0,
+  Optional = 1 << 1,
+  Value = 2 << 2,
 }
 
 /**
@@ -228,7 +284,7 @@ export function isQuery(node: Node) { return node.type === NodeTypes.Query; }
  * ViewData
  */
 export interface ViewData {
-  def: ViewDefinition;
+  def: ViewDefinitionOld;
   // root: RootData;
   renderer: Renderer;
   parent: ViewData | null;
