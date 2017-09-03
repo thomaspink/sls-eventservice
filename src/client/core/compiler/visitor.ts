@@ -9,7 +9,7 @@ import { createComponentView, initView } from '../view/view';
 import { createInjector } from '../view/refs';
 import { createClass } from '../view/util';
 import {
-  ViewDefinition, ViewData, QueryDef, QueryBindingDef, QueryBindingType, QueryValueType,
+  ViewDefinitionOld, ViewData, QueryDef, QueryBindingDef, QueryBindingType, QueryValueType,
   Node, isBinding, isQuery, isViewDefinition, BindingDef, BindingFlags
 } from '../view/types';
 import { callLifecycleHook } from '../lifecycle_hooks';
@@ -59,7 +59,7 @@ export class CodegenVisitor implements Visitor {
           throw new Error(`The components ${stringify(view.def.componentType)} and ` +
             `${stringify(context.def.componentType)} match the same element`);
         }
-        view = this._visitComponent(element, selectable as ViewDefinition, context);
+        view = this._visitComponent(element, selectable as ViewDefinitionOld, context);
       } else if (isQuery(selectable)) {
         queries.push(selectable as QueryDef);
       } else if (isBinding(selectable)) {
@@ -113,7 +113,7 @@ export class CodegenVisitor implements Visitor {
     callLifecycleHook(context, 'onInit');
   }
 
-  private _visitComponent(element: Element, def: ViewDefinition, context: any) {
+  private _visitComponent(element: Element, def: ViewDefinitionOld, context: any) {
     const view = createComponentView(context, def, element);
     const instance = createClass(def.componentType, createInjector(view), view.def.deps);
     initView(view, instance, null);

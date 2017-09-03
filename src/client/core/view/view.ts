@@ -3,17 +3,14 @@ import { Provider } from '../di/provider';
 import { Injector } from '../di/injector';
 import { Renderer } from '../linker/renderer';
 import { createInjector } from './refs';
-import { ViewDefinition, ViewData, BindingFlags, DisposableFn } from './types';
+import { ViewDefinitionOld, ViewData, BindingFlags, DisposableFn } from './types';
 import { createElement } from './element';
 import { callLifecycleHook } from '../lifecycle_hooks';
 import { ComponentFactoryResolver } from '../linker/component_factory_resolver';
 
-export function createComponentView(parent: ViewData, viewDef: ViewDefinition,
-  hostElement?: any, renderHost?: any, injector?: Injector): ViewData {
+export function createComponentView(parent: ViewData|null, viewDef: ViewDefinitionOld,
+  rootSelectorOrNode?: any, renderHost?: any, injector?: Injector): ViewData {
   const renderer: Renderer = viewDef.rendererFactory.createRenderer();
-  // if (!hostElement) {
-  //   hostElement = renderer.selectRootElement(viewDef.selector);
-  // }
   const providers = viewDef.providers.map(p => p.provider);
   if (viewDef.resolver) {
     providers.unshift({
@@ -40,8 +37,12 @@ export function createComponentView(parent: ViewData, viewDef: ViewDefinition,
   return view;
 }
 
+function createRootView(elInjector: Injector, rootSelectorOrNode: string | any, def: ViewDefinitionOld) {
+
+}
+
 function createView(hostElement: any, renderer: Renderer | null, parent: ViewData | null,
-  def: ViewDefinition, injector: Injector|null): ViewData {
+  def: ViewDefinitionOld, injector: Injector|null): ViewData {
   const view: ViewData = {
     def,
     renderer,
