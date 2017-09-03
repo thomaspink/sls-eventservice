@@ -9,19 +9,11 @@ import { ComponentFactory, ComponentRef } from '../linker/component_factory';
 import {
   CodegenComponentFactoryResolver, ComponentFactoryResolver
 } from '../linker/component_factory_resolver';
-<<<<<<< HEAD
 // import { createComponentFactory, ELEMENT } from '../view/refs';
 // import {
 //   ViewDefinitionOld, BindingFlags, BindingDef, ViewData, HandleEventFn, QueryDef, QueryBindingDef, Node,
 //   QueryBindingType, QueryValueType, isQuery, NodeTypes, Provider, OutputDef, ElementDef, TemplateNodeDef
 // } from '../view/types';
-=======
-import { createComponentFactory, ELEMENT } from '../view/refs';
-import {
-  ViewDefinition, BindingFlags, BindingDef, ViewData, HandleEventFn, QueryDef, QueryBindingDef,
-  QueryBindingType, QueryValueType, isQuery, NodeTypes, Provider, OutputDef, ElementDef
-} from '../view/types';
->>>>>>> 9d1b00d... element
 import { CssSelector } from './selector';
 import { RendererFactory } from '../linker/renderer';
 import { Visitor } from '../linker/visitor';

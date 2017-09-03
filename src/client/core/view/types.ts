@@ -136,11 +136,27 @@ export interface OutputDef {
   propName: string | null;
 }
 
-export interface ElementDef {
+/**
+ * Element
+ */
+export interface ElementDef extends Node {
   name: string | null;
   ns: string | null;
   /** ns, name, value */
   attrs: [string, string, string][] | null;
+  template: TemplateNodeDef[] | null;
+}
+
+/**
+ * Template
+ */
+export enum TemplateTypes {
+  Void,
+  Element,
+  Text,
+  Comment,
+  Attribute,
+  EOF
 }
 
 export const enum OutputType {ElementOutput, ComponentOutput}
@@ -235,7 +251,11 @@ export const enum DepFlags {
   Optional = 1 << 1,
   Value = 2 << 2,
 }
+<<<<<<< HEAD
 
+=======
+export function isQuery(node: Node) { return node.type === NodeTypes.Query; }
+>>>>>>> 7fcb5ad... wip
 
 /**
  * ViewData
