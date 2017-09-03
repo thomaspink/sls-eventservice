@@ -11,8 +11,8 @@ import {
 } from '../linker/component_factory_resolver';
 import { createComponentFactory, ELEMENT } from '../view/refs';
 import {
-  ViewDefinition, BindingFlags, BindingDef, ViewData, HandleEventFn, QueryDef, QueryBindingDef,
-  QueryBindingType, QueryValueType, isQuery, NodeTypes, Provider, OutputDef, ElementDef
+  ViewDefinition, BindingFlags, BindingDef, ViewData, HandleEventFn, QueryDef, QueryBindingDef, Node,
+  QueryBindingType, QueryValueType, isQuery, NodeTypes, Provider, OutputDef, ElementDef, TemplateNodeDef
 } from '../view/types';
 import { CssSelector } from './selector';
 import { RendererFactory } from '../linker/renderer';
@@ -21,7 +21,7 @@ import { CodegenVisitor, Selectable } from './visitor';
 import { BindingCompiler } from './binding_compiler';
 import { AST } from './expression_parser/ast';
 import { ExpressionContext, ExpressionInterpreter } from './expression_parser/interpreter';
-import { TemplateParser } from './template_parser/parser';
+import { TemplateParser, TemplateParseError } from './template_parser/parser';
 
 export class ComponentCompiler {
   private _viewDefs = new Map<Type<any>, ViewDefinition>();
@@ -98,10 +98,18 @@ export class ComponentCompiler {
     const outputs: OutputDef[] = [];
     const queries: QueryDef[] = [];
     const bindings: BindingDef[] = [];
-    const template = metadata.template ? metadata.template.trim() : null;
     let element: ElementDef | null = null;
+    let template: TemplateNodeDef[] | null = null;
     let index = 0;
     let bindingFlags = 0;
+
+    if (metadata.template && metadata.template.length) {
+      const result = this.templateParser.parse(metadata.template, stringify(component));
+      if (result.errors && result.errors.length) {
+        _handleTemplateParseErrors(result.errors);
+      }
+      template = result.nodes;
+    }
 
     if (metadata.selector) {
       const parsedSelector = CssSelector.parse(metadata.selector)[0];
@@ -114,10 +122,14 @@ export class ComponentCompiler {
           attrs.push(['', parsedSelector.attrs[i], parsedSelector.attrs[i + 1]]);
         }
       }
+
       element = {
+        index: index++,
+        type: NodeTypes.Element,
         ns: null,
         name: parsedSelector.element,
-        attrs: attrs.length ? attrs : null
+        attrs: attrs.length ? attrs : null,
+        template
       };
     }
 
@@ -199,12 +211,6 @@ export class ComponentCompiler {
       }
     });
 
-    if (template && template.length) {
-      const result = this.templateParser.parse(template, stringify(component));
-      console.log(JSON.stringify(result.vm));
-      console.log(result);
-    }
-
     const def: ViewDefinition = {
       index: compIndex,
       type: NodeTypes.ViewDefinition,
@@ -222,7 +228,6 @@ export class ComponentCompiler {
       bindingFlags,
       queries,
       outputs,
-      template,
       element,
       handleEvent: this._createHandleEventFn(handler)
     };
@@ -255,6 +260,7 @@ export class ComponentCompiler {
   }
 }
 
-export function eventFullName(target: string | null, name: string): string {
-  return target ? `${target}:${name}` : name;
+function _handleTemplateParseErrors(errors: TemplateParseError[]): never {
+  const msg = errors.map(error => error.message).join('\n');
+  throw new Error('Template Parse Errors' + msg);
 }

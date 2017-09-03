@@ -11,12 +11,110 @@ export interface Node {
   type: NodeTypes;
 }
 
+/**
+ * A node definition in the view.
+ *
+ * Note: We use one type for all nodes so that loops that loop over all nodes
+ * of a ViewDefinition stay monomorphic!
+ */
+export interface NodeDef {
+  flags: NodeFlags;
+  index: number;
+  parent: NodeDef|null;
+  // renderParent: NodeDef|null;
+  /** this is checked against NgContentDef.index to find matched nodes */
+  // ngContentIndex: number;
+  /** number of transitive children */
+  // childCount: number;
+  /** aggregated NodeFlags for all transitive children (does not include self) **/
+  // childFlags: NodeFlags;
+  /** aggregated NodeFlags for all direct children (does not include self) **/
+  // directChildFlags: NodeFlags;
+
+  bindingIndex: number;
+  bindings: BindingDef[];
+  bindingFlags: BindingFlags;
+  outputIndex: number;
+  outputs: OutputDef[];
+  /**
+   * references that the user placed on the element
+   */
+  // references: {[refId: string]: QueryValueType};
+  /**
+   * ids and value types of all queries that are matched by this node.
+   */
+  // matchedQueries: {[queryId: number]: QueryValueType};
+  /** Binary or of all matched query ids of this node. */
+  // matchedQueryIds: number;
+  /**
+   * Binary or of all query ids that are matched by one of the children.
+   * This includes query ids from templates as well.
+   * Used as a bloom filter.
+   */
+  // childMatchedQueries: number;
+  element: ElementDef|null;
+  // provider: ProviderDef|null;
+  // text: TextDef|null;
+  // query: QueryDef|null;
+  // ngContent: NgContentDef|null;
+}
+
+/**
+ * Bitmask for NodeDef.flags.
+ * Naming convention:
+ * - `Type...`: flags that are mutually exclusive
+ * - `Cat...`: union of multiple `Type...` (short for category).
+ */
+export const enum NodeFlags {
+  None = 0,
+  TypeElement = 1 << 0,
+  TypeText = 1 << 1,
+  ProjectedTemplate = 1 << 2,
+  CatRenderNode = TypeElement | TypeText,
+  // TypeNgContent = 1 << 3,
+  // TypePipe = 1 << 4,
+  // TypePureArray = 1 << 5,
+  // TypePureObject = 1 << 6,
+  // TypePurePipe = 1 << 7,
+  // CatPureExpression = TypePureArray | TypePureObject | TypePurePipe,
+  TypeValueProvider = 1 << 8,
+  TypeClassProvider = 1 << 9,
+  TypeFactoryProvider = 1 << 10,
+  TypeUseExistingProvider = 1 << 11,
+  LazyProvider = 1 << 12,
+  PrivateProvider = 1 << 13,
+  // TypeDirective = 1 << 14,
+  // Component = 1 << 15,
+  CatProviderNoDirective =
+      TypeValueProvider | TypeClassProvider | TypeFactoryProvider | TypeUseExistingProvider,
+  // CatProvider = CatProviderNoDirective | TypeDirective,
+  OnInit = 1 << 16,
+  OnDestroy = 1 << 17,
+  // DoCheck = 1 << 18,
+  // OnChanges = 1 << 19,
+  // AfterContentInit = 1 << 20,
+  // AfterContentChecked = 1 << 21,
+  // AfterViewInit = 1 << 22,
+  // AfterViewChecked = 1 << 23,
+  // EmbeddedViews = 1 << 24,
+  // ComponentView = 1 << 25,
+  // TypeContentQuery = 1 << 26,
+  TypeViewQuery = 1 << 27,
+  // StaticQuery = 1 << 28,
+  // DynamicQuery = 1 << 29,
+  CatQuery = /*TypeContentQuery | */TypeViewQuery,
+
+  // mutually exclusive values...
+  // Types = CatRenderNode | TypeNgContent | TypePipe | CatPureExpression | CatProvider | CatQuery
+}
+
 export const enum NodeTypes {
-  ViewDefinition = 1 << 0,
-  Provider = 1 << 1,
-  Binding = 1 << 2,
-  Query = 1 << 3,
-  Output = 1 << 4
+  ViewDefinition,
+  Element,
+  Provider,
+  Binding,
+  Query,
+  Output
 }
 
 /**
@@ -39,9 +137,8 @@ export interface ViewDefinition extends Node {
   queries: QueryDef[] | null;
   handleEvent: HandleEventFn | null;
   element: ElementDef | null;
-  template: string | null;
 }
-export function isViewDefinition(node: Node) { return !!(node.type & NodeTypes.ViewDefinition); }
+export function isViewDefinition(node: Node) { return node.type === NodeTypes.ViewDefinition; }
 export interface HandleEventFn {
   (view: ViewData, eventName: string, bindingIndex: number, event: any): boolean;
 }
@@ -52,7 +149,7 @@ export interface HandleEventFn {
 export interface Provider extends Node {
   provider: ClassProvider | ConstructorProvider | ExistingProvider | FactoryProvider | ValueProvider;
 }
-export function isProvider(node: Node) { return !!(node.type & NodeTypes.Provider); }
+export function isProvider(node: Node) { return node.type === NodeTypes.Provider; }
 
 export interface OutputDef extends Node {
   target: 'window' | 'document' | 'body' | 'component' | null;
@@ -60,13 +157,35 @@ export interface OutputDef extends Node {
   propName: string | null;
 }
 
-export interface ElementDef {
+/**
+ * Element
+ */
+export interface ElementDef extends Node {
   name: string | null;
   ns: string | null;
   /** ns, name, value */
   attrs: [string, string, string][] | null;
+  template: TemplateNodeDef[] | null;
 }
 
+/**
+ * Template
+ */
+export enum TemplateTypes {
+  Void,
+  Element,
+  Text,
+  Comment,
+  Attribute,
+  EOF
+}
+
+export type TemplateElementDef = [TemplateTypes.Element, string, TemplateAttributeDef[], any[], boolean];
+export type TemplateTextDef = [TemplateTypes.Text, string];
+export type TeplateCommentDef = [TemplateTypes.Comment, string];
+export type TemplateAttributeDef = [TemplateTypes.Attribute, string, string];
+export type TemplateEOFDef = [TemplateTypes.EOF];
+export type TemplateNodeDef = TemplateElementDef | TemplateTextDef | TeplateCommentDef | TemplateAttributeDef | TemplateEOFDef;
 
 /**
  * Bindings
@@ -85,7 +204,7 @@ export const enum BindingFlags {
   TypeProperty = 1 << 3,
   TypeEvent = 1 << 4,
 }
-export function isBinding(node: Node) { return !!(node.type & NodeTypes.Binding); }
+export function isBinding(node: Node) { return node.type === NodeTypes.Binding; }
 
 /**
  * Queries
@@ -103,7 +222,7 @@ export const enum QueryValueType {
   Element = 0,
   Component = 1
 }
-export function isQuery(node: Node) { return !!(node.type & NodeTypes.Query); }
+export function isQuery(node: Node) { return node.type === NodeTypes.Query; }
 
 /**
  * ViewData
