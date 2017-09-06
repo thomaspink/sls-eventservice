@@ -1,4 +1,4 @@
-import { BindingDef, BindingFlags, ViewData, NodeTypes } from '../view/types';
+import { BindingDef, BindingFlags, ViewData } from '../view/types';
 import { ExpressionParser } from './expression_parser/api';
 import { EmptyExpr, ParserError, AST } from './expression_parser/ast';
 import { ExpressionInterpreter } from './expression_parser/interpreter';
@@ -69,17 +69,17 @@ export class BindingCompiler {
     // const handleEventFn = function($event: any) {
     //   return interpreter.visit(ast);
     // };
-    const def: BindingDef = {
-      index,
-      type: NodeTypes.Binding,
-      flags: BindingFlags.TypeEvent,
-      ns: target,
-      name,
-      suffix: null,
-      isHost
-    };
+    // const def: BindingDef = {
+    //   index,
+    //   type: NodeTypes.Binding,
+    //   flags: BindingFlags.TypeEvent,
+    //   ns: target,
+    //   name,
+    //   suffix: null,
+    //   isHost
+    // };
 
-    return { def, ast };
+    return { def: null, ast };
   }
 
   private _parseAction(value: string, location: string) {

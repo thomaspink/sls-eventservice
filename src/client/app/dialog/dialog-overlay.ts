@@ -15,10 +15,11 @@ export class DialogOverlay {
       this._createContainer();
     }
     const el = this._template(config);
-    this._container.appendChild(el);
-    const factory = this._resolver.resolveComponentFactory(DialogOverlayRef)
-    const ref = factory.create(el, this._injector);
-    return ref.instance;
+    // this._container.appendChild(el);
+    // const factory = this._resolver.resolveComponentFactory(DialogOverlayRef)
+    // const ref = factory.create(el, this._injector);
+    // return ref.instance;
+    return null;
   }
 
   private _template(config: DialogConfig) {
@@ -76,11 +77,12 @@ export class DialogOverlayRef {
     if (this._componentRef)  {
       throw new Error(`Can not attach component to overlay, because there is already a component attached!`);
     }
-    this.pane.appendChild(element);
-    const factory = this._resolver.resolveComponentFactory(compType);
-    const ref = factory.create(element, this._injector);
-    this._componentRef = ref;
-    return ref;
+    // this.pane.appendChild(element);
+    // const factory = this._resolver.resolveComponentFactory(compType);
+    // const ref = factory.create(element, this._injector);
+    // this._componentRef = ref;
+    // return ref;
+    return null;
   }
 
   detach() {

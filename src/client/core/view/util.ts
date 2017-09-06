@@ -1,8 +1,8 @@
 import { Type } from '../type';
 import { stringify } from '../util';
 import { Injector } from '../di/injector';
-import { createComponentView, initView } from './view';
-import { Definition, DefinitionFactory, ViewData, ViewDefinitionOld, DepFlags, DepDef, BindingDef, BindingFlags, NodeFlags } from './types';
+// import { createComponentView, initView } from './view';
+import { Definition, DefinitionFactory, ViewData, ViewDefinition, DepFlags, DepDef, BindingDef, BindingFlags, NodeFlags } from './types';
 
 export const NOOP: any = () => {};
 
@@ -27,7 +27,8 @@ export function createClass<C>(ctor: Type<C>, injector: Injector, deps: any[] = 
 }
 
 export function isComponentView(view: ViewData): boolean {
-  return !!(view.flags & NodeFlags.Component);
+  // return !!(view.def.nodeFlags & NodeFlags.Component);
+  return true;
 }
 
 export function splitDepsDsl(deps: ([DepFlags, any] | any)[]): DepDef[] {

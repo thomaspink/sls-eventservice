@@ -10,11 +10,6 @@ export interface DefinitionFactory<D extends Definition<any>> { (): D; }
 
 export interface Definition<DF extends DefinitionFactory<any>> { factory: DF|null; }
 
-export interface Node {
-  index: number;
-  type: NodeTypes;
-}
-
 /**
  * A node definition in the view.
  *
@@ -109,17 +104,72 @@ export const enum NodeFlags {
   CatQuery = /*TypeContentQuery | */TypeViewQuery,
 
   // mutually exclusive values...
-  Types = CatRenderNode | /*TypeNgContent | *//*TypePipe | *//*CatPureExpression | */CatProvider | CatQuery;
+  Types = CatRenderNode | /*TypeNgContent | *//*TypePipe | *//*CatPureExpression | */CatProvider | CatQuery
 }
 
-export const enum NodeTypes {
-  ViewDefinition,
-  Element,
-  Provider,
-  Binding,
-  Query,
-  Output
+export interface BindingDef {
+  flags: BindingFlags;
+  ns: string|null;
+  name: string|null;
+  nonMinifiedName: string|null;
+  // securityContext: SecurityContext|null;
+  suffix: string|null;
 }
+
+export const enum BindingFlags {
+  TypeElementAttribute = 1 << 0,
+  TypeElementClass = 1 << 1,
+  TypeElementStyle = 1 << 2,
+  TypeProperty = 1 << 3,
+  SyntheticProperty = 1 << 4,
+  SyntheticHostProperty = 1 << 5,
+  CatSyntheticProperty = SyntheticProperty | SyntheticHostProperty,
+
+  // mutually exclusive values...
+  Types = TypeElementAttribute | TypeElementClass | TypeElementStyle | TypeProperty
+}
+
+export interface OutputDef {
+  type: OutputType;
+  target: 'window'|'document'|'body'|'component'|null;
+  eventName: string;
+  propName: string|null;
+}
+
+export const enum OutputType {ElementOutput, ComponentOutput}
+
+export const enum QueryValueType {
+  ElementRef = 0,
+  RenderElement = 1,
+  TemplateRef = 2,
+  ViewContainerRef = 3,
+  Provider = 4
+}
+
+export interface ElementDef {
+  name: string|null;
+  ns: string|null;
+  /** ns, name, value */
+  attrs: [string, string, string][]|null;
+  // template: ViewDefinition|null;
+  // componentProvider: NodeDef|null;
+  // componentRendererType: RendererType2|null;
+  // closure to allow recursive components
+  // componentView: ViewDefinitionFactory|null;
+  /**
+   * visible public providers for DI in the view,
+   * as see from this element. This does not include private providers.
+   */
+  // publicProviders: {[tokenKey: string]: NodeDef}|null;
+  /**
+   * same as visiblePublicProviders, but also includes private providers
+   * that are located on this element.
+   */
+  // allProviders: {[tokenKey: string]: NodeDef}|null;
+  handleEvent: ElementHandleEventFn|null;
+}
+
+export interface ElementHandleEventFn { (view: ViewData, eventName: string, event: any): boolean; }
 
 /**
  * ViewDefinition
@@ -154,43 +204,9 @@ export interface ViewHandleEventFn {
   (view: ViewData, nodeIndex: number, eventName: string, event: any): boolean;
 }
 
-export interface ViewDefinitionOld extends Node {
-  selector: string;
-  componentType: Type<any>;
-  parent: ViewDefinitionOld | null;
-  factory: ComponentFactory<any>;
-  resolver: ComponentFactoryResolver | null;
-  rendererFactory: RendererFactory | null;
-  providers: Provider[] | null;
-  deps: any[] | null;
-  childComponents: Provider[] | null;
-  childDefs: ViewDefinitionOld[] | null;
-  bindings: BindingDef[];
-  bindingFlags: BindingFlags;
-  outputs: OutputDef[];
-  queries: QueryDef[] | null;
-  handleEvent: HandleEventFn | null;
-  element: ElementDef | null;
-}
-export function isViewDefinition(node: Node) { return node.type === NodeTypes.ViewDefinition; }
-export interface HandleEventFn {
-  (view: ViewData, eventName: string, bindingIndex: number, event: any): boolean;
-}
-
 /**
  * Provider
  */
-export interface Provider extends Node {
-  provider: ClassProvider | ConstructorProvider | ExistingProvider | FactoryProvider | ValueProvider;
-}
-export function isProvider(node: Node) { return node.type === NodeTypes.Provider; }
-
-export interface OutputDef extends Node {
-  target: 'window' | 'document' | 'body' | 'component' | null;
-  eventName: string;
-  propName: string | null;
-}
-
 export interface ProviderDef {
   token: any;
   value: any;
@@ -213,86 +229,10 @@ export const enum DepFlags {
   Value = 2 << 2,
 }
 
-/**
- * Element
- */
-export interface ElementDef extends Node {
-  name: string | null;
-  ns: string | null;
-  /** ns, name, value */
-  attrs: [string, string, string][] | null;
-  template: TemplateNodeDef[] | null;
-}
-
-/**
- * Template
- */
-export enum TemplateTypes {
-  Void,
-  Element,
-  Text,
-  Comment,
-  Attribute,
-  EOF
-}
-
-export type TemplateElementDef = [TemplateTypes.Element, string, TemplateAttributeDef[], any[], boolean];
-export type TemplateTextDef = [TemplateTypes.Text, string];
-export type TeplateCommentDef = [TemplateTypes.Comment, string];
-export type TemplateAttributeDef = [TemplateTypes.Attribute, string, string];
-export type TemplateEOFDef = [TemplateTypes.EOF];
-export type TemplateNodeDef = TemplateElementDef | TemplateTextDef | TeplateCommentDef | TemplateAttributeDef | TemplateEOFDef;
-
-/**
- * Bindings
- */
-export interface BindingDef extends Node {
-  flags: BindingFlags;
-  ns: string | null;
-  name: string | null;
-  suffix: string | null;
-  isHost: boolean;
-}
-export const enum BindingFlags {
-  TypeElementAttribute = 1 << 0,
-  TypeElementClass = 1 << 1,
-  TypeElementStyle = 1 << 2,
-  TypeProperty = 1 << 3,
-  TypeEvent = 1 << 4,
-}
-export function isBinding(node: Node) { return node.type === NodeTypes.Binding; }
-
-/**
- * Queries
- */
-export interface QueryDef extends Node {
-  queryBindings: QueryBindingDef[];
-}
-export interface QueryBindingDef {
-  propName: string;
-  bindingType: QueryBindingType;
-  valueType: QueryValueType;
-}
-export const enum QueryBindingType { First = 0, All = 1 }
-export const enum QueryValueType {
-  Element = 0,
-  Component = 1
-}
-export function isQuery(node: Node) { return node.type === NodeTypes.Query; }
 
 /**
  * ViewData
  */
 export interface ViewData {
-  def: ViewDefinitionOld;
-  // root: RootData;
-  renderer: Renderer;
-  parent: ViewData | null;
-  hostElement: any;
-  component: any;
-  context: any;
-  injector: Injector;
-  disposables: DisposableFn[] | null;
-  childViews: ViewData[] | null;
+  def: ViewDefinition;
 }
-export interface DisposableFn { (): void; }
