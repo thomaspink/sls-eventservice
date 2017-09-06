@@ -8,6 +8,8 @@ import { EXPRESSION_PARSER_PROVIDERS, ExpressionParser } from './expression_pars
 import { ComponentCompiler } from './component_compiler';
 import { TemplateParser } from './template_parser/parser';
 
+import {VIEW_COMPILER_PROVIDER} from './view_compiler';
+
 export const COMPILER_PROVIDER: Provider[] = [
   { provide: ComponentResolver, deps: [Reflector] },
   EXPRESSION_PARSER_PROVIDERS,
