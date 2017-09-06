@@ -5,6 +5,7 @@ import { ListWrapper } from '../util/collection';
 import { NodeDef, NodeFlags, DepFlags, OutputDef, OutputType } from '../view/types';
 import { componentDef, providerDef } from '../view/provider';
 import { elementDef } from '../view/element';
+import { viewDef } from '../view/view';
 import { ComponentResolver } from './component_resolver';
 import { CssSelector } from './selector';
 
@@ -21,17 +22,18 @@ export class ViewCompiler {
 
     const compDeps = (metadata.deps && metadata.deps.map(dep => [DepFlags.None, dep])) || [];
     const compDef = componentDef(0, [], 0, component, compDeps);
-    this._addToNodes(nodes, compDef);
+    nodes.push(compDef);
 
     const element = this._visitElement(metadata.selector);
-    this._addToNodes(nodes, element);
+    nodes.push(element);
 
-    let providers: NodeDef[] = [];
     if (metadata.providers && metadata.providers.length) {
-      providers = this._visitProviders(metadata.providers, nodes);
+      const providers = this._visitProviders(metadata.providers, nodes);
+      nodes.push(...providers);
     }
-    this._addToNodes(nodes, providers);
-    console.log(nodes);
+
+    return viewDef(nodes);
+
   }
 
   private _visitElement(selector?: string) {
@@ -81,16 +83,14 @@ export class ViewCompiler {
       return providerDef(flags, [], token, value, deps);
     });
   }
+}
 
-  private _addToNodes(nodes: NodeDef[], node: NodeDef|NodeDef[]) {
-    if (Array.isArray(node)) {
-      node.forEach(n => this._addToNodes(nodes, n));
-    } else {
-      const index = nodes.length;
-      node.index = index;
-      nodes.push(node);
-    }
+export function calcNodeFlags(nodes: NodeDef[]): NodeFlags {
+  let flags = 0;
+  for (let i = 0; i < nodes.length; i++) {
+    flags |= nodes[i].flags;
   }
+  return flags;
 }
 
 export const VIEW_COMPILER_PROVIDER: Provider = {
