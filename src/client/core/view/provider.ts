@@ -1,7 +1,7 @@
 import { Injector } from '../di/injector';
 import { Renderer } from '../linker/renderer';
 import { ElementRef } from '../linker/element_ref';
-import { NodeDef, NodeFlags, DepDef, DepFlags, BindingDef, OutputDef, ViewData } from './types';
+import { NodeDef, NodeFlags, DepDef, DepFlags, BindingDef, BindingFlags, OutputDef, OutputType, ViewData, QueryValueType } from './types';
 import { tokenKey, splitDepsDsl, calcBindingFlags, isComponentView } from './util';
 import { createInjector } from './refs';
 
@@ -13,6 +13,34 @@ const ElementRefTokenKey = tokenKey(ElementRef);
 const InjectorRefTokenKey = tokenKey(Injector);
 
 const NOT_CREATED = new Object();
+
+export function componentDef(
+  flags: NodeFlags, matchedQueries: [string | number, QueryValueType][], childCount: number,
+  ctor: any, deps: ([DepFlags, any] | any)[], props?: { [name: string]: [number, string] },
+  outputs?: { [name: string]: string }): NodeDef {
+  const bindings: BindingDef[] = [];
+  if (props) {
+    for (let prop in props) {
+      const [bindingIndex, nonMinifiedName] = props[prop];
+      bindings[bindingIndex] = {
+        flags: BindingFlags.TypeProperty,
+        name: prop,
+        nonMinifiedName,
+        ns: null,
+        suffix: null
+      };
+    }
+  }
+  const outputDefs: OutputDef[] = [];
+  if (outputs) {
+    for (let propName in outputs) {
+      outputDefs.push(
+        { type: OutputType.ComponentOutput, propName, target: null, eventName: outputs[propName] });
+    }
+  }
+  flags |= NodeFlags.TypeComponent;
+  return _def(flags, matchedQueries, childCount, ctor, ctor, deps, bindings, outputDefs);
+}
 
 export function providerDef(
   flags: NodeFlags, matchedQueries: [string | number, QueryValueType][], token: any, value: any,
@@ -69,14 +97,14 @@ export function createComponentInstance(view: ViewData, def: NodeDef): any {
   // directives are always eager and classes!
   const instance = createClass(
     view, def.parent!, true, def.provider!.value, def.provider!.deps);
-  if (def.outputs.length) {
-    for (let i = 0; i < def.outputs.length; i++) {
-      const output = def.outputs[i];
-      // const subscription = instance[output.propName !].subscribe(
-      //     eventHandlerClosure(view, def.parent !.index, output.eventName));
-      // view.disposables ![def.outputIndex + i] = subscription.unsubscribe.bind(subscription);
-    }
-  }
+  // if (def.outputs.length) {
+  //   for (let i = 0; i < def.outputs.length; i++) {
+  //     const output = def.outputs[i];
+  // const subscription = instance[output.propName !].subscribe(
+  //     eventHandlerClosure(view, def.parent !.index, output.eventName));
+  // view.disposables ![def.outputIndex + i] = subscription.unsubscribe.bind(subscription);
+  //   }
+  // }
   return instance;
 }
 
@@ -225,7 +253,7 @@ export function resolveDep(
         }
         case ElementRefTokenKey:
           throw new Error('not implemented');
-          // return new ElementRef(asElementData(view, elDef.index).renderElement);
+        // return new ElementRef(asElementData(view, elDef.index).renderElement);
         // case ViewContainerRefTokenKey:
         //   return asElementData(view, elDef.index).viewContainer;
         // case TemplateRefTokenKey: {
@@ -240,26 +268,27 @@ export function resolveDep(
         // }
         case InjectorRefTokenKey:
           throw new Error('not implemented');
-          // return createInjector(view, elDef);
+        // return createInjector(view, elDef);
         default:
-          const providerDef =
-            (allowPrivateServices ? elDef.element!.allProviders :
-              elDef.element!.publicProviders)![tokenKey];
-          if (providerDef) {
-            const providerData = asProviderData(view, providerDef.index);
-            if (providerData.instance === NOT_CREATED) {
-              providerData.instance = _createProviderInstance(view, providerDef);
-            }
-            return providerData.instance;
-          }
+        // const providerDef =
+        //   (allowPrivateServices ? elDef.element!.allProviders :
+        //     elDef.element!.publicProviders)![tokenKey];
+        // if (providerDef) {
+        //   const providerData = asProviderData(view, providerDef.index);
+        //   if (providerData.instance === NOT_CREATED) {
+        //     providerData.instance = _createProviderInstance(view, providerDef);
+        //   }
+        //   return providerData.instance;
+        // }
       }
     }
     allowPrivateServices = isComponentView(view);
-    elDef = viewParentEl(view)!;
-    view = view.parent!;
+    // elDef = viewParentEl(view)!;
+    // view = view.parent!;
   }
 
-  const value = startView.root.injector.get(depDef.token, NOT_FOUND_CHECK_ONLY_ELEMENT_INJECTOR);
+  // const value = startView.root.injector.get(depDef.token, NOT_FOUND_CHECK_ONLY_ELEMENT_INJECTOR);
+  const value: any = null;
 
   if (value !== NOT_FOUND_CHECK_ONLY_ELEMENT_INJECTOR ||
     notFoundValue === NOT_FOUND_CHECK_ONLY_ELEMENT_INJECTOR) {
@@ -271,5 +300,5 @@ export function resolveDep(
     return value;
   }
 
-  return startView.root.ngModule.injector.get(depDef.token, notFoundValue);
+  // return startView.root.ngModule.injector.get(depDef.token, notFoundValue);
 }

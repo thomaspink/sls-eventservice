@@ -58,7 +58,7 @@ export class ExpressionInterpreter implements AstVisitor {
     if (ast.args) {
       args = this.visitAll(ast.args, context);
     }
-    return fn.apply(context.view.component, args);
+    // return fn.apply(context.view.component, args);
   }
 
   visitPipe(ast: BindingPipe, context: ExpressionContext): any {
@@ -113,16 +113,16 @@ export class ExpressionContext {
     if (typeof result !== 'undefined') {
       return result;
     }
-    if (this.view.context) {
-      result = this.view.context[name];
-    }
-    if (typeof result !== 'undefined') {
-      return result;
-    }
-    result = this.view.component[name];
-    if (typeof result !== 'undefined') {
-      return result;
-    }
-    throw new Error(`${name} can not be found while resolving expression ${stringify(this.view.component)}`);
+    // if (this.view.context) {
+    //   result = this.view.context[name];
+    // }
+    // if (typeof result !== 'undefined') {
+    //   return result;
+    // }
+    // result = this.view.component[name];
+    // if (typeof result !== 'undefined') {
+    //   return result;
+    // }
+    // throw new Error(`${name} can not be found while resolving expression ${stringify(this.view.component)}`);
   }
 }

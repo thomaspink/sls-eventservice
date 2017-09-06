@@ -11,6 +11,8 @@ import { ComponentCompiler } from './component_compiler';
 import { TemplateParser } from './template_parser/parser';
 import { SimpleTemplateParser } from './template_parser/simple_parser';
 
+import {VIEW_COMPILER_PROVIDER} from './view_compiler';
+
 export const COMPILER_PROVIDER: Provider[] = [
   { provide: ComponentResolver, deps: [Reflector] },
 
@@ -23,6 +25,7 @@ export const COMPILER_PROVIDER: Provider[] = [
   { provide: ExpressionParser, useClass: SimpleExpressionParser, deps: [] },
 
   { provide: BindingCompiler, deps: [ExpressionParser] },
+  VIEW_COMPILER_PROVIDER,
   { provide: ComponentCompiler, deps: [ComponentResolver, BindingCompiler, TemplateParser, RendererFactoryType] }
 ];
 export { ComponentCompiler };
