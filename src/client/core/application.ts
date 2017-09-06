@@ -5,6 +5,7 @@ import { Injector } from './di/injector';
 import { InjectionToken } from './di/injection_token';
 import { REFLECTIVE_PROVIDERS } from './reflection/reflection';
 import { COMPILER_PROVIDER, ComponentCompiler } from './compiler/compiler';
+import { ViewCompiler } from './compiler/view_compiler';
 import { PLATFORM_BROWSER_PROVIDER } from './platform-browser/platform';
 import { ViewRef, InternalViewRef } from './linker/view_ref';
 
@@ -29,10 +30,10 @@ export class ApplicationRef extends Injector {
       componentFactory =
         this._componentFactoryResolver.resolveComponentFactory(componentOrFactory)!;
     }
-    this._rootComponentTypes.push(componentFactory.componentType);
-    const compRef = componentFactory.create(null, this, null);
-    this.attachView(compRef.hostView);
-    return compRef;
+    // this._rootComponentTypes.push(componentFactory.componentType);
+    // const compRef = componentFactory.create(null, this, null);
+    // this.attachView(compRef.hostView);
+    // return compRef;
   }
 
   attachView(viewRef: ViewRef): void {
@@ -65,10 +66,10 @@ export function bootstrapComponent<C>(component: Type<C>) {
     REFLECTIVE_PROVIDERS,
     COMPILER_PROVIDER
   ]);
-  const compiler: ComponentCompiler = appInjector.get(ComponentCompiler);
-  const resolver = compiler.compile(component);
-  const app = new ApplicationRef(appInjector, resolver);
-  app.bootstrap(component);
+  const compiler: ViewCompiler = appInjector.get(ViewCompiler);
+  const resolver = compiler.compileComponent(component);
+  // const app = new ApplicationRef(appInjector, resolver);
+  // app.bootstrap(component);
 }
 
 function remove<T>(list: T[], el: T): void {

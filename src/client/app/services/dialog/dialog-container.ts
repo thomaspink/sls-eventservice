@@ -30,9 +30,10 @@ export class DialogContainer {
     const el = document.createElement(name);
     this._el.appendChild(el);
 
-    const ref = factory.create(el, injector);
-    this._ref = ref;
-    return ref;
+    // const ref = factory.create(el, injector);
+    // this._ref = ref;
+    // return ref;
+    return null;
   }
 
   detachComponent() {

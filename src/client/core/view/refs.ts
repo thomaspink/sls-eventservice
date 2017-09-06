@@ -10,35 +10,35 @@ import { ComponentFactoryResolver } from '../linker/component_factory_resolver';
 import { ViewRef, InternalViewRef } from '../linker/view_ref';
 import { Renderer } from '../linker/renderer';
 import { callLifecycleHook } from '../lifecycle_hooks';
-import { createComponentView, initView, destroyView } from './view';
-import { ViewDefinitionOld, ViewData } from './types';
+// import { createComponentView, initView, destroyView } from './view';
+import { ViewDefinition, ViewData } from './types';
 import { createClass } from './util';
 
-export function createComponentFactory(selector: string, componentType: Type<any>,
-  viewDef: ViewDefinitionOld) {
-  return new ComponentFactory_(selector, componentType, viewDef);
-}
-class ComponentFactory_ extends ComponentFactory<any> {
-  constructor(public selector: string, public componentType: Type<any>,
-    private viewDef: ViewDefinitionOld) {
-    super();
-  }
-  create(injector: Injector, rootSelectorOrNode?: string|any) {
-    const view = createComponentView(null, this.viewDef, rootSelectorOrNode, null, injector);
-    const instance = createClass(this.componentType, new Injector_(view), view.def.deps);
-    initView(view, instance, null);
-    view.renderer.parse(view);
-    callLifecycleHook(instance, 'onInit');
-    return new ComponentRef_(view, new ViewRef_(view), instance);
-  }
-}
+// export function createComponentFactory(selector: string, componentType: Type<any>,
+//   viewDef: ViewDefinitionOld) {
+//   return new ComponentFactory_(selector, componentType, viewDef);
+// }
+// class ComponentFactory_ extends ComponentFactory<any> {
+//   constructor(public selector: string, public componentType: Type<any>,
+//     private viewDef: ViewDefinitionOld) {
+//     super();
+//   }
+//   create(injector: Injector, rootSelectorOrNode?: string|any) {
+//     const view = createComponentView(null, this.viewDef, rootSelectorOrNode, null, injector);
+//     const instance = createClass(this.componentType, new Injector_(view), view.def.deps);
+//     initView(view, instance, null);
+//     view.renderer.parse(view);
+//     callLifecycleHook(instance, 'onInit');
+//     return new ComponentRef_(view, new ViewRef_(view), instance);
+//   }
+// }
 
 class ComponentRef_ extends ComponentRef<any> {
   constructor(private _view: ViewData, private _viewRef: ViewRef, private _component: any) {
     super();
   }
 
-  get location() { return this._view.hostElement; };
+  get location(): any { return null; /*this._view.hostElement;*/ };
   get instance() { return this._component; };
   get injector() { return new Injector_(this._view); };
   get hostView() { return this._viewRef; };
@@ -59,22 +59,23 @@ class ViewRef_ extends ViewRef implements InternalViewRef {
     this._appRef = null;
   }
 
-  get renderer() { return this.view.renderer; };
+  get renderer(): any { return null; /*this.view.renderer;*/ };
 
   destroy(): void {
-    destroyView(this.view);
+    // destroyView(this.view);
   }
 
   get destroyed() {
     // TODO change to state
-    return !!this.view.hostElement;
+    // return !!this.view.hostElement;
+    return false;
   }
 
   onDestroy(callback: Function): any {
-    if (!this.view.disposables) {
-      this.view.disposables = [];
-    }
-    this.view.disposables.push(<any>callback);
+    // if (!this.view.disposables) {
+    //   this.view.disposables = [];
+    // }
+    // this.view.disposables.push(<any>callback);
   }
 
   detachFromAppRef() {
@@ -94,22 +95,22 @@ class Injector_ extends Injector {
   private parent: Injector;
   constructor(private view: ViewData, _parent?: Injector) {
     super();
-    this.parent = _parent || view.injector || Injector.NULL;
+    // this.parent = _parent || view.injector || Injector.NULL;
   }
 
   get(token: any, notFoundValue?: any): any {
-    if (token === ELEMENT) {
-      return this.view.hostElement;
-    }
-    if (token === ComponentRef) {
-      return new ComponentRef_(this.view, new ViewRef_(this.view), this.view.component);
-    }
-    if (token === Renderer) {
-      return this.view.renderer;
-    }
-    if (token === ComponentFactoryResolver) {
-      return this.view.def.resolver || this.view.def.parent.resolver;
-    }
+    // if (token === ELEMENT) {
+    //   return this.view.hostElement;
+    // }
+    // if (token === ComponentRef) {
+    //   return new ComponentRef_(this.view, new ViewRef_(this.view), this.view.component);
+    // }
+    // if (token === Renderer) {
+    //   return this.view.renderer;
+    // }
+    // if (token === ComponentFactoryResolver) {
+    //   return this.view.def.resolver || this.view.def.parent.resolver;
+    // }
     return this.parent.get(token, notFoundValue);
   }
 }
