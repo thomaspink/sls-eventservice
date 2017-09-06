@@ -4,7 +4,15 @@ import { Injector } from '../di/injector';
 import { NodeDef } from './types';
 
 export function viewDef(nodes: NodeDef[]) {
-
+  let viewBindingCount = 0;
+  let viewDisposableCount = 0;
+  let viewNodeFlags = 0;
+  for (let i = 0; i < nodes.length; i++) {
+    const node = nodes[i];
+    node.index = i;
+    node.bindingIndex = viewBindingCount;
+    node.outputIndex = viewDisposableCount;
+  }
 }
 
 // export function createComponentView(parent: ViewData|null, viewDef: ViewDefinitionOld,
