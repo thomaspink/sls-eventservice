@@ -1,5 +1,5 @@
-import { TagDefinition, TagContentType } from './tags';
-import { $EOF, $LT, $BANG, $LBRACKET, $MINUS, $SLASH, $GT, $COLON, $a, $z, $A, $Z, $0, $9, $SQ, $DQ, $EQ, isWhitespace, isAsciiLetter } from '../chars';
+import { TagDefinition, TagContentType } from '../../compiler/template_parser/tags';
+import { $EOF, $LT, $BANG, $LBRACKET, $MINUS, $SLASH, $GT, $COLON, $a, $z, $A, $Z, $0, $9, $SQ, $DQ, $EQ, isWhitespace, isAsciiLetter } from '../../compiler/chars';
 
 export enum TokenType {
   TAG_OPEN_START,

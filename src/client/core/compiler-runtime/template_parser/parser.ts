@@ -1,7 +1,7 @@
 import { ListWrapper } from '../../util/collection';
-import { TemplateParser, TemplateParseError, TemplateParseResult } from './parser';
-import { tokenize, TokenType, Token } from './simple_lexer';
-import { getSimpleHtmlTagDefinition } from './html_tags';
+import { getSimpleHtmlTagDefinition } from '../../compiler/template_parser/html_tags';
+import { TemplateParser, TemplateParseError, TemplateParseResult } from '../../compiler/template_parser/parser';
+import { tokenize, TokenType, Token } from './lexer';
 
 enum VmType {
   Void,

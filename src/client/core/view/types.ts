@@ -24,11 +24,11 @@ export interface NodeDef {
   /** this is checked against NgContentDef.index to find matched nodes */
   // ngContentIndex: number;
   /** number of transitive children */
-  // childCount: number;
+  childCount: number;
   /** aggregated NodeFlags for all transitive children (does not include self) **/
-  // childFlags: NodeFlags;
+  childFlags: NodeFlags;
   /** aggregated NodeFlags for all direct children (does not include self) **/
-  // directChildFlags: NodeFlags;
+  directChildFlags: NodeFlags;
 
   bindingIndex: number;
   bindings: BindingDef[];
@@ -96,7 +96,7 @@ export const enum NodeFlags {
   // AfterViewInit = 1 << 22,
   // AfterViewChecked = 1 << 23,
   // EmbeddedViews = 1 << 24,
-  // ComponentView = 1 << 25,
+  ComponentView = 1 << 25,
   // TypeContentQuery = 1 << 26,
   TypeViewQuery = 1 << 27,
   // StaticQuery = 1 << 28,
@@ -152,20 +152,20 @@ export interface ElementDef {
   /** ns, name, value */
   attrs: [string, string, string][]|null;
   // template: ViewDefinition|null;
-  // componentProvider: NodeDef|null;
+  componentProvider: NodeDef|null;
   // componentRendererType: RendererType2|null;
   // closure to allow recursive components
-  // componentView: ViewDefinitionFactory|null;
+  componentView: ViewDefinitionFactory|null;
   /**
    * visible public providers for DI in the view,
    * as see from this element. This does not include private providers.
    */
-  // publicProviders: {[tokenKey: string]: NodeDef}|null;
+  publicProviders: {[tokenKey: string]: NodeDef}|null;
   /**
    * same as visiblePublicProviders, but also includes private providers
    * that are located on this element.
    */
-  // allProviders: {[tokenKey: string]: NodeDef}|null;
+  allProviders: {[tokenKey: string]: NodeDef}|null;
   handleEvent: ElementHandleEventFn|null;
 }
 
