@@ -1,5 +1,5 @@
 import { BindingDef, BindingFlags, ViewData } from '../view/types';
-import { ExpressionParser } from './expression_parser/api';
+import { ExpressionParser } from './expression_parser/expression_parser';
 import { EmptyExpr, ParserError, AST } from './expression_parser/ast';
 import { ExpressionInterpreter } from './expression_parser/interpreter';
 import { splitAtColon } from './util';

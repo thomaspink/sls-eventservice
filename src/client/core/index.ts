@@ -1,6 +1,7 @@
 export { OnInit, OnDestroy } from './lifecycle_hooks';
 export { EventEmitter } from './events';
 export { Injector } from './di/injector';
+export { Optional, Self, SkipSelf } from './di/metadata';
 export { Component, Output, HostListener, ChildListener } from './metadata/components';
 export { ViewChild, ViewChildren } from './metadata/di';
 export { ApplicationRef, bootstrapComponent } from './application';

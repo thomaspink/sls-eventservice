@@ -11,27 +11,56 @@ import { ViewRef, InternalViewRef } from '../linker/view_ref';
 import { Renderer } from '../linker/renderer';
 import { callLifecycleHook } from '../lifecycle_hooks';
 // import { createComponentView, initView, destroyView } from './view';
-import { ViewDefinition, ViewData } from './types';
-import { createClass } from './util';
+import { ViewDefinition, ViewData, ViewDefinitionFactory } from './types';
+import { createClass, resolveDefinition } from './util';
 
-// export function createComponentFactory(selector: string, componentType: Type<any>,
-//   viewDef: ViewDefinitionOld) {
-//   return new ComponentFactory_(selector, componentType, viewDef);
-// }
-// class ComponentFactory_ extends ComponentFactory<any> {
-//   constructor(public selector: string, public componentType: Type<any>,
-//     private viewDef: ViewDefinitionOld) {
-//     super();
-//   }
-//   create(injector: Injector, rootSelectorOrNode?: string|any) {
-//     const view = createComponentView(null, this.viewDef, rootSelectorOrNode, null, injector);
-//     const instance = createClass(this.componentType, new Injector_(view), view.def.deps);
-//     initView(view, instance, null);
-//     view.renderer.parse(view);
-//     callLifecycleHook(instance, 'onInit');
-//     return new ComponentRef_(view, new ViewRef_(view), instance);
-//   }
-// }
+export function getComponentViewDefinitionFactory(componentFactory: ComponentFactory<any>):
+  ViewDefinitionFactory {
+  return (componentFactory as ComponentFactory_).viewDefFactory;
+}
+
+class ComponentFactory_ extends ComponentFactory<any> {
+  /**
+   * @internal
+   */
+  viewDefFactory: ViewDefinitionFactory;
+
+  constructor(public selector: string, public componentType: Type<any>,
+    viewDefFactory: ViewDefinitionFactory, private _inputs: { [propName: string]: string } | null,
+    private _outputs: { [propName: string]: string }) {
+    super();
+    this.viewDefFactory = viewDefFactory;
+  }
+
+  get inputs() {
+    const inputsArr: { propName: string, templateName: string }[] = [];
+    const inputs = this._inputs!;
+    for (let propName in inputs) {
+      const templateName = inputs[propName];
+      inputsArr.push({ propName, templateName });
+    }
+    return inputsArr;
+  }
+
+  get outputs() {
+    const outputsArr: { propName: string, templateName: string }[] = [];
+    for (let propName in this._outputs) {
+      const templateName = this._outputs[propName];
+      outputsArr.push({ propName, templateName });
+    }
+    return outputsArr;
+  }
+
+  create(injector: Injector, rootSelectorOrNode?: string | any): ComponentRef<any> {
+    const viewDef = resolveDefinition(this.viewDefFactory);
+    // const instance = createClass(this.componentType, new Injector_(view), view.def.deps);
+    // initView(view, instance, null);
+    // view.renderer.parse(view);
+    // callLifecycleHook(instance, 'onInit');
+    // return new ComponentRef_(view, new ViewRef_(view), instance);
+    return null;
+  }
+}
 
 class ComponentRef_ extends ComponentRef<any> {
   constructor(private _view: ViewData, private _viewRef: ViewRef, private _component: any) {
@@ -52,7 +81,7 @@ class ComponentRef_ extends ComponentRef<any> {
 }
 
 class ViewRef_ extends ViewRef implements InternalViewRef {
-  private _appRef: ApplicationRef|null;
+  private _appRef: ApplicationRef | null;
 
   constructor(public view: ViewData) {
     super();

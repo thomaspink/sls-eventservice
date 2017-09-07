@@ -1,6 +1,4 @@
 import { Provider } from '../../di/provider';
-import { SimpleTemplateParser } from './simple_parser';
-// import { TemplateNodeDef } from '../../view/types';
 
 export class TemplateParseResult {
   constructor(public fileName: string, templateString: string,

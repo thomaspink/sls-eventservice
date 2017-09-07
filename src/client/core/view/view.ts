@@ -7,12 +7,35 @@ export function viewDef(nodes: NodeDef[]) {
   let viewBindingCount = 0;
   let viewDisposableCount = 0;
   let viewNodeFlags = 0;
+  let currentParent: NodeDef|null = null;
+  let currentElementHasPublicProviders = false;
+  let currentElementHasPrivateProviders = false;
   for (let i = 0; i < nodes.length; i++) {
+    while (currentParent && i > currentParent.index + currentParent.childCount) {
+      const newParent: NodeDef|null = currentParent.parent;
+      if (newParent) {
+        newParent.childFlags |= currentParent.childFlags !;
+        // newParent.childMatchedQueries |= currentParent.childMatchedQueries;
+      }
+      currentParent = newParent;
+    }
     const node = nodes[i];
     node.index = i;
+    node.parent = currentParent;
     node.bindingIndex = viewBindingCount;
     node.outputIndex = viewDisposableCount;
+
+    if (node.element) {
+      const elDef = node.element;
+      elDef.publicProviders =
+          currentParent ? currentParent.element !.publicProviders : Object.create(null);
+      elDef.allProviders = elDef.publicProviders;
+      // Note: We assume that all providers of an element are before any child element!
+      currentElementHasPublicProviders = false;
+      currentElementHasPrivateProviders = false;
+    }
   }
+  console.log(nodes);
 }
 
 // export function createComponentView(parent: ViewData|null, viewDef: ViewDefinitionOld,
