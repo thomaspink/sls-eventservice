@@ -53,6 +53,11 @@ export interface Component {
   providers?: Provider[];
 
   /**
+   * Defines the set of injectable objects that are visible to its view DOM children.
+   */
+  viewProviders?: Provider[];
+
+  /**
    * A list of `token`s which need to be resolved by the injector. The list of values is then
    * used as arguments to the constructor.
    */

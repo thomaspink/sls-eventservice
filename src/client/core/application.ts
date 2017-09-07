@@ -4,10 +4,11 @@ import { ComponentFactory, ComponentRef } from './linker/component_factory';
 import { Injector } from './di/injector';
 import { InjectionToken } from './di/injection_token';
 import { REFLECTIVE_PROVIDERS } from './reflection/reflection';
-import { COMPILER_PROVIDER, ComponentCompiler } from './compiler/compiler';
-import { ViewCompiler } from './compiler/view_compiler';
+import { COMPILER_PROVIDER } from './compiler-runtime/compiler';
 import { PLATFORM_BROWSER_PROVIDER } from './platform-browser/platform';
 import { ViewRef, InternalViewRef } from './linker/view_ref';
+
+import { JitCompiler } from './compiler-runtime/jit_compiler';
 
 export class ApplicationRef extends Injector {
   private _rootComponents: ComponentRef<any>[] = [];
@@ -66,8 +67,9 @@ export function bootstrapComponent<C>(component: Type<C>) {
     REFLECTIVE_PROVIDERS,
     COMPILER_PROVIDER
   ]);
-  const compiler: ViewCompiler = appInjector.get(ViewCompiler);
-  const resolver = compiler.compileComponent(component);
+  const compiler: JitCompiler = appInjector.get(JitCompiler);
+  // const resolver = compiler.compileComponent(component);
+  console.log(compiler.compileComponentSync(component));
   // const app = new ApplicationRef(appInjector, resolver);
   // app.bootstrap(component);
 }

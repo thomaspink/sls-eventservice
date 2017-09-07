@@ -1,10 +1,12 @@
-import { ListWrapper } from '../../util/collection';
-import { isWhitespace, $PERIOD, $COMMA } from '../chars';
+import { ListWrapper } from '../util/collection';
+import { Provider } from '../di/provider';
+import { isWhitespace, $PERIOD, $COMMA } from '../compiler/chars';
 import {
   AST, ASTWithSource, EmptyExpr, ImplicitReceiver, PropertyRead, MethodCall,
   ParseSpan, ParserError
-} from './ast';
-import { ExpressionParser } from './api';
+} from '../compiler/expression_parser/ast';
+import { ExpressionParser } from '../compiler/expression_parser/expression_parser';
+import { Lexer } from '../compiler/expression_parser/lexer';
 
 // Regex for parsing the expression. As it can only be a method call or
 // property access we can use a regex.
@@ -44,7 +46,7 @@ const KW_FN_ARGS_IDX = 3;
  * `onClick()`
  * `obj.onStart($event)`
  */
-export class SimpleExpressionParser extends ExpressionParser {
+export class ExpressionParser_ extends ExpressionParser {
 
   constructor() { super(); }
 
@@ -140,3 +142,8 @@ function removeWhitespaces(value: string): string {
   });
   return result;
 }
+
+export const EXPRESSION_PARSER_PROVIDERS: Provider[] = [
+  { provide: Lexer, deps: [] },
+  { provide: ExpressionParser, useClass: ExpressionParser_, deps: [Lexer] }
+];

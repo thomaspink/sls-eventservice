@@ -1,4 +1,4 @@
-import { Component, ViewChild, ChildListener } from '../core';
+import { Component, ViewChild, ChildListener, Optional, SkipSelf } from '../core';
 import { HeaderComponent } from './components/header.component';
 import { DrawerComponent } from './components/drawer.component';
 import { QuotesSwiperComponent } from './components/quotes-swiper.component';
@@ -20,7 +20,7 @@ import { SWIPER_PROVIDERS } from './services/swiper';
   ]
 =======
   providers: [DIALOG_PROVIDERS],
-  // deps: [Dialog],
+  deps: [ [new Optional(), new SkipSelf(), Dialog]],
   components: [HeaderComponent, DrawerComponent, ImageSliderComponent/*, DIALOG_COMPONENTS*/]
 >>>>>>> dba3ac1... wip
 })
@@ -29,10 +29,14 @@ export class AppComponent {
   drawer: DrawerComponent;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   @ChildListener('header', 'onToggleDrawer')
   onToggleDrawer() {
 =======
   constructor(private dialog: any/* Dialog*/) {
+=======
+  constructor(private dialog?: any/* Dialog*/) {
+>>>>>>> 57f8871... wip
   }
 
   @ChildListener('header', 'onToggleDrawer')

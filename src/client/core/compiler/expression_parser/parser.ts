@@ -18,7 +18,7 @@ import {
   SafePropertyRead, TemplateBinding
 } from './ast';
 import { EOF, Lexer, Token, TokenType, isIdentifier, isQuote } from './lexer';
-import { ExpressionParser } from './api';
+import { ExpressionParser } from './expression_parser';
 
 export class SplitInterpolation {
   constructor(public strings: string[], public expressions: string[], public offsets: number[]) { }
@@ -35,7 +35,7 @@ function _createInterpolateRegExp(config: InterpolationConfig): RegExp {
   return new RegExp(pattern, 'g');
 }
 
-export class SuperExpressionParser extends ExpressionParser {
+export class ExpressionParser_ extends ExpressionParser {
   private errors: ParserError[] = [];
 
   constructor(private _lexer: Lexer) {

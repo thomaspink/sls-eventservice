@@ -47,9 +47,9 @@ export function elementDef(
     return [ns, name, value];
   });
   // componentRendererType = resolveRendererType2(componentRendererType);
-  // if (componentView) {
-  //   flags |= NodeFlags.ComponentView;
-  // }
+  if (componentView) {
+    flags |= NodeFlags.ComponentView;
+  }
   flags |= NodeFlags.TypeElement;
   return {
     // will bet set by the view definition
@@ -60,13 +60,13 @@ export function elementDef(
     outputIndex: -1,
     // regular values
     flags,
-    // childFlags: 0,
-    // directChildFlags: 0,
+    childFlags: 0,
+    directChildFlags: 0,
     // childMatchedQueries: 0,
     // matchedQueries,
     // matchedQueryIds,
     // references,
-    // childCount,
+    childCount,
     bindings: bindingDefs,
     bindingFlags: calcBindingFlags(bindingDefs),
     outputs: outputDefs,
@@ -76,11 +76,11 @@ export function elementDef(
       attrs,
       // template: null,
       // will bet set by the view definition
-      // componentProvider: null,
-      // componentView: componentView || null,
+      componentProvider: null,
+      componentView: componentView || null,
       // componentRendererType: componentRendererType,
-      // publicProviders: null,
-      // allProviders: null,
+      publicProviders: null,
+      allProviders: null,
       handleEvent: handleEvent || NOOP,
     },
     provider: null,
