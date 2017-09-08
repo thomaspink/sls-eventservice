@@ -1,0 +1,21 @@
+<div class="swiper-container {{ style | join(' ') }} ">
+
+  <div class="swiper-wrapper">
+    {% for slide in slides %}
+      {% include 'components/swiper-slide.twig' %}
+    {% endfor %}
+  </div>
+
+  {% if pagination %}
+  <div class="swiper-pagination"></div>
+  {% endif %}
+
+  {% if navButtons %}
+  <div class="swiper-button-prev"></div>
+  <div class="swiper-button-next"></div>
+  {% endif %}
+
+  {% if scrollbar %}
+  <div class="swiper-scrollbar"></div>
+  {% endif %}
+</div>
