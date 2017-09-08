@@ -1,5 +1,9 @@
 .service-item {
 
+  &:nth-child(even) {
+    flex-flow: row-reverse;
+  }
+
   grid-column {
     position: relative;
   }

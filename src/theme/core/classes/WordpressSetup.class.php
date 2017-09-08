@@ -35,7 +35,7 @@ class WordpressSetup {
     add_action('init', array($this, 'register_custom_taxonomies'));
     add_action('init', array($this, 'register_menus'));
 
-    add_action( 'after_setup_theme', array($this, 'custom_header_setup'));
+    add_action('after_setup_theme', array($this, 'custom_header_setup'));
     add_action('wp_enqueue_scripts',  array($this, 'add_theme_scripts_and_styles'));
 
 
@@ -120,7 +120,7 @@ class WordpressSetup {
   }
 
   public function register_custom_taxonomies() {
-
+    $services = new CustomTaxonomies('service', 'Leistung', 'Leistungen', false, array('services, post'));
   }
 
   public function change_acf_path( $path ) {

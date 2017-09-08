@@ -14,12 +14,11 @@
 
     the_content();
 
-    Timber::render( array( 'components/swiper.twig' ), $header );
-
-
   endwhile; endif;
 
   printf('</div>');
+
+  Timber::render( array( 'components/swiper.twig' ), $header );
 
   get_footer();
 ?>
