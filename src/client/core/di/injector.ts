@@ -1,6 +1,6 @@
 // tslint:disable:no-bitwise
 
-import { stringify } from '../../util';
+import { stringify } from '../util';
 import { Type } from '../type';
 import { InjectionToken } from './injection_token';
 import { resolveForwardRef } from './forward_ref';
@@ -212,9 +212,15 @@ function resolveToken(
             childRecord,
             // Other records we know about.
             records,
+
             // If we don't know how to resolve dependency and we should not check parent for it,
             // than pass in Null injector.
-            !childRecord ? NULL_INJECTOR : parent,
+            // !childRecord ? NULL_INJECTOR : parent,
+
+            // Changed this from the original angular version to parent
+            // so we can search for dependency in parent injectory
+            parent,
+
             Injector.THROW_IF_NOT_FOUND));
         }
       }

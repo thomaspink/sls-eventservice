@@ -1,7 +1,4 @@
-export * from './app/app.component';
-export * from './app/components/header.component';
-export * from './app/components/drawer.component';
+import { bootstrapComponent } from './core';
+import { AppComponent } from './app/app.component';
 
-import { updateDOM } from './core';
-
-updateDOM();
+bootstrapComponent(AppComponent);
