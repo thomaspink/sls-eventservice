@@ -120,7 +120,7 @@ class WordpressSetup {
   }
 
   public function register_custom_taxonomies() {
-    $services = new CustomTaxonomies('service', 'Leistung', 'Leistungen', false, array('services, post'));
+    $leistungen = new CustomTaxonomies('leistungen', 'Leistung', 'Leistungen', false, array('post', 'services'));
   }
 
   public function change_acf_path( $path ) {

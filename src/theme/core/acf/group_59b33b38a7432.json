@@ -1,0 +1,55 @@
+{
+    "key": "group_59b33b38a7432",
+    "title": "Leistung Kategorie",
+    "fields": [
+        {
+            "key": "field_59b33b7abae06",
+            "label": "Icon",
+            "name": "icon",
+            "type": "select",
+            "instructions": "Bitte Wähle einen Icontyp aus",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "buehnenbau": "Bühnenbau",
+                "lichttechnik": "Lichttechnik",
+                "lasertechnik": "Lasertechnik",
+                "powerfactory": "Powerfactory",
+                "pyrotechnik": "Pyrotechnik",
+                "tontechnik": "Tontechnik",
+                "videoproduktion": "Videoproduktion",
+                "videotechnik": "Videotechnik"
+            },
+            "default_value": [],
+            "allow_null": 0,
+            "multiple": 0,
+            "ui": 0,
+            "ajax": 0,
+            "return_format": "value",
+            "placeholder": ""
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "taxonomy",
+                "operator": "==",
+                "value": "leistungen"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "seamless",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": 1,
+    "description": "",
+    "modified": 1504918580
+}

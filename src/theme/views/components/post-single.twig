@@ -1,0 +1,36 @@
+<div class="post-single container">
+
+  <grid-row gutter='large'>
+
+    <grid-column medium-2>
+
+      <div class="post-single__date">
+        <span class="day">{{ post.date | date('D') }}</span>
+        <span class="month">{{ post.date | date('M, y') }}</span>
+      </div>
+
+      <p class="post-single__author">
+        {{ __('Posted By', 'sls-2017') }} <a href="{{ post.author.link }}">{{ post.author.name}}</a>
+      </p>
+      <p class="post-single__categories">
+        {{ post.categories | json_encode() }}
+      </p>
+
+    </grid-column>
+
+    <grid-column medium-7>
+      <h4 class="post-single__headline">{{ post.title }}</h4>
+      {{ post.content }}
+    </grid-column>
+
+    <grid-column medium-3>
+      <h6>{{ __('Suche', 'sls-2017') }}</h6>
+      <input type="search" />
+    </grid-column>
+
+  </grid-row>
+
+
+</div>
+
+

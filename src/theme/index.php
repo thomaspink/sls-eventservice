@@ -6,6 +6,8 @@
   $header['image'] = get_field('header_image');
   $header['title'] = get_field('header_text');
 
+  $swiper = array();
+
   Timber::render( array( 'components/hero.twig' ), $header );
 
   printf('<div class="container">');
@@ -18,7 +20,7 @@
 
   printf('</div>');
 
-  Timber::render( array( 'components/swiper.twig' ), $header );
+  Timber::render( array( 'components/swiper.twig' ), $swiper );
 
   get_footer();
 ?>
