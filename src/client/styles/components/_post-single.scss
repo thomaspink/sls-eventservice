@@ -1,0 +1,40 @@
+$color-black: black !default;
+$border-radius: 1.5rem !default;
+$top-padding: 0.2rem !default;
+$side-padding: 0.7rem !default;
+
+.post-single__date {
+  font-family: Oswald, 'Roboto Condensed', Roboto, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  letter-spacing: 0.025em;
+  font-weight: bold;
+  align-self: flex-end;
+  display: flex;
+  flex-flow: column;
+  width: fit-content;
+  height: auto;
+  border: 0.3rem solid $color-black;
+  border-top-left-radius: $border-radius;
+  border-bottom-right-radius: $border-radius;
+  font-size: 1.2em;
+  text-align: right;
+  margin-bottom: 1.5rem;
+
+  .day {
+    font-size: 2.7em;
+    padding: $top-padding $side-padding 0;
+    line-height: 1.1em;
+  }
+
+  .month {
+    padding: 0 $side-padding $top-padding;
+  }
+}
+
+.post-single__author,
+.post-single__categories {
+  font-family: Oswald, 'Roboto Condensed', Roboto, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  letter-spacing: 0.025em;
+  line-height: 1.5em;
+  text-align: right;
+  margin: 0;
+}

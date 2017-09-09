@@ -5,7 +5,7 @@
         {
             "key": "field_59b33c665a607",
             "label": "Kategorien",
-            "name": "categories",
+            "name": "kategorien",
             "type": "taxonomy",
             "instructions": "Bitte wählen Sie die passenden Kategorien aus",
             "required": 0,
@@ -105,5 +105,5 @@
     ],
     "active": 1,
     "description": "",
-    "modified": 1504918718
+    "modified": 1504919018
 }

@@ -3,6 +3,7 @@
 class TimberSetup extends TimberSite {
 
   use TestHelper;
+  use GetLeistungen;
 
   protected $version;
   protected $assets;
@@ -74,6 +75,7 @@ class TimberSetup extends TimberSite {
       /* this is where you can add your own functions to twig */
       $twig->addExtension( new Twig_Extension_StringLoader() );
       $twig->addFilter('test_helper', new Twig_SimpleFilter('test_helper', array($this, 'test_helper')));
+      $twig->addFilter('get_leistungen', new Twig_SimpleFilter('get_leistungen', array($this, 'get_leistungen')));
       $twig->addFunction(new Twig_SimpleFunction('get_header_image', array($this, 'get_header_image')));
 
     return $twig;

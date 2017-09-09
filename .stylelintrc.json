@@ -19,7 +19,7 @@
 
     "unit-case": "lower",
     "unit-no-unknown": true,
-    "unit-whitelist": ["px", "%", "deg", "ms", "em", "vh", "vw"],
+    "unit-whitelist": ["px", "%", "deg", "ms", "em", "rem", "vh", "vw"],
 
     "value-list-comma-space-after": "always-single-line",
     "value-list-comma-space-before": "never",
@@ -53,7 +53,6 @@
     "selector-pseudo-element-case": "lower",
     "selector-pseudo-element-colon-notation": "double",
     "selector-pseudo-element-no-unknown": true,
-    "selector-type-case": "lower",
-    "selector-no-id": false
+    "selector-type-case": "lower"
   }
 }
