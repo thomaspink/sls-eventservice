@@ -1,0 +1,7 @@
+<div class="gallery">
+
+  {% for image in gallery %}
+    {% include 'components/gallery-item.twig' with { image: image } %}
+  {% endfor %}
+
+</div>

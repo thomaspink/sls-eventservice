@@ -5,7 +5,7 @@
     <grid-column medium-3>
 
       <div class="post-single__date">
-        <div class="day">{{ post.date | date('s') }}</div>
+        <div class="day">{{ post.date | date('d') }}</div>
         <div class="month">{{ post.date | date('M, o') }}</div>
       </div>
 
@@ -19,17 +19,23 @@
     </grid-column>
 
     <grid-column medium-6>
-      <h4 class="post-single__headline">{{ post.title }}</h4>
+      <h3 class="post-single__headline">{{ post.title }}</h3>
 
 
-      {% include 'components/image.twig' with {'image': Image(post.image) } %}
+      {% include 'components/image.twig' with { 'image': Image(post.image) } %}
 
       {{ post.content }}
+
+      {% set gallery = post.get_field('gallery') %}
+      {% if gallery %}
+        {% include 'components/gallery.twig' with { 'gallery': gallery } %}
+      {% endif %}
+
     </grid-column>
 
     <grid-column medium-3>
       <h6>{{ __('Suche', 'sls-2017') }}</h6>
-      <input type="search" />
+      <input type="search" placeholder="{{ __('Suchbegriff', 'sls-2017') }}"/>
     </grid-column>
 
   </grid-row>
