@@ -20,6 +20,10 @@
 
     <grid-column medium-6>
       <h4 class="post-single__headline">{{ post.title }}</h4>
+
+
+      {% include 'components/image.twig' with {'image': Image(post.image) } %}
+
       {{ post.content }}
     </grid-column>
 
