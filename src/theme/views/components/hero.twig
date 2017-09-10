@@ -5,12 +5,12 @@
   hero--bg-bottom
 
 #}
-<div class="hero {{ style | join(' ') }} "
-  style="background-image: url('{{ image.url }}')">
+<div class="hero {{ hero.style | join(' ') }} "
+  style="background-image: url('{{ hero.image.url }}')">
   <div class="container">
-    {% if title %}
+    {% if hero.title %}
 
-    <h1 class="hero__title">{{title}}</h1>
+    <h1 class="hero__title">{{ hero.title }}</h1>
 
     {% endif %}
   </div>

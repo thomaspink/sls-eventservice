@@ -1,0 +1,21 @@
+
+{% include 'components/hero.twig' with { 'hero': hero } %}
+
+<div class="container">
+
+  {% if page %}
+
+    {{ page.content }}
+
+  {% endif %}
+
+</div>
+
+{% include 'components/swiper.twig' with { 'slides': swiper, 'pagination': true } %}
+
+<div class="container">
+
+  <h2 class="is-centered" >SLS – Blog</h2>
+  {% include 'components/post-overview.twig' with { 'posts': posts } %}
+
+</div>

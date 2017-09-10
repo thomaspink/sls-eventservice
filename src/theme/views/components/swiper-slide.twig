@@ -1,3 +1,9 @@
 <div class="swiper-slide">
-  swiper slide!
+  {% if slide.image %}
+    {% include 'components/image.twig' with { 'image': Image(slide.image) } %}
+  {% endif %}
+
+  {% if slide.text %}
+    <p class="swiper-slide__text">{{ slide.text}}</p>
+  {% endif %}
 </div>
