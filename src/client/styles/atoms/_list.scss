@@ -1,8 +1,8 @@
-ul {
+ul.has--arrows {
   padding-left: 1em;
 }
 
-li {
+.has--arrows > li {
   list-style-type: none;
 
   &::before {
