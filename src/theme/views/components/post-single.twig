@@ -1,9 +1,6 @@
-<div class="post-single container">
-
-  <grid-row gutter='large'>
+<grid-row gutter='large' class="blog-item">
 
     <grid-column medium-3>
-
       <div class="post-single__date">
         <div class="day">{{ post.date | date('d') }}</div>
         <div class="month">{{ post.date | date('M, o') }}</div>
@@ -15,32 +12,34 @@
       <p class="post-single__categories">
         {{ post.kategorien | get_leistungen() }}
       </p>
-
     </grid-column>
 
-    <grid-column medium-6>
+    <grid-column medium-9>
       <h3 class="post-single__headline">{{ post.title }}</h3>
-
 
       {% include 'components/image.twig' with { 'image': Image(post.image) } %}
 
-      {{ post.content }}
+      {% if excerpt %}
 
-      {% set gallery = post.get_field('gallery') %}
-      {% if gallery %}
-        {% include 'components/gallery.twig' with { 'gallery': gallery } %}
+        <p class="post-single__excerpt">
+          {# get_preview($len = 50, $force = false, $readmore = 'Read More', $strip = true, $end = "&hellip;") #}
+          {{ post.get_preview(40, false, false) }}
+        </p>
+
+        <a class="post-single__link" href="{{ post.link }}">
+          <button class="post-single__more">{{ __('Mehr erfahren', 'sls-2017') }}</button>
+        </a>
+
+      {% else %}
+        {{ post.content }}
+
+        {% set gallery = post.get_field('gallery') %}
+        {% if gallery %}
+          {% include 'components/gallery.twig' with { 'gallery': gallery } %}
+        {% endif %}
+
       {% endif %}
 
     </grid-column>
 
-    <grid-column medium-3>
-      <h6>{{ __('Suche', 'sls-2017') }}</h6>
-      <input type="search" placeholder="{{ __('Suchbegriff', 'sls-2017') }}"/>
-    </grid-column>
-
-  </grid-row>
-
-
-</div>
-
-
+</grid-row>

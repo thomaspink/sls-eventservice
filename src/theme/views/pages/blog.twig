@@ -1,0 +1,27 @@
+<div class="blog container">
+
+  <grid-row gutter='small'>
+
+    <grid-column medium-9>
+
+      {% for post in posts %}
+        {% include 'components/post-single.twig' with { 'post': post, 'excerpt': multiple } %}
+      {% endfor %}
+
+      {% if multiple %}
+        {% include 'components/pagination.twig' with { 'pagination': pagination } %}
+      {% endif %}
+
+    </grid-column>
+
+    <grid-column medium-3>
+      <h6>{{ __('Suche', 'sls-2017') }}</h6>
+      <input type="search" placeholder="{{ __('Suchbegriff', 'sls-2017') }}"/>
+    </grid-column>
+
+  </grid-row>
+
+
+</div>
+
+

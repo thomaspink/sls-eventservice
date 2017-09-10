@@ -5,7 +5,7 @@
 
   $context = Timber::get_context();
   $context['post'] = new TimberPost();
-  $template = array( 'components/post-single.twig' );
+  $template = array( 'pages/post-single.twig' );
 
   Timber::render( $template, $context );
 
