@@ -1,0 +1,24 @@
+ul {
+  padding-left: 1em;
+}
+
+li {
+  list-style-type: none;
+
+  &::before {
+    content: '> ';
+    margin-left: -1em;
+    padding-right: 0.5em;
+    display: inline-block;
+  }
+
+  a {
+    color: inherit;
+    opacity: 1;
+    transition: opacity 300ms ease-out;
+
+    &:hover {
+      opacity: 0.6;
+    }
+  }
+}
