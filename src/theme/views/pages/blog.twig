@@ -17,6 +17,10 @@
     <grid-column medium-3>
       <h6>{{ __('Suche', 'sls-2017') }}</h6>
       <input type="search" placeholder="{{ __('Suchbegriff', 'sls-2017') }}"/>
+
+      <h3>{{ __('Kategorien', 'sls-2017') }}</h3>
+      {% include 'components/categorylist.twig' %}
+
     </grid-column>
 
   </grid-row>

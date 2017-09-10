@@ -1,0 +1,11 @@
+<ul class="category-list">
+
+  {% for leistung in  list_leistungen() %}
+
+  <li class="category-list__item">
+    <a href="">{{ leistung.name }}</a>
+  </li>
+
+  {% endfor %}
+
+</ul>
