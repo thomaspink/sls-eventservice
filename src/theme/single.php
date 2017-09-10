@@ -4,8 +4,8 @@
 
 
   $context = Timber::get_context();
-  $context['post'] = new TimberPost();
-  $template = array( 'pages/post-single.twig' );
+  $context['posts'] = array(new TimberPost());
+  $template = array( 'pages/blog.twig' );
 
   Timber::render( $template, $context );
 
