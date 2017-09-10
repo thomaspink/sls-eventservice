@@ -3,16 +3,16 @@
   get_header();
 
 
-  $blog = array(
+  $args = array(
     'post_type' => 'post',
-    'posts_per_page' => '2'
-  );
-
+    'posts_per_page' => 1,
+    'paged' => 1
+);
   $context = Timber::get_context();
-  $context['posts'] = Timber::get_posts($blog);
-  $context['pagination'] = Timber::get_pagination();
+  $context['posts'] = new Timber\PostQuery($args);
   $context['multiple'] = true;
   $template = array( 'pages/blog.twig' );
+
 
   Timber::render( $template, $context );
 

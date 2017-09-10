@@ -1,10 +1,11 @@
 <div class="pagination">
+
     {% if pagination.prev %}
-        <a href="{{pagination.prev.link}}" class="prev {{pagination.prev.link|length ? '' : 'invisible'}}">Prev</a>
+        <a href="{{pagination.prev.link}}" class="prev {{pagination.prev.link|length ? '' : 'invisible'}}"><</a>
     {% endif %}
     <ul class="pages">
         {% for page in pagination.pages %}
-            <li>
+            <li class="pages__item">
                 {% if page.link %}
                     <a href="{{page.link}}" class="{{page.class}}">{{page.title}}</a>
                 {% else %}
@@ -14,6 +15,6 @@
         {% endfor %}
     </ul>
     {% if pagination.next %}
-        <a href="{{pagination.next.link}}" class="next {{pagination.next.link|length ? '' : 'invisible'}}">Next</a>
+        <a href="{{pagination.next.link}}" class="next {{pagination.next.link|length ? '' : 'invisible'}}">></a>
     {% endif %}
 </div>

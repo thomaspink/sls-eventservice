@@ -1,6 +1,9 @@
-<?php get_header(); ?>
+<?php
 
-<h1>404 Not Found</h1>
+  get_header();
 
+  Timber::render( array( 'pages/404.twig' ) );
 
-<?php get_footer(); ?>
+  get_footer();
+
+?>

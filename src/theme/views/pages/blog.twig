@@ -9,7 +9,12 @@
       {% endfor %}
 
       {% if multiple %}
-        {% include 'components/pagination.twig' with { 'pagination': pagination } %}
+      <grid-row gutter='large'>
+
+        <grid-column medium-3></grid-column>
+        <grid-column medium-9>
+          {% include 'components/pagination.twig' with { 'pagination': posts.pagination } %}
+        </grid-column>
       {% endif %}
 
     </grid-column>
