@@ -1,0 +1,20 @@
+<grid-column class="post" medium-4>
+
+  <h3 class="post__title">{{ post.title }}</h3>
+
+  {% include 'components/image.twig' with { 'image': Image(post.image), 'style': 'post__image' } %}
+
+  <div class="post__about">
+    {% include 'components/icon.twig' with { icon: 'clock' } %} {{ __('on', 'sls-2017') }} {{ post.date | date('d M, o') }}
+    {% include 'components/icon.twig' with { icon: 'user' } %} {{ __('Posted By', 'sls-2017') }} <a href="{{ post.author.link }}">{{ post.author.name}}</a>
+  </div>
+
+  <p class="post__excerpt">
+    {# get_preview($len = 50, $force = false, $readmore = 'Read More', $strip = true, $end = "&hellip;") #}
+    {{ post.get_preview(40, false, false) }}
+  </p>
+
+  <a class="post__link" href="{{ post.link }}">
+    <button class="post__more">{{ __('Erfahre mehr', 'sls-2017') }}</button>
+  </a>
+</grid-column>

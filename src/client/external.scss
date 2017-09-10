@@ -1,9 +1,12 @@
 @import 'styles/variables';
 @import 'styles/icons';
 
+@import 'styles/atoms/image';
+
 @import 'styles/components/service-item';
 @import 'styles/components/gallery';
-@import 'styles/atoms/image';
+@import 'styles/components/post-overview';
+@import 'styles/components/post';
 
 @import 'styles/gallery';
 @import 'styles/feature';
