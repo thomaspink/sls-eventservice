@@ -11,12 +11,12 @@
             "required": 1,
             "conditional_logic": 0,
             "wrapper": {
-                "width": "",
+                "width": "40",
                 "class": "",
                 "id": ""
             },
             "return_format": "array",
-            "preview_size": "thumbnail",
+            "preview_size": "medium",
             "library": "all",
             "min_width": "",
             "min_height": "",
@@ -35,7 +35,7 @@
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
-                "width": "",
+                "width": "60",
                 "class": "",
                 "id": ""
             },
@@ -77,5 +77,5 @@
     ],
     "active": 1,
     "description": "",
-    "modified": 1504894117
+    "modified": 1505142729
 }

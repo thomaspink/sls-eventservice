@@ -35,7 +35,7 @@
 
         {% set gallery = post.get_field('gallery') %}
         {% if gallery %}
-          {% include 'components/gallery.twig' with { 'gallery': gallery } %}
+          {% include 'components/layout.twig' with { 'layout': gallery } %}
         {% endif %}
 
       {% endif %}

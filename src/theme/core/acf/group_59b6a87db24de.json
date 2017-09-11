@@ -1,24 +1,24 @@
 {
-    "key": "group_59943ffe39ec9",
-    "title": "Leistungen",
+    "key": "group_59b6a87db24de",
+    "title": "Referenz",
     "fields": [
         {
-            "key": "field_5994400b61950",
+            "key": "field_59b6a897637d1",
             "label": "Bild",
             "name": "image",
             "type": "image",
             "instructions": "",
-            "required": 1,
+            "required": 0,
             "conditional_logic": 0,
             "wrapper": {
-                "width": "40",
+                "width": "50",
                 "class": "",
                 "id": ""
             },
             "return_format": "array",
-            "preview_size": "medium",
+            "preview_size": "large",
             "library": "all",
-            "min_width": 620,
+            "min_width": "",
             "min_height": "",
             "min_size": "",
             "max_width": "",
@@ -27,35 +27,47 @@
             "mime_types": ""
         },
         {
-            "key": "field_5994405f61951",
-            "label": "Icon",
-            "name": "icon",
-            "type": "select",
+            "key": "field_59b6a8b4637d2",
+            "label": "Logo",
+            "name": "logo",
+            "type": "image",
             "instructions": "",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
-                "width": "60",
+                "width": "50",
                 "class": "",
                 "id": ""
             },
-            "choices": {
-                "buehnenbau": "Bühnenbau",
-                "lichttechnik": "Lichttechnik",
-                "lasertechnik": "Lasertechnik",
-                "powerfactory": "Powerfactory",
-                "pyrotechnik": "Pyrotechnik",
-                "tontechnik": "Tontechnik",
-                "videoproduktion": "Videoproduktion",
-                "videotechnik": "Videotechnik"
+            "return_format": "array",
+            "preview_size": "medium",
+            "library": "all",
+            "min_width": "",
+            "min_height": "",
+            "min_size": "",
+            "max_width": "",
+            "max_height": "",
+            "max_size": "",
+            "mime_types": ""
+        },
+        {
+            "key": "field_59b6a8ea637d3",
+            "label": "Kurztext",
+            "name": "shorttext",
+            "type": "textarea",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
             },
-            "default_value": [],
-            "allow_null": 0,
-            "multiple": 0,
-            "ui": 0,
-            "ajax": 0,
-            "return_format": "value",
-            "placeholder": ""
+            "default_value": "",
+            "placeholder": "",
+            "maxlength": "",
+            "rows": "",
+            "new_lines": ""
         }
     ],
     "location": [
@@ -63,13 +75,13 @@
             {
                 "param": "post_type",
                 "operator": "==",
-                "value": "services"
+                "value": "references"
             }
         ]
     ],
     "menu_order": 0,
     "position": "acf_after_title",
-    "style": "seamless",
+    "style": "default",
     "label_placement": "top",
     "instruction_placement": "label",
     "hide_on_screen": [
@@ -90,5 +102,5 @@
     ],
     "active": 1,
     "description": "",
-    "modified": 1505142817
+    "modified": 1505143061
 }

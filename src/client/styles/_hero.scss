@@ -18,6 +18,11 @@
   }
 }
 
+.hero.hero--right > .container {
+  display: flex;
+  flex-flow: row-reverse;
+}
+
 .hero.hero--large > .container {
   height: 250px;
   @media all and (min-width:$breakpoint-tablet) {
@@ -62,4 +67,8 @@
     left: 50%;
     transform: translateX(-111%);
   }
+}
+
+.hero--right.hero--outline > .container::after {
+  left: 115%;
 }

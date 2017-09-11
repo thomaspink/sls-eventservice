@@ -1,0 +1,7 @@
+<div class="layout">
+
+  {% for image in layout %}
+    {% include 'components/layout-item.twig' with { image: image } %}
+  {% endfor %}
+
+</div>
