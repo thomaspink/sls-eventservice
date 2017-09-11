@@ -52,9 +52,9 @@ export function _def(flags: NodeFlags, matchedQueriesDsl: [string | number, Quer
   childCount: number, token: any, value: any, deps: ([DepFlags, any] | any)[],
   bindings?: BindingDef[], outputs?: OutputDef[]): NodeDef {
   // const { matchedQueries, references, matchedQueryIds } = splitMatchedQueriesDsl(matchedQueriesDsl);
-  // if (!outputs) {
-  //   outputs = [];
-  // }
+  if (!outputs) {
+    outputs = [];
+  }
   if (!bindings) {
     bindings = [];
   }
