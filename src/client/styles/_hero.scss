@@ -53,11 +53,13 @@
   pointer-events: none;
   transform: translateX(-50%);
 
-  @media all and (min-width:$breakpoint-tablet) {
-    width: 830px;
-    height: 830px;
-    border-width: 30px;
+  @media all and (min-width: $breakpoint-tablet) {
+    width: 47%;
+    height: 100%;
+    border-width: 20px;
     border-bottom-right-radius: 100px;
     bottom: 30px;
+    left: 50%;
+    transform: translateX(-111%);
   }
 }

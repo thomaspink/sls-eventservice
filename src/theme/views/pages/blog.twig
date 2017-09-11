@@ -1,3 +1,7 @@
+{% if hero %}
+  {% include 'components/hero.twig' with { 'hero': hero } only %}
+{% endif %}
+
 <div class="blog container">
 
   <grid-row gutter='small'>

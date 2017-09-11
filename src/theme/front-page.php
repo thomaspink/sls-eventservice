@@ -9,7 +9,7 @@
 
   $context = Timber::get_context();
 
-  $context['hero']['style'] = array('hero--large');
+  $context['hero']['style'] = array('hero--large', 'hero--right');
   $context['hero']['image'] = get_field('header_image');
   $context['hero']['title'] = get_field('header_text');
 
