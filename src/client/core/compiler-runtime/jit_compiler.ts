@@ -17,7 +17,8 @@ export class JitCompiler {
 
   private _compileComponent(component: Type<any>, allComponentFactories: object[] | null, isSync: boolean) {
     return SyncAsync.then(this._loadComponent(component, isSync), _ => {
-      console.log(this._metadataResolver.getComponentMetadata(component));
+      const metadata = this._metadataResolver.getComponentMetadata(component);
+      this._viewCompiler.compileComponent(metadata);
       return {};
     });
   }
