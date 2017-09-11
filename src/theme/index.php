@@ -11,7 +11,8 @@
     'post_type' => 'post',
     'posts_per_page' => 2,
     'paged' => $paged
-);
+  );
+
   $context = Timber::get_context();
   $context['posts'] = new Timber\PostQuery($args);
   $context['multiple'] = true;
