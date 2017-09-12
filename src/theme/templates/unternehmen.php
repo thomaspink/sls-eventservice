@@ -4,6 +4,9 @@
    *
    */
 
+
+  $context = Timber::get_context();
+
   if( have_rows('content') ):
 
       // loop through the rows of data

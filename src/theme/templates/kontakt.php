@@ -3,6 +3,7 @@
    * Template Name: Kontakt
    */
 
-    Timber::render( array( 'pages/contact.twig' ) );
+    $context = Timber::get_context();
+    Timber::render( array( 'pages/contact.twig' ), $context );
 
   ?>
