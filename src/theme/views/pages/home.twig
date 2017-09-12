@@ -1,21 +1,26 @@
+{% extends 'layouts/base.twig' %}
 
-{% include 'components/hero.twig' with { 'hero': hero } %}
+{% block content %}
 
-<div class="container">
+  {% include 'components/hero.twig' with { 'hero': hero } %}
 
-  {% if page %}
+  <div class="container">
 
-    {{ page.content }}
+    {% if page %}
 
-  {% endif %}
+      {{ page.content }}
 
-</div>
+    {% endif %}
 
-{% include 'components/swiper.twig' with { 'slides': swiper, 'pagination': true } %}
+  </div>
 
-<div class="container">
+  {% include 'components/swiper.twig' with { 'slides': swiper, 'pagination': true } %}
 
-  <h2 class="is-centered" >SLS – Blog</h2>
-  {% include 'components/post-overview.twig' with { 'posts': posts } %}
+  <div class="container">
 
-</div>
+    <h2 class="is-centered" >SLS – Blog</h2>
+    {% include 'components/post-overview.twig' with { 'posts': posts } %}
+
+  </div>
+
+{% endblock %}

@@ -1,9 +1,8 @@
 <?php
   /*
    * Template Name: Unternehmen
+   *
    */
-
-  get_header();
 
   if( have_rows('content') ):
 
@@ -46,6 +45,3 @@
       endwhile;
 
   endif;
-
-
-  get_footer();

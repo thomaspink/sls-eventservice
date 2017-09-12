@@ -1,7 +1,5 @@
 <?php
 
-  get_header();
-
   $blog = array(
     'post_type' => 'post',
     'posts_per_page' => '3'
@@ -19,5 +17,4 @@
 
   Timber::render( array( 'pages/home.twig' ), $context );
 
-  get_footer();
 ?>

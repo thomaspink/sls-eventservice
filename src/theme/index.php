@@ -1,7 +1,5 @@
 <?php
 
-  get_header();
-
   global $paged; // current page
   if (!isset($paged) || !$paged){
       $paged = 1;
@@ -24,8 +22,5 @@
   $template = array( 'pages/blog.twig' );
 
   Timber::render( $template, $context );
-
-
-  get_footer();
 
 ?>

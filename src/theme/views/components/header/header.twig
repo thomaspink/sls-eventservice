@@ -1,0 +1,14 @@
+<header>
+  {% include 'components/header/social-nav.twig' %}
+
+  <div class="main-header">
+    <div class="container">
+      <a href="/" role="banner" aria-label="Startseite" class="brand" tabindex="-1">
+        {% include 'components/logo.twig' %}
+      </a>
+      <button class="toggle-drawer"><i class="material-icons">menu</i></button>
+      {% include 'components/header/main-nav.twig' %}
+    </div>
+  </div>
+
+</header>

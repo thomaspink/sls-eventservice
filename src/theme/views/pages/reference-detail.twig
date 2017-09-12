@@ -1,20 +1,26 @@
-{% include 'components/hero.twig' with { 'hero': hero } only %}
+{% extends 'layouts/base.twig' %}
 
-<div class="container">
-  <grid-row gutter="medium">
-      <grid-column medium-6>
-        <h2 class="jumbo">Ihr Event - <br>unsere Aufgabe</h2>
-        <p class="excerpt">
-        It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it ha
-        </p>
-      </grid-column>
+{% block content %}
 
-      <grid-column medium-6>
-        <img class="reference-logo" src="" />
-      </grid-column>
-  </grid-row>
+  {% include 'components/hero.twig' with { 'hero': hero } only %}
 
-  {% if page.gallery %}
-    {% include 'components/gallery.twig' with { 'gallery': page.gallery } only %}
-  {% endif %}
-</div>
+  <div class="container">
+    <grid-row gutter="medium">
+        <grid-column medium-6>
+          <h2 class="jumbo">Ihr Event - <br>unsere Aufgabe</h2>
+          <p class="excerpt">
+          It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it ha
+          </p>
+        </grid-column>
+
+        <grid-column medium-6>
+          <img class="reference-logo" src="" />
+        </grid-column>
+    </grid-row>
+
+    {% if page.gallery %}
+      {% include 'components/gallery.twig' with { 'gallery': page.gallery } only %}
+    {% endif %}
+  </div>
+
+{% endblock %}

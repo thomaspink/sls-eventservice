@@ -1,8 +1,5 @@
 <?php
 
-  get_header();
-
-
   $context = Timber::get_context();
   $context['posts'] = array(new TimberPost());
   $context['hero'] = array(
@@ -13,8 +10,3 @@
   $template = array( 'pages/blog.twig' );
 
   Timber::render( $template, $context );
-
-
-  get_footer();
-
-?>

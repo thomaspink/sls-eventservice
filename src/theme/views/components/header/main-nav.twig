@@ -1,0 +1,14 @@
+<nav id="main-navigation" class="main-nav">
+  <ul id="menu-hauptmenue" class="main-nav__list">
+
+    {% for item in topMenu.get_items %}
+
+      <li class="menu-item {{ item.classes | join(' ') }}">
+        <a class="nav-main-link" href="{{ item.get_link }}">{{ item.title }}</a>
+      </li>
+
+    {% endfor %}
+
+  </ul>
+</nav>
+

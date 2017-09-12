@@ -3,7 +3,6 @@
    * Template Name: Referenzen
    */
 
-  get_header();
   // $args = array(
   //   'post_type' => 'references',
   //   'posts_per_page' => 2,
@@ -20,6 +19,3 @@
   $template = array( 'pages/reference-detail.twig' );
 
   Timber::render( $template, $context );
-
-
-  get_footer();

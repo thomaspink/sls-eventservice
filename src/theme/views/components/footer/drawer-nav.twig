@@ -1,0 +1,14 @@
+<nav class="side-drawer__nav">
+  <button class="side-drawer__close"></button>
+  <ul id="menu-hauptmenue-1" class="side-drawer__list">
+
+    {% for item in topMenu.get_items %}
+
+      <li class="menu-item {{ item.classes | join(' ') }}">
+        <a class="nav-main-link" href="{{ item.get_link }}">{{ item.title }}</a>
+      </li>
+
+    {% endfor %}
+
+  </ul>
+</nav>

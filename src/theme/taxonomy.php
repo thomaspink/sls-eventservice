@@ -1,7 +1,5 @@
 <?php
 
-  get_header();
-
   $term_slug = get_query_var( 'term' );
   $taxonomyName = get_query_var( 'taxonomy' );
   $term = get_term_by( 'slug', $term_slug, $taxonomyName );
@@ -30,9 +28,3 @@
   $template = array( 'pages/blog.twig' );
 
   Timber::render( $template, $context );
-
-
-
-  get_footer();
-
-?>
