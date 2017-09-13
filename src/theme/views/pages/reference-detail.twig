@@ -14,7 +14,8 @@
         </grid-column>
 
         <grid-column medium-6>
-          <img class="reference-logo" src="" />
+
+          {% include 'components/image.twig' with { 'image': Image(page.logo), 'style': 'refernce-logo' } %}
         </grid-column>
     </grid-row>
 

@@ -1,7 +1,7 @@
 <?php
 
 $context = Timber::get_context();
-$context['page'] = array(new TimberPost());
+$context['page'] = new TimberPost();
 $context['hero'] = array(
   'image' => array('url' => 'http://placehold.it/900x400'),
   'title' => 'Referenzen',
