@@ -27,7 +27,20 @@ class TimberSetup extends TimberSite {
         $context['version'] = $this->version;
         $context['env'] = WP_ENV;
         $context['topMenu'] = new TimberMenu('top');
+        $context['footer'] = array(
+          'address' => array(
+            'streetAddress' => get_field('street-address', 'option'),
+            'countryName' => get_field('country-name', 'option'),
+            'postalCode' => get_field('postal-code', 'option'),
+            'locality' => get_field('locality', 'option'),
+          ),
+          'jobs' => false,
+          'partner' => false,
+          'downloads' => get_field('downloads', 'option')
+        );
         $context['site'] = $this;
+
+        var_dump($context['footer']);
 
         return $context;
     }

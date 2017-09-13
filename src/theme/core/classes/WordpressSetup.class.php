@@ -79,9 +79,7 @@ class WordpressSetup {
       add_filter('style_loader_tag', array($this, 'inline_styles'), 10, 4);
     }
 
-    // $options = new OptionsPage('Allgemeine Theme Konfiguration', 'Theme Konfiguration', 'theme-options');
-    // $function = $options->addOptionsPage();
-    // var_dump($options);
+    $options = new OptionsPage('Allgemeine Theme Konfiguration', 'Theme Konfiguration', 'theme-options');
   }
 
   public function get_version() {

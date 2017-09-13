@@ -20,6 +20,7 @@ if (class_exists('Timber')) {
 
   require_once __DIR__ . '/core/classes/CustomPostTypes.class.php';
   require_once __DIR__ . '/core/classes/CustomTaxonomies.class.php';
+  require_once __DIR__ . '/core/classes/OptionsPage.class.php';
   require_once __DIR__ . '/core/classes/WordpressSetup.class.php';
   require_once __DIR__ . '/core/classes/TimberSetup.class.php';
 
