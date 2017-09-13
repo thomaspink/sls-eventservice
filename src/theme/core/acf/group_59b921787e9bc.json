@@ -88,8 +88,8 @@
         {
             "key": "field_59b925d980165",
             "label": "Telefonnummern",
-            "name": "telefonnummern",
-            "type": "group",
+            "name": "numbers",
+            "type": "repeater",
             "instructions": "",
             "required": 0,
             "conditional_logic": 0,
@@ -98,27 +98,12 @@
                 "class": "",
                 "id": ""
             },
+            "collapsed": "field_59b9264980167",
+            "min": 0,
+            "max": 0,
             "layout": "table",
+            "button_label": "",
             "sub_fields": [
-                {
-                    "key": "field_59b9260780166",
-                    "label": "Telefonnummer \/ Email",
-                    "name": "telefonnummer",
-                    "type": "text",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "",
-                        "class": "",
-                        "id": ""
-                    },
-                    "default_value": "",
-                    "placeholder": "",
-                    "prepend": "",
-                    "append": "",
-                    "maxlength": ""
-                },
                 {
                     "key": "field_59b9264980167",
                     "label": "Typ",
@@ -128,7 +113,7 @@
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
-                        "width": "",
+                        "width": "10",
                         "class": "",
                         "id": ""
                     },
@@ -144,6 +129,78 @@
                     "ajax": 0,
                     "return_format": "value",
                     "placeholder": ""
+                },
+                {
+                    "key": "field_59b92d1bf99dd",
+                    "label": "Präfix",
+                    "name": "pre",
+                    "type": "select",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_59b9264980167",
+                                "operator": "!=",
+                                "value": "email"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "10",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": {
+                        "T": "Telefon",
+                        "M": "Mobil",
+                        "F": "Fax"
+                    },
+                    "default_value": [],
+                    "allow_null": 0,
+                    "multiple": 0,
+                    "ui": 0,
+                    "ajax": 0,
+                    "return_format": "value",
+                    "placeholder": ""
+                },
+                {
+                    "key": "field_59b92924e2f30",
+                    "label": "Wert",
+                    "name": "value",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "40",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_59b92940e2f31",
+                    "label": "Anzeige",
+                    "name": "display",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "40",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
                 }
             ]
         }
@@ -165,5 +222,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1505306463
+    "modified": 1505308257
 }

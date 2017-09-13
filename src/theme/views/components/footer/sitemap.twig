@@ -2,7 +2,7 @@
   <div class="container">
     <grid-row gutter="medium">
       <grid-column medium-6 large-3>
-        <h3>{{ __( 'Kontakt', 'sls-2017' ) }}></h3>
+        <h3>{{ __( 'Kontakt', 'sls-2017' ) }}</h3>
         <v-card class="vcard" itemscope="" itemtype="http://microformats.org/profile/hcard">
           <div>
             <span itemprop="org">SLS Eventservice</span><br>
@@ -15,21 +15,19 @@
             </span>
           </div>
           <div>
-            <div class="desktop-hidden" itemprop="tel" itemscope="">
-              <meta itemprop="type" content="work">
-              <span itemprop="cell">T: <a href="tel:+43720310311">+43 (0)720 310 311 (VOIP)</a></span>
-            </div>
-            <div class="desktop-hidden" itemprop="tel" itemscope="">
-              <meta itemprop="type" content="work">
-              <span itemprop="fax">F: <a href="tel:+4372031031110">+43 (0)720 310 311 - 10</a></span>
-            </div>
-            <div class="desktop-hidden" itemprop="tel" itemscope="">
-              <meta itemprop="type" content="work">
-              <span itemprop="fax">M: <a href="tel:+4369910465844">+43 (0)699 104 65 844</a></span>
-            </div>
-          </div>
+          {% for item in footer.numbers %}
 
-          <a class="hidden" itemscope="email" href="mailto:info@hoeglinger.bmw.at">info@hoeglinger.bmw.at</a>
+            {% if item.type == 'email' %}
+              <a class="" itemscope="email" href="mailto:{{ item.value }}">{{ item.display ? item.display : item.value }}</a>
+            {% else %}
+              <div class="desktop-hidden" itemprop="tel" itemscope="">
+                <meta itemprop="type" content="work">
+                <span itemprop="{{ item.type }}">{{ item.pre ? item.pre ~ ': ' }}<a href="tel:{{ item.value }}">{{ item.display ? item.display : item.value }}</a></span>
+              </div>
+            {% endif %}
+
+          {% endfor %}
+          </div>
         </v-card>
       </grid-column>
       <grid-column medium-6 large-3>

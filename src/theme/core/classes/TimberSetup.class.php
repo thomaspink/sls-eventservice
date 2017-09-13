@@ -34,6 +34,7 @@ class TimberSetup extends TimberSite {
             'postalCode' => get_field('postal-code', 'option'),
             'locality' => get_field('locality', 'option'),
           ),
+          'numbers' => get_field('numbers', 'option'),
           'jobs' => false,
           'partner' => false,
           'downloads' => get_field('downloads', 'option')
