@@ -41,8 +41,6 @@ class TimberSetup extends TimberSite {
         );
         $context['site'] = $this;
 
-        var_dump($context['footer']);
-
         return $context;
     }
 
