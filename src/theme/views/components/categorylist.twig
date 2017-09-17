@@ -1,9 +1,20 @@
-<ul class="category-list has--arrows">
+<ul class="category-list {{ not showcase ? 'has--arrows': 'is--showcase' }}">
 
   {% for leistung in  list_leistungen() %}
 
   <li class="category-list__item">
-    <a href="/leistungen/{{leistung.slug}}">{{ leistung.name }}</a>
+    {% if showcase %}
+      {% include 'components/icon.twig' with { 'icon': leistung.icon, 'style': 'category-list__icon' } %}
+      <h3 class="category-list__headline">{{ leistung.title ? leistung.title : leistung.name }}</h3>
+      <p class="category-list__description">{{ leistung.description}}</p>
+    {% endif %}
+    <a href="/leistungen/{{leistung.slug}}">
+      {% if showcase %}
+        {% include 'components/icon.twig' with { 'icon': 'circle-with-plus', 'style': 'category-list__more' } %}
+      {% else %}
+        {{ leistung.name }}
+      {% endif %}
+    </a>
   </li>
 
   {% endfor %}

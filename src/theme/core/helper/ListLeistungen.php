@@ -13,6 +13,12 @@ trait ListLeistungen {
       'hide_empty' => false,
     ) );
 
+    foreach($terms as $term) {
+      $slug = $term->taxonomy . '_' . $term->term_id;
+      $term->icon = get_field('icon', $slug);
+      $term->title = get_field('titel', $slug);
+    }
+
     return $terms;
   }
 }

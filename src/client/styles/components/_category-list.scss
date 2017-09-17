@@ -1,0 +1,22 @@
+$icon-size: 4em !default;
+
+.category-list.is--showcase{
+  display: flex;
+  flex-flow: row;
+  flex-wrap: wrap;
+
+  li {
+    list-style: none;
+    width: 25%;
+    text-align: center;
+  }
+
+  .category-list__icon {
+    width: $icon-size;
+    height: $icon-size;
+  }
+
+  .category-list__description {
+    font-size: 0.8rem;
+  }
+}

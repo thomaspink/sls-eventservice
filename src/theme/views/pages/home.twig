@@ -22,6 +22,8 @@
 
   <div class="container">
 
+    {% include 'components/categorylist.twig' with { 'showcase': true } %}
+
     <h2 class="is-centered" >SLS – Blog</h2>
     {% include 'components/post-overview.twig' with { 'posts': posts } %}
 
