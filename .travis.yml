@@ -10,7 +10,7 @@ cache:
   - src/theme/core/vendor/
 
 addons:
-  ssh_known_hosts: $FTP_HOST:
+  ssh_known_hosts: $FTP_HOST
   apt:
     packages:
     - lftp
