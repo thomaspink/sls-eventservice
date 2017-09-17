@@ -11,16 +11,19 @@ cache:
 
 addons:
   ssh_known_hosts: $FTP_HOST
+  apt:
+    - lftp
 
-before_install:
-  - sudo apt-get -qq update
-  - sudo apt-get install -y lftp
+# before_install:
+#   - sudo apt-get -qq update
+#   - sudo apt-get install -y lftp
 
 script:
   - npm install
 
 after_success:
-  - lftp -c "open -u $FTP_USER,$FTP_PASSWORD $FTP_HOST; set ssl:verify-certificate no; mirror -R src/theme/ /wp-content/themes/"
+  - mv src/theme src/sls-2017
+  - lftp -c "open -u $FTP_USER,$FTP_PASSWORD $FTP_HOST; set ssl:verify-certificate no; mirror -R src/sls-2017/ /html/apps/wordpress-56023/wp-content/themes/"
 
 notifications:
   email:
