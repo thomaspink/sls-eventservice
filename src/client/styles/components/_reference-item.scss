@@ -1,9 +1,21 @@
 .reference-item {
-  // &:nth-child(odd) {
-  //   flex-flow: column-reverse;
-  // }
+  &:nth-child(even) {
+    flex-flow: row-reverse;
+  }
+}
+
+.reference-item__content {
+
+  .reference-item:nth-child(odd) & {
+    padding-left: 2rem;
+  }
+
+  .reference-item:nth-child(even) & {
+    padding-right: 2rem;
+  }
 }
 
 .reference-item__logo {
   width: 40%;
+  margin-bottom: 2rem;
 }
