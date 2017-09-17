@@ -19,6 +19,7 @@
 
   $context = Timber::get_context();
   $context['posts'] = new Timber\PostQuery($args);
+  $context['page'] = new TimberPost();
   $context['multiple'] = true;
   $context['hero'] = array(
     'image' => array('url' => 'http://placehold.it/900x400'),

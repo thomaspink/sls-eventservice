@@ -2,6 +2,12 @@
 
 {% block content %}
 
+  {% set hero = page.get_field('hero') %}
+
+  {% if hero.image  %}
+    {% include 'components/hero.twig' with { 'hero': hero } %}
+  {% endif %}
+
 <div class="container">
   <div class="services-overview">
 

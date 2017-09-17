@@ -2,7 +2,9 @@
 
 {% block content %}
 
+{% if hero.image %}
   {% include 'components/hero.twig' with { 'hero': hero } only %}
+{% endif %}
 
   <div class="container">
     <grid-row gutter="medium">

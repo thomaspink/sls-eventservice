@@ -1,6 +1,13 @@
 {% extends 'layouts/base.twig' %}
 
+
 {% block content %}
+
+  {% set hero = page.get_field('hero') %}
+
+  {% if hero.image  %}
+    {% include 'components/hero.twig' with { 'hero': hero } %}
+  {% endif %}
 
   <div class="container">
     <h2>24 Stunden, 7 Tage die Woche<br>für Sie erreichbar.</h2>
