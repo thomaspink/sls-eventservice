@@ -12,6 +12,7 @@ cache:
 addons:
   ssh_known_hosts: $FTP_HOST
   apt:
+    packages:
     - lftp
 
 # before_install:
