@@ -1,0 +1,25 @@
+<accordion class="{{ style | join(' ') }}">
+
+  {% for job in jobs %}
+
+  <accordion-item>
+    <input type="checkbox" checked>
+    {% include 'components/icon.twig' with { icon: 'chevron-thin-right' } %}
+    <accordion-headline role="heading">{{ job.title }}</accordion-headline>
+    <accordion-content>
+      <h4>{{ job.wochenstunden }} {{ __('Wochenstunden', 'sls-2017') }}</h4>
+      <p>{{ __('Bruttojahresgehalt ab EUR', 'sls-2017') }} {{ job.bruttogehalt }}
+
+      <h4>{{ __('Anforderungsprofil', 'sls-2017') }}</h4>
+      {{ job.anforderungsprofil }}
+
+      <h4>{{ __('Aufgabenbereich', 'sls-2017') }}</h4>
+      {{ job.aufgaben }}
+
+      <h4>{{ __('Sende deine aussagekräftige Bewerbung an', 'sls-2017') }}: <a href="mailto:jobs@sls-eventservice.at">jobs@sls-service.at</a></h4>
+    <accordion-content>
+  </accordion-item>
+
+  {% endfor %}
+
+</accordion>

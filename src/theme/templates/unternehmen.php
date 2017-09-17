@@ -4,8 +4,18 @@
    *
    */
 
+  $args = array(
+    'post_type' => 'jobs',
+    'posts_per_page' => '-1'
+  );
+
   $context = Timber::get_context();
-  Timber::render( array( 'pages/unternehmen.twig' ), $context );
+  $context['page'] = new TimberPost();
+  $context['jobs'] = Timber::get_posts($args);
+
+  $template = array( 'pages/unternehmen.twig' );
+
+  Timber::render( $template, $context );
 
   // if( have_rows('content') ):
 
