@@ -3,19 +3,13 @@
    * Template Name: Referenzen
    */
 
-  // $args = array(
-  //   'post_type' => 'references',
-  //   'posts_per_page' => 2,
-  //   'paged' => $paged
-  // );
+  $args = array(
+    'post_type' => 'references',
+    'posts_per_page' => 4
+  );
 
   $context = Timber::get_context();
-  // $context['references'] = new Timber\PostQuery($args);
-  // $context['hero'] = array(
-  //   'image' => array('url' => 'http://placehold.it/900x400'),
-  //   'title' => 'SLS Eventservice<br>BLOG',
-  //   'style' => 'hero--outline'
-  // );
-  $template = array( 'pages/reference-detail.twig' );
+  $context['posts'] = new Timber\PostQuery($args);
+  $template = array( 'pages/references.twig' );
 
   Timber::render( $template, $context );

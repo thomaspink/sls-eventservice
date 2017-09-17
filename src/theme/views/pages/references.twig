@@ -4,11 +4,21 @@
 
   <div class="container">
 
-    <grid-row>
+    <grid-row class="references">
+
+      {% for post in posts %}
+
       <grid-column medium-6>
+        {% include 'components/image' with { 'image': Image(posts.image) } %}
       </grid-column>
+
+
       <grid-column medium-6>
+
       </grid-column>
+
+      {% endfor %}
+
     </grid-row>
 
   </div>
