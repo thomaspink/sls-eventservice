@@ -2,9 +2,6 @@ language: php
 php: '7.0'
 env:
   # - TRAVIS_NODE_VERSION="5"
-  global:
-    - "FTP_USER=44750ftp2"
-    - "FTP_PASSWORD=password"
 
 cache:
   directories:
