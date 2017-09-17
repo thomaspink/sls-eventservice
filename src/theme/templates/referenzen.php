@@ -10,6 +10,7 @@
 
   $context = Timber::get_context();
   $context['posts'] = new Timber\PostQuery($args);
+  $context['page'] = new Timber\Post();
   $template = array( 'pages/references.twig' );
 
   Timber::render( $template, $context );
