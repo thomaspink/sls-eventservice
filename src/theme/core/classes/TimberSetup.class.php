@@ -27,6 +27,7 @@ class TimberSetup extends TimberSite {
         $context['version'] = $this->version;
         $context['env'] = WP_ENV;
         $context['topMenu'] = new TimberMenu('top');
+        $context['socialMedia'] = get_field('social-media', 'option');
         $context['footer'] = array(
           'address' => array(
             'streetAddress' => get_field('street-address', 'option'),
