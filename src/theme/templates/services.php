@@ -12,6 +12,6 @@
   $context['page'] = new TimberPost();
   $context['services'] = Timber::get_posts($args);
 
-  $template = array( 'components/services-overview.twig' );
+  $template = array( 'pages/services.twig' );
 
   Timber::render( $template, $context );

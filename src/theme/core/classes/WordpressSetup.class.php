@@ -30,14 +30,12 @@ class WordpressSetup {
       'caption',
     ));
 
-
     add_action('init', array($this, 'register_custom_post_types'));
     add_action('init', array($this, 'register_custom_taxonomies'));
     add_action('init', array($this, 'register_menus'));
 
     add_action('after_setup_theme', array($this, 'custom_header_setup'));
     add_action('wp_enqueue_scripts',  array($this, 'add_theme_scripts_and_styles'));
-
 
     // currently out of function -> does not work in case of any reasons…
     wp_enqueue_script( 'polyfills-defer', $this->assets('polyfills.js'), array(), $this->version, true );
@@ -58,7 +56,6 @@ class WordpressSetup {
 
     add_action( 'admin_menu', array($this, 'remove_menus'));
     add_action( 'admin_menu', array($this, 'remove_unused_menu_pages'));
-
 
     // clean up wordpress
     add_theme_support('soil-clean-up');
@@ -90,11 +87,11 @@ class WordpressSetup {
     register_nav_menus(
       array(
         'top'    => __( 'Top Menu', 'sls-2017' ),
-        'drawer' => __( 'Drawer Menu', 'sls-2017' ),
-        'social' => __( 'Social Links Menu', 'sls-2017' ),
-        'legal' => __( 'Footer Legal Links', 'sls-2017' ),
-        'partner' => __( 'Footer Partner Links', 'sls-2017' ),
-        'downloads' => __( 'Footer Download Links', 'sls-2017' ),
+        // 'drawer' => __( 'Drawer Menu', 'sls-2017' ),
+        // 'social' => __( 'Social Links Menu', 'sls-2017' ),
+        // 'legal' => __( 'Footer Legal Links', 'sls-2017' ),
+        // 'partner' => __( 'Footer Partner Links', 'sls-2017' ),
+        // 'downloads' => __( 'Footer Download Links', 'sls-2017' ),
       )
     );
   }
