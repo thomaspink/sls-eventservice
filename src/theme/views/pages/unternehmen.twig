@@ -1,0 +1,29 @@
+{% extends 'layouts/base.twig' %}
+
+{% block content %}
+
+<div class="container">
+
+ <h2>{{ __('Offene Stellen', 'sls-2017') }}</h2>
+ <p>Werde Teil des großartigen SLS Eventservice – Teams.</p>
+
+ <div class="jobs">
+
+  <accordion>
+
+    {% for job in jobs %}
+    <accordion-item>
+      <input type="checkbox" checked>
+      {% include 'components/icon.twig' with { icon: 'chevron-thin-right' } %}
+      <accordion-headline role="heading"></accordion-headline>
+      <accordion-content>
+
+      <accordion-content>
+    </accordion-item>
+    {% endfor %}
+
+  </accordion>
+
+</div>
+
+{% endblock %}
