@@ -4,22 +4,32 @@
 
   <div class="container">
 
-    <grid-row class="references">
+    {% for post in posts %}
 
-      {% for post in posts %}
-
-      <grid-column medium-6>
-        {% include 'components/image' with { 'image': Image(posts.image) } %}
-      </grid-column>
-
+    <grid-row class="reference-item">
 
       <grid-column medium-6>
-
+        {% include 'components/image.twig'
+           with {
+            'image': Image(post.image),
+            'style': 'reference-item__image'
+          }
+        %}
       </grid-column>
 
-      {% endfor %}
+      <grid-column medium-6>
+        {% include 'components/image.twig' with { 'image': Image(post.logo), 'style': 'reference-item__logo'  } %}
+
+        <h3 class="reference-item__headline">{{ post.title }}</h3>
+        <p class="refernce-item__text">{{ post.shorttext }}</p>
+        <a class="reference-item__link" href="{{ post.link }}">{{ __('Mehr erfahren', 'sls-2017') }} ></a>
+
+      </grid-column>
 
     </grid-row>
+
+    {% endfor %}
+
 
   </div>
 
