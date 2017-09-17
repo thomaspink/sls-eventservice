@@ -11,9 +11,10 @@ cache:
 
 addons:
   ssh_known_hosts: $FTP_HOST
-  apt:
-    packages:
-    - lftp
+
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y lftp
 
 script:
   - npm install
