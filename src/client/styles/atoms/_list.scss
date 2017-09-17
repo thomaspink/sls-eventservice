@@ -1,15 +1,19 @@
-ul.has--arrows {
+ul {
   padding-left: 1em;
 }
 
-.has--arrows > li {
+ul > li {
   list-style-type: none;
 
   &::before {
-    content: '> ';
+    content: '— ';
     margin-left: -1em;
     padding-right: 0.5em;
     display: inline-block;
+
+    .has--arrows & {
+      content: '> ';
+    }
   }
 
   a {
