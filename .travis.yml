@@ -1,0 +1,27 @@
+language: php
+php: '7.0'
+env:
+  # - TRAVIS_NODE_VERSION="5"
+  global:
+    - "FTP_USER=44750ftp2"
+    - "FTP_PASSWORD=password"
+
+cache:
+  directories:
+  - node_modules/
+  - src/theme/core/vendor/
+
+addons:
+  ssh_known_hosts: ftp://e39931-ftp.services.easyname.eu/
+
+script:
+  - npm install
+
+after_success:
+  - lftp -c "open -u $FTP_USER,$FTP_PASSWORD ftp://e39931-ftp.services.easyname.eu/; set ssl:verify-certificate no; mirror -R src/theme/ /wp-content/themes/"
+
+# notifications:
+#   email:
+#     recipients: office@lukasholzer.com
+#     on_success: never
+#     on_failure: always

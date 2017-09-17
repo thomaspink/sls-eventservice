@@ -3,7 +3,6 @@
 require_once __DIR__ . '/core/vendor/autoload.php';
 require_once __DIR__ . '/core/requireDir.php';
 
-
 $timber = new \Timber\Timber();
 
 if ( !class_exists( 'Timber' ) ) {
@@ -12,9 +11,7 @@ if ( !class_exists( 'Timber' ) ) {
             echo '<div class="error"><p>Timber not activated. Make sure you activate the plugin in <a href="' . esc_url( admin_url( 'plugins.php#timber' ) ) . '">' . esc_url( admin_url( 'plugins.php' ) ) . '</a></p></div>';
         } );
     return;
-}
-
-if (class_exists('Timber')) {
+} else {
 
   includeDir(  __DIR__ . '/core/helper/' );
 
