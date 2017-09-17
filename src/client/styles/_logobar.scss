@@ -1,4 +1,7 @@
+$color-black: #101010 !default;
+
 .logo-bar {
+  background-color: $color-black;
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -19,4 +22,5 @@
 .logo-bar__img {
   display: block;
   max-width: 100%;
+  min-width: 300px;
 }
