@@ -1,8 +1,10 @@
-<ul class="logo-bar">
-  {% for item in page.get_field('logo-bar') %}
+<div class="logo-bar">
+  <ul class="logo-bar__list container">
+    {% for item in page.get_field('logo-bar') %}
 
-    <li class="logo-bar__item">
-      {% include 'components/image.twig' with { 'image': Image(item.logo), 'style': 'logo-bar__img' } %}
-    </li>
-  {% endfor %}
-</ul>
+      <li class="logo-bar__item">
+        {% include 'components/image.twig' with { 'image': Image(item.logo), 'style': 'logo-bar__img' } %}
+      </li>
+    {% endfor %}
+  </ul>
+</div>
