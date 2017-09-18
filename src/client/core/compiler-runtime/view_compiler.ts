@@ -21,13 +21,18 @@ export class ViewCompiler {
   }
 
   compileComponent(component: CompileComponentMetadata) {
+    console.log(component);
     const nodes: NodeDef[] = [];
     const providers = component.providers.map(provider => this._providerDef(provider));
     const selector = CssSelector.parse(component.selector)[0];
     nodes.push(...providers);
 
+    const compDef =
+      componentDef(0, [], 0, component.type.reference, component.type.diDeps.map(dep => this._depDef(dep)));
+    nodes.push(compDef);
+
     const def = viewDef(nodes);
-    // console.log(def);
+    console.log(def);
   }
 
   private _providerDef(providerMeta: CompileProviderMetadata): NodeDef {
