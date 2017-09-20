@@ -4,7 +4,7 @@
   "description": "Website for SLS Eventservice",
   "main": "index.js",
   "scripts": {
-    "postinstall": "composer install",
+    "postinstall": "php composer.phar install",
     "build": "rm -rf dist && mkdir dist && npm run wp:theme:prod && npm run compile:prod",
     "setup": "npm run tools:build && npm run wp:install && npm run wp:plugins && npm run wp:theme:dev && npm run wp:config",
     "start": "npm run wp:theme:dev && node webpack.middleware.js & npm run server:start",
