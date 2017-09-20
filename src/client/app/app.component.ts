@@ -3,11 +3,12 @@ import { HeaderComponent } from './components/header.component';
 import { DrawerComponent } from './components/drawer.component';
 import { QuotesSwiperComponent } from './components/quotes-swiper.component';
 import { ImageSliderComponent } from './components/image-slider.component';
-import { DIALOG_COMPONENTS, DIALOG_PROVIDERS, Dialog } from './dialog/dialog';
+import { DIALOG_COMPONENTS, DIALOG_PROVIDERS, Dialog } from './services/dialog/dialog';
+import { SWIPER_PROVIDERS } from './services/swiper';
 
 @Component({
   selector: 'body',
-  providers: [DIALOG_PROVIDERS],
+  providers: [DIALOG_PROVIDERS, SWIPER_PROVIDERS],
   deps: [Dialog],
   components: [
     HeaderComponent,

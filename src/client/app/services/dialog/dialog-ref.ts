@@ -1,4 +1,4 @@
-import { EventEmitter, ComponentRef } from '../../core';
+import { EventEmitter, ComponentRef } from '../../../core';
 import { DialogContainer } from './dialog-container';
 import { DialogOverlayRef } from './dialog-overlay';
 

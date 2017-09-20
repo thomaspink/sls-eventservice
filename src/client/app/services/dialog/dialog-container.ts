@@ -1,4 +1,4 @@
-import { Component, ComponentFactoryResolver, Injector, ELEMENT, ComponentRef } from '../../core';
+import { Component, ComponentFactoryResolver, Injector, ELEMENT, ComponentRef } from '../../../core';
 import { DialogConfig } from './dialog-config';
 import { ComponentType } from './dialog';
 

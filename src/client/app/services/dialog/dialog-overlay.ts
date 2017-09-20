@@ -1,7 +1,7 @@
 import {
   Component, ChildListener, ViewChild, EventEmitter, Output, ComponentFactoryResolver,
   ComponentRef, Injector, ELEMENT
-} from '../../core';
+} from '../../../core';
 import { ComponentType } from './dialog';
 import { DialogConfig } from './dialog-config';
 

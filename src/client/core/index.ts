@@ -12,3 +12,4 @@ export {
   Provider, ClassProvider, ConstructorProvider, ExistingProvider, FactoryProvider,
   ValueProvider
 } from './di/provider';
+export { InjectionToken } from './di/injection_token';
