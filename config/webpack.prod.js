@@ -26,7 +26,7 @@ module.exports = webpackMerge(commonConfig, {
       {
         test: /\.scss$/,
         exclude: helpers.root('src', 'client', 'app'),
-        use: internalCSS.extract({
+        use: ExtractTextPlugin.extract({
           use: ['css-loader', 'sass-loader']
         })
       }
