@@ -73,8 +73,7 @@ module.exports = webpackMerge(commonConfig, {
         languageIn: 'ECMASCRIPT5',
         languageOut: 'ECMASCRIPT5',
         compilationLevel: 'ADVANCED',
-        warningLevel: 'VERBOSE',
-        // externs: [helpers.root('config', 'closure-externs.js')],
+        warningLevel: 'QUIET', // 'DEFAULT',
         externs: [{ src: externs }]
       },
     }),
