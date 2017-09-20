@@ -1,11 +1,12 @@
 # sls-eventservice
-New website for [sls-eventservice.at](http://sls-eventservice.at)
+New website for [sls-eventservice.at](http://sls-eventservice.at)    
+Development server: [sls-eventservice.ch](http://www.sls-eventservice.ch/)
 
 ## Prerequisite
 
 1. Make sure [node.js](https://nodejs.org) is installed
 2. Make [composer](https://getcomposer.org/download/) is installed (either globally or locally)
-3. Run `npm install` to install all dependencies and compile all the tools (see also [#tools])
+3. Run `npm install` to install all dependencies and compile all the tools (see also [Tools](#tools))
 4. Run `npm run setup` to install wordpress and all plugins locally and start the setup wizzard.
 
 ## Run locally
