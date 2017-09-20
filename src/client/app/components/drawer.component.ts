@@ -1,6 +1,9 @@
-import { Component, OnInit, OnDestroy, ELEMENT, HostListener, ChildListener, ViewChild } from '../../core';
-import { listen, findElement } from '../../util';
+import {
+  Component, ELEMENT, HostListener, ChildListener, ViewChild
+} from '../../core';
 
+
+// tslint:disable:no-unused-variable
 @Component({
   selector: 'side-drawer',
   deps: [ELEMENT]
@@ -11,9 +14,13 @@ export class DrawerComponent {
   private touchingDrawer = false;
   private trashhold = 0.5;
   private transitionEndDisp: Function | null = null;
+  private isAnimatable = false;
 
   @ViewChild('.side-drawer__nav', { read: ELEMENT })
   private container: HTMLElement;
+
+  @ViewChild('.side-drawer__close', { read: ELEMENT })
+  private closeBtn: HTMLElement;
 
   constructor(private element: Element) {
     this.update = this.update.bind(this);
@@ -37,22 +44,24 @@ export class DrawerComponent {
     this.enableAnimatable();
     requestAnimationFrame(() => {
       this.element.setAttribute('aria-hidden', 'false');
-      this.transitionEndDisp = listen(this.element, 'transitionend', this.onTransitionEnd);
       this.disableScroll();
     });
   }
 
   @HostListener('click')
   selfClicked() {
+    console.log('selfClicked');
     this.hideDrawer();
   }
 
   @ChildListener('.side-drawer__close', 'click')
   hideDrawer() {
-    this.disableAnimatable();
-    this.element.setAttribute('aria-hidden', 'true');
-    this.transitionEndDisp = listen(this.element, 'transitionend', this.onTransitionEnd);
-    this.enableScroll();
+    console.log('hideDrawer');
+    this.enableAnimatable();
+    requestAnimationFrame(() => {
+      this.element.setAttribute('aria-hidden', 'true');
+      this.enableScroll();
+    });
   }
 
   @ChildListener('.side-drawer__nav', 'click', ['$event'])
@@ -70,17 +79,16 @@ export class DrawerComponent {
 
   @HostListener('touchstart', ['$event'])
   private onTouchStart(evt: TouchEvent) {
-    if (!this.isDrawerVisible)  {
-      return false;
+    if (this.isDrawerVisible && evt.target !== this.element &&
+      evt.target !== this.closeBtn)  {
+      this.disableAnimatable();
+
+      this.startX = evt.touches[0].pageX;
+      this.currentX = this.startX;
+
+      this.touchingDrawer = true;
+      requestAnimationFrame(this.update);
     }
-
-    this.disableAnimatable();
-
-    this.startX = evt.touches[0].pageX;
-    this.currentX = this.startX;
-
-    this.touchingDrawer = true;
-    requestAnimationFrame(this.update);
   }
 
   @HostListener('touchmove', ['$event'])
@@ -96,11 +104,16 @@ export class DrawerComponent {
     }
   }
 
-  @HostListener('touchend')
-  private onTouchEnd() {
+  @HostListener('touchend', ['$event'])
+  private onTouchEnd(evt: TouchEvent) {
     if (!this.touchingDrawer) {
+      if (evt.target === this.element || evt.target === this.closeBtn) {
+        this.hideDrawer();
+      }
       return false;
     }
+
+
     this.touchingDrawer = false;
 
     const translateX = Math.max(0, this.currentX - this.startX);
@@ -123,7 +136,11 @@ export class DrawerComponent {
     this.container.style.transform = `translateX(${translateX}px)`;
   }
 
+  @HostListener('transitionend')
   private onTransitionEnd(evt: Event) {
+    console.log('transition end');
+    if (!this.isAnimatable)
+      return;
     this.disableAnimatable();
     if (this.transitionEndDisp) {
       this.transitionEndDisp();
@@ -133,9 +150,12 @@ export class DrawerComponent {
 
   private enableAnimatable() {
     this.element.classList.add('side-drawer--animatable');
+    this.isAnimatable = true;
   }
 
   private disableAnimatable() {
     this.element.classList.remove('side-drawer--animatable');
+    this.isAnimatable = false;
   }
 }
+// tslint:enable:no-unused-variable
