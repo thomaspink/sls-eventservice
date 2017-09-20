@@ -1,5 +1,4 @@
-import { Component, ELEMENT } from '../../core';
-import { listen, findElement } from '../../util';
+import { Component, ELEMENT, ChildListener } from '../../core';
 
 @Component({
   selector: 'image-slider',
@@ -7,10 +6,16 @@ import { listen, findElement } from '../../util';
 })
 export class ImageSliderComponent {
   constructor(private _el: Element) {
-
   }
 
-  render() {
-
+  @ChildListener('.image-slider-next', 'click')
+  next() {
+    // Todo @thomas.pink
   }
+
+  @ChildListener('.image-slider-prev', 'click')
+  prev() {
+    // Todo @thomas.pink
+  }
+
 }

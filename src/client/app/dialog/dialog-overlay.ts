@@ -1,5 +1,7 @@
-import { Component, ChildListener, ViewChild, EventEmitter, Output, ComponentFactoryResolver, ComponentRef, Injector, ELEMENT } from '../../core';
-import { DialogContainer } from './dialog-container';
+import {
+  Component, ChildListener, ViewChild, EventEmitter, Output, ComponentFactoryResolver,
+  ComponentRef, Injector, ELEMENT
+} from '../../core';
 import { ComponentType } from './dialog';
 import { DialogConfig } from './dialog-config';
 
@@ -51,7 +53,8 @@ export class DialogOverlayRef {
   private _isVisible = false;
   private _componentRef: ComponentRef<any> = null;
 
-  constructor(private _resolver: ComponentFactoryResolver, private _injector: Injector, private _ref: ComponentRef<DialogOverlayRef>) { }
+  constructor(private _resolver: ComponentFactoryResolver, private _injector: Injector,
+    private _ref: ComponentRef<DialogOverlayRef>) { }
 
   @Output()
   readonly onBackdropClick = new EventEmitter<void>();
@@ -64,7 +67,8 @@ export class DialogOverlayRef {
 
   attach<T>(compType: ComponentType<T>, element: Element): ComponentRef<T> {
     if (this._componentRef) {
-      throw new Error(`Can not attach component to overlay, because there is already a component attached!`);
+      throw new Error(
+        `Can not attach component to overlay, because there is already a component attached!`);
     }
     this.pane.appendChild(element);
     const factory = this._resolver.resolveComponentFactory(compType);

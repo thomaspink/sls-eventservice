@@ -1,6 +1,7 @@
 import { Component, ViewChild, ChildListener } from '../core';
 import { HeaderComponent } from './components/header.component';
 import { DrawerComponent } from './components/drawer.component';
+import { QuotesSwiperComponent } from './components/quotes-swiper.component';
 import { ImageSliderComponent } from './components/image-slider.component';
 import { DIALOG_COMPONENTS, DIALOG_PROVIDERS, Dialog } from './dialog/dialog';
 
@@ -8,7 +9,13 @@ import { DIALOG_COMPONENTS, DIALOG_PROVIDERS, Dialog } from './dialog/dialog';
   selector: 'body',
   providers: [DIALOG_PROVIDERS],
   deps: [Dialog],
-  components: [HeaderComponent, DrawerComponent, ImageSliderComponent, DIALOG_COMPONENTS]
+  components: [
+    HeaderComponent,
+    DrawerComponent,
+    QuotesSwiperComponent,
+    ImageSliderComponent,
+    DIALOG_COMPONENTS
+  ]
 })
 export class AppComponent {
   @ViewChild(DrawerComponent)
