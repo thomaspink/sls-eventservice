@@ -1,4 +1,4 @@
-import { InjectionToken, Provider } from '../../core';
+import { InjectionToken, Provider, EventEmitter } from '../../core';
 
 /**
  * Service for creating idangerous swiper.
@@ -36,8 +36,16 @@ import { InjectionToken, Provider } from '../../core';
 export class Swiper {
 
   private _refs: SwiperRef[] = [];
+  private _afterCreation = new EventEmitter<SwiperRef>();
+  private _afterAllDestroyed = new EventEmitter<void>();
 
   constructor(private _lib: any) { }
+
+  /** Stream that emits when a swiper has been created. */
+  get afterCreation() { return this._afterCreation; }
+
+  /** Stream that emits when active all swipers have been destroyed. */
+  get afterAllDestroyed() { return this._afterAllDestroyed; }
 
   /**
    * Creates a new idangerous swiper and return the reference.
@@ -51,12 +59,14 @@ export class Swiper {
     const instance = this._lib(elementOrSelector, options);
     const ref = new SwiperRef(instance);
     this._refs.push(ref);
+    this._afterCreation.next(ref);
     return ref;
   }
 
   /** Destroy all swiper instances at once */
   destroyAll() {
     this._refs.forEach(ref => ref.destroy());
+    this._refs = [];
   }
 }
 
@@ -71,9 +81,16 @@ export class SwiperRef {
   constructor (private _nativeInstance: any) { }
 
   /** Destroys the swiper instance and removes event listeners */
-  destroy() {
-    this._nativeInstance.destroy(/* deleteInstance*/true, /*cleanupStyles*/true);
-  }
+  destroy() { this._nativeInstance.destroy(/* deleteInstance*/true, /*cleanupStyles*/true); }
+
+  /** Run transition to next slide */
+  slideNext() { this._nativeInstance.slideNext(); }
+
+  /** Run transition to previous slide */
+  slidePrev() { this._nativeInstance.slidePrev(); }
+
+  /** Run transition to the slide with index number equal to 'index' parameter */
+  slideTo(index: number) { this._nativeInstance.slideTo(index); }
 }
 
 export const SwiperLib = new InjectionToken('SwiperLib');
