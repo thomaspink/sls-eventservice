@@ -37,8 +37,9 @@ side-drawer {
 
 .side-drawer__nav {
   position: relative;
-  width: 290px;
-  max-width: 400px;
+  width: 90vw;
+  max-width: 290px;
+  // max-width: 400px;
   float: right;
   background: #FFF;
   height: 100%;
