@@ -5,6 +5,7 @@ import * as http from 'http';
 import * as https from 'https';
 import * as rimraf from 'rimraf';
 import * as minimist from 'minimist';
+import * as request from 'request';
 
 export const readFile: (path: string, encoding: string) => Promise<string> = promisifyFn(fs.readFile);
 export const writeFile: (path: string, contents: string) => Promise<void> = promisifyFn<void>(fs.writeFile);
@@ -40,23 +41,17 @@ export function getCommandlineArgs(args: string[]): {[key: string]: string} {
 
 export function download(uri: string): Promise<Buffer> {
   return new Promise<Buffer>((resolve, reject) => {
-    (/https:\/\/.*/.test(uri) ? https.get : http.get)(uri as any, res => {
-      const { statusCode } = res;
-      const contentType = res.headers['content-type'];
-
-      if (statusCode < 200 && statusCode >= 400) {
-        // consume response data to free up memory
-        res.resume();
-        return reject(`Downloading ${uri} failed - StatusCode: ${statusCode}`);
-      }
-
-      const data = [];
-      let dataLen = 0;
-      res.on('data', chunk => {
+    const data = [];
+    let dataLen = 0;
+    request.get(uri)
+      .on('data', chunk => {
         data.push(chunk);
         dataLen += chunk.length;
-      });
-      res.on('end', () => {
+      })
+      .on('error', e => {
+        reject(`Downloading ${uri} failed: ${e.message}`);
+      })
+      .on('complete', () => {
         try {
           const buf = new Buffer(dataLen);
           for (let i = 0, len = data.length, pos = 0; i < len; i++) {
@@ -65,11 +60,8 @@ export function download(uri: string): Promise<Buffer> {
           }
           resolve(buf);
         } catch (e) {
-          reject(e);
+          reject(`Resolving buffer for download ${uri} failed: ${e.message || e}`);
         }
-      }).on('error', (e) => {
-        reject(e);
       });
-    });
   });
 }

@@ -1,8 +1,6 @@
 import * as util from './util';
-import * as fs from 'fs';
 import * as chalk from 'chalk';
 import * as AdmZip from 'adm-zip';
-import * as pathUtil from 'path';
 
 export async function main(outdir: string, project?: string): Promise<number | void> {
   try {
@@ -25,7 +23,7 @@ export async function main(outdir: string, project?: string): Promise<number | v
         const buf = await util.download(url);
         console.log(`Installing plugin ${chalk.italic(name)}`);
         const zip = new AdmZip(buf);
-        zip.extractAllTo(pathUtil.join(outdir), /*overwrite*/true);
+        zip.extractAllTo(outdir, /*overwrite*/true);
         console.log(`Finished installing plugin ${chalk.italic(name)}`);
       }
     }

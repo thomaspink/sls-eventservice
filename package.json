@@ -34,6 +34,7 @@
     "@types/chalk": "^0.4.31",
     "@types/inquirer": "0.0.35",
     "@types/minimist": "^1.2.0",
+    "@types/request": "^2.0.3",
     "@types/rimraf": "0.0.28",
     "adm-zip": "^0.4.7",
     "awesome-typescript-loader": "^3.0.4",
@@ -50,6 +51,7 @@
     "nodemon": "^1.11.0",
     "optimize-css-assets-webpack-plugin": "^3.2.0",
     "raw-loader": "^0.5.1",
+    "request": "^2.82.0",
     "rimraf": "^2.5.4",
     "sass-loader": "^6.0.2",
     "script-ext-html-webpack-plugin": "^1.7.1",
@@ -80,5 +82,7 @@
     "rxjs": "^5.4.3",
     "swiper": "^3.4.2"
   },
-  "wp-plugins": {}
+  "wp-plugins": {
+    "advanced-custom-fields-pro": "https://github.com/wp-premium/advanced-custom-fields-pro/archive/5.6.2.zip"
+  }
 }
