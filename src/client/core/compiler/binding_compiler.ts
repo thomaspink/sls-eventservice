@@ -41,19 +41,19 @@ export class BindingCompiler {
     if (bindParts !== null) {
       hasBinding = true;
       if (bindParts[KW_BIND_IDX] != null) {
-        unsupported('Property binding', name, expression);
+        unsupported('Property binding', declaration, expression);
       } else if (bindParts[KW_LET_IDX]) {
-        unsupported('Variable declaration', name, expression);
+        unsupported('Variable declaration', declaration, expression);
       } else if (bindParts[KW_REF_IDX]) {
-        unsupported('Variable declaration', name, expression);
+        unsupported('Variable declaration', declaration, expression);
       } else if (bindParts[KW_ON_IDX]) {
         return this._parseEvent(bindParts[KW_ON_IDX], expression, index, isHost, location);
       } else if (bindParts[KW_BINDON_IDX]) {
-        unsupported('Two way binding', name, expression);
+        unsupported('Two way binding', declaration, expression);
       } else if (bindParts[IDENT_BANANA_BOX_IDX]) {
-        unsupported('Two way binding', name, expression);
+        unsupported('Two way binding', declaration, expression);
       } else if (bindParts[IDENT_PROPERTY_IDX]) {
-        unsupported('Property binding', name, expression);
+        unsupported('Property binding', declaration, expression);
       } else if (bindParts[IDENT_EVENT_IDX]) {
         return this._parseEvent(bindParts[IDENT_EVENT_IDX], expression, index, isHost, location);
       }
