@@ -16,8 +16,8 @@ export class DrawerComponent {
   private container: HTMLElement;
 
   constructor(private element: Element) {
-    // this.update = this.update.bind(this);
-    // this.onTransitionEnd = this.onTransitionEnd.bind(this);
+    this.update = this.update.bind(this);
+    this.onTransitionEnd = this.onTransitionEnd.bind(this);
     this.enableAnimatable();
   }
 
@@ -34,11 +34,11 @@ export class DrawerComponent {
   }
 
   showDrawer() {
-    //this.enableAnimatable();
+    this.enableAnimatable();
     requestAnimationFrame(() => {
       this.element.setAttribute('aria-hidden', 'false');
-      // this.transitionEndDisp = listen(this.element, 'transitionend', this.onTransitionEnd);
-      // this.disableScroll();
+      this.transitionEndDisp = listen(this.element, 'transitionend', this.onTransitionEnd);
+      this.disableScroll();
     });
   }
 
@@ -49,10 +49,10 @@ export class DrawerComponent {
 
   @ChildListener('.side-drawer__close', 'click')
   hideDrawer() {
-    // this.disableAnimatable();
+    this.disableAnimatable();
     this.element.setAttribute('aria-hidden', 'true');
-    // this.transitionEndDisp = listen(this.element, 'transitionend', this.onTransitionEnd);
-    // this.enableScroll();
+    this.transitionEndDisp = listen(this.element, 'transitionend', this.onTransitionEnd);
+    this.enableScroll();
   }
 
   @ChildListener('.side-drawer__nav', 'click', ['$event'])
@@ -68,68 +68,68 @@ export class DrawerComponent {
     document.body.parentElement.classList.remove('noscroll');
   }
 
-  // @HostListener('touchstart', ['$event'])
-  // private onTouchStart(evt: TouchEvent) {
-  //   if (!this.isDrawerVisible)  {
-  //     return false;
-  //   }
+  @HostListener('touchstart', ['$event'])
+  private onTouchStart(evt: TouchEvent) {
+    if (!this.isDrawerVisible)  {
+      return false;
+    }
 
-  //   this.disableAnimatable();
+    this.disableAnimatable();
 
-  //   this.startX = evt.touches[0].pageX;
-  //   this.currentX = this.startX;
+    this.startX = evt.touches[0].pageX;
+    this.currentX = this.startX;
 
-  //   this.touchingDrawer = true;
-  //   requestAnimationFrame(this.update);
-  // }
+    this.touchingDrawer = true;
+    requestAnimationFrame(this.update);
+  }
 
-  // @HostListener('touchmove', ['$event'])
-  // private onTouchMove(evt: TouchEvent) {
-  //   if (!this.touchingDrawer) {
-  //     return;
-  //   }
-  //   this.currentX = evt.touches[0].pageX;
-  //   const translateX = Math.max(0, this.currentX - this.startX);
+  @HostListener('touchmove', ['$event'])
+  private onTouchMove(evt: TouchEvent) {
+    if (!this.touchingDrawer) {
+      return;
+    }
+    this.currentX = evt.touches[0].pageX;
+    const translateX = Math.max(0, this.currentX - this.startX);
 
-  //   if (translateX > 290 * this.trashhold) {
-  //     return false;
-  //   }
-  // }
+    if (translateX > 290 * this.trashhold) {
+      return false;
+    }
+  }
 
-  // @HostListener('touchend')
-  // private onTouchEnd() {
-  //   if (!this.touchingDrawer) {
-  //     return false;
-  //   }
-  //   this.touchingDrawer = false;
+  @HostListener('touchend')
+  private onTouchEnd() {
+    if (!this.touchingDrawer) {
+      return false;
+    }
+    this.touchingDrawer = false;
 
-  //   const translateX = Math.max(0, this.currentX - this.startX);
-  //   this.container.style.transform = '';
+    const translateX = Math.max(0, this.currentX - this.startX);
+    this.container.style.transform = '';
 
-  //   if (translateX > 290 * this.trashhold) {
-  //     this.hideDrawer();
-  //   } else {
-  //     this.showDrawer();
-  //   }
-  // }
+    if (translateX > 290 * this.trashhold) {
+      this.hideDrawer();
+    } else {
+      this.showDrawer();
+    }
+  }
 
-  // private update() {
-  //   if (!this.touchingDrawer) {
-  //     return;
-  //   }
-  //   requestAnimationFrame(this.update);
+  private update() {
+    if (!this.touchingDrawer) {
+      return;
+    }
+    requestAnimationFrame(this.update);
 
-  //   const translateX = Math.max(0, this.currentX - this.startX);
-  //   this.container.style.transform = `translateX(${translateX}px)`;
-  // }
+    const translateX = Math.max(0, this.currentX - this.startX);
+    this.container.style.transform = `translateX(${translateX}px)`;
+  }
 
-  // private onTransitionEnd(evt: Event) {
-  //   this.disableAnimatable();
-  //   if (this.transitionEndDisp) {
-  //     this.transitionEndDisp();
-  //     this.transitionEndDisp = null;
-  //   }
-  // }
+  private onTransitionEnd(evt: Event) {
+    this.disableAnimatable();
+    if (this.transitionEndDisp) {
+      this.transitionEndDisp();
+      this.transitionEndDisp = null;
+    }
+  }
 
   private enableAnimatable() {
     this.element.classList.add('side-drawer--animatable');

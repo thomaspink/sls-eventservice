@@ -88,3 +88,26 @@ side-drawer {
       transform: rotate(-45deg) translate3d(-50%, -50%, 0);
   }
 }
+
+.side-drawer__list {
+  margin: 46px 0 0 0;
+  padding: 0;
+  list-style: none;
+  text-transform: uppercase;
+  font-family: $font-family-condensed;
+  font-weight: bold;
+  line-height: 1.5;
+
+  .menu-item {
+    display: block;
+
+    a {
+      display: block;
+      padding: 4px 16px;
+
+      &:hover {
+        background: rgba(0,0,0,.04);
+      }
+    }
+  }
+}

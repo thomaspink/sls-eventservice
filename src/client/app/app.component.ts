@@ -11,17 +11,11 @@ import { DIALOG_COMPONENTS, DIALOG_PROVIDERS, Dialog } from './dialog/dialog';
   components: [HeaderComponent, DrawerComponent, ImageSliderComponent, DIALOG_COMPONENTS]
 })
 export class AppComponent {
-  private delegates: Function[] = [];
-
   @ViewChild(DrawerComponent)
   drawer: DrawerComponent;
 
-  constructor(private dialog: Dialog) {
-  }
-
   @ChildListener('header', 'onToggleDrawer')
   onToggleDrawer() {
-    this.dialog.open(ImageSliderComponent);
     if (this.drawer) {
       this.drawer.showDrawer();
     }
