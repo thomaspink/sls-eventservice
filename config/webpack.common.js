@@ -28,7 +28,12 @@ module.exports = {
             configFileName: helpers.root('src', 'client', 'tsconfig.json')
           }
         }
-      },
+      }
+      // , {
+      //   test: /\.scss$/,
+      //   exclude: helpers.root('src', 'client', 'app'),
+      //   use: ['style-loader', 'css-loader', 'sass-loader']
+      // }
     ]
   },
 

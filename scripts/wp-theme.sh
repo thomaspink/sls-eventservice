@@ -3,15 +3,17 @@
 set -u -e -o pipefail
 
 PUBLIC=`pwd`/public
+DIST=`pwd`/dist
 THEMES_DIR=${PUBLIC}/wp-content/themes
 THEME_SRC=`pwd`/src/theme
-THEME_DEST=${THEMES_DIR}/sls-2017
+THEME_DEST=${DIST}/sls-2017
 DEV=false
 
 for ARG in "$@"; do
   case "$ARG" in
     --dev)
       DEV=true
+      THEME_DEST=${THEMES_DIR}/sls-2017
       ;;
     *)
       echo "Unknown option $ARG."
