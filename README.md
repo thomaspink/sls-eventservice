@@ -1,4 +1,4 @@
-# sls-eventservice
+# SLS Eventservice
 New website for [sls-eventservice.at](http://sls-eventservice.at)    
 Development server: [sls-eventservice.ch](http://www.sls-eventservice.ch/)
 
