@@ -17,15 +17,18 @@
     )
   );
 
+  $blog = array(
+    'post_type' => 'page',
+    'pagename' => 'blog'
+  );
+  $blog = Timber::get_post($blog);
+
+
   $context = Timber::get_context();
   $context['posts'] = new Timber\PostQuery($args);
   $context['page'] = new TimberPost();
   $context['multiple'] = true;
-  $context['hero'] = array(
-    'image' => array('url' => 'http://placehold.it/900x400'),
-    'title' => 'SLS Eventservice<br>BLOG',
-    'style' => 'hero--outline'
-  );
+  $context['hero'] = $blog->get_field('hero');
   $template = array( 'pages/blog.twig' );
 
   Timber::render( $template, $context );
