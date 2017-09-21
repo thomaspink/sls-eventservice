@@ -89,7 +89,6 @@
     "label_placement": "top",
     "instruction_placement": "label",
     "hide_on_screen": [
-        "permalink",
         "custom_fields",
         "discussion",
         "comments",
@@ -105,5 +104,5 @@
     ],
     "active": 1,
     "description": "",
-    "modified": 1504919018
+    "modified": 1506006644
 }
