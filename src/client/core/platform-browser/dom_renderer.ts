@@ -1,7 +1,5 @@
 import { ListWrapper } from '../util/collection';
 import { Renderer, RendererFactory } from '../linker/renderer';
-import { Visitor } from '../linker/visitor';
-import { NodeWalker } from './node_walker';
 
 export const NAMESPACE_URIS: { [ns: string]: string } = {
   'svg': 'http://www.w3.org/2000/svg',
@@ -115,30 +113,24 @@ export class DefaultDomRenderer implements Renderer {
 }
 
 export class ComponentDomRenderer extends DefaultDomRenderer {
-  private _walker: NodeWalker;
-  constructor(private _visitor: Visitor) {
+  constructor() {
     super();
-    this._walker = new NodeWalker();
   }
 
   parse(view: any): void {
-    ListWrapper.forEach(view.hostElement.childNodes, node => {
-      this._walker.traverse(node as any, this._visitor, view);
-    });
-    this._visitor.finish(view);
   }
 }
 
-const defaultRenderer = new DefaultDomRenderer();
-
 export class DomRendererFactory implements RendererFactory {
   // private _renderer = new Map<any, Renderer>();
+  private defaultRenderer: Renderer;
 
-  constructor(private visitor?: Visitor) { };
+  constructor() {
+    this.defaultRenderer = new DefaultDomRenderer();
+  };
 
   createRenderer(): Renderer {
-    // let renderer = this._renderer.get(view);
-    return this.visitor ? new ComponentDomRenderer(this.visitor) : defaultRenderer;
+    return this.defaultRenderer;
   }
 }
 

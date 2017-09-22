@@ -1,12 +1,16 @@
-import { NodeDef, NodeFlags, QueryValueType, BindingFlags, BindingDef, OutputDef, OutputType, ViewDefinitionFactory, ElementHandleEventFn } from './types';
-import { NOOP, calcBindingFlags, splitNamespace } from './util';
+import {
+  NodeDef, NodeFlags, QueryValueType, BindingFlags, BindingDef, OutputDef,
+  OutputType, ViewDefinitionFactory, ElementHandleEventFn
+} from './types';
+import {NOOP, calcBindingFlags, splitNamespace, resolveRendererType} from './util';
+import {RendererType} from '../linker/renderer';
 
 export function elementDef(
   flags: NodeFlags, matchedQueriesDsl: [string | number, QueryValueType][],
   childCount: number, namespaceAndName: string, fixedAttrs: [string, string][] = [],
   bindings?: [BindingFlags, string, string][], outputs?: ([string, string])[],
   handleEvent?: ElementHandleEventFn, componentView?: ViewDefinitionFactory,
-  /*componentRendererType?: RendererType2 | null*/): NodeDef {
+  componentRendererType?: RendererType | null): NodeDef {
 
   if (!handleEvent) {
     handleEvent = NOOP;
@@ -29,7 +33,7 @@ export function elementDef(
       suffix = <string>suffixOrSecurityContext;
     }
     bindingDefs[i] =
-      { flags: bindingFlags, ns, name, nonMinifiedName: name, suffix };
+      {flags: bindingFlags, ns, name, nonMinifiedName: name, suffix};
   }
   outputs = outputs || [];
   const outputDefs: OutputDef[] = new Array(outputs.length);
@@ -46,7 +50,7 @@ export function elementDef(
     const [ns, name] = splitNamespace(namespaceAndName);
     return [ns, name, value];
   });
-  // componentRendererType = resolveRendererType2(componentRendererType);
+  componentRendererType = resolveRendererType(componentRendererType);
   if (componentView) {
     flags |= NodeFlags.ComponentView;
   }
@@ -78,7 +82,7 @@ export function elementDef(
       // will bet set by the view definition
       componentProvider: null,
       componentView: componentView || null,
-      // componentRendererType: componentRendererType,
+      componentRendererType: componentRendererType,
       publicProviders: null,
       allProviders: null,
       handleEvent: handleEvent || NOOP,

@@ -1,10 +1,10 @@
 // tslint:disable:no-bitwise
-import { Type } from '../type';
-import { ClassProvider, ConstructorProvider, ExistingProvider, FactoryProvider, ValueProvider } from '../di/provider';
-import { Injector } from '../di/injector';
-import { ComponentFactory } from '../linker/component_factory';
-import { ComponentFactoryResolver } from '../linker/component_factory_resolver';
-import { Renderer, RendererFactory } from '../linker/renderer';
+// import { Type } from '../type';
+// import { ClassProvider, ConstructorProvider, ExistingProvider, FactoryProvider, ValueProvider } from '../di/provider';
+// import { Injector } from '../di/injector';
+// import { ComponentFactory } from '../linker/component_factory';
+// import { ComponentFactoryResolver } from '../linker/component_factory_resolver';
+import { Renderer, RendererType } from '../linker/renderer';
 
 export interface DefinitionFactory<D extends Definition<any>> { (): D; }
 
@@ -155,7 +155,7 @@ export interface ElementDef {
   attrs: [string, string, string][]|null;
   // template: ViewDefinition|null;
   componentProvider: NodeDef|null;
-  // componentRendererType: RendererType2|null;
+  componentRendererType: RendererType|null;
   // closure to allow recursive components
   componentView: ViewDefinitionFactory|null;
   /**
@@ -231,10 +231,73 @@ export const enum DepFlags {
   Value = 2 << 2,
 }
 
-
 /**
- * ViewData
+ * View instance data.
+ * Attention: Adding fields to this is performance sensitive!
  */
 export interface ViewData {
   def: ViewDefinition;
+  // root: RootData;
+  renderer: Renderer;
+  // index of component provider / anchor.
+  parentNodeDef: NodeDef|null;
+  parent: ViewData|null;
+  viewContainerParent: ViewData|null;
+  component: any;
+  context: any;
+  // Attention: Never loop over this, as this will
+  // create a polymorphic usage site.
+  // Instead: Always loop over ViewDefinition.nodes,
+  // and call the right accessor (e.g. `elementData`) based on
+  // the NodeType.
+  nodes: {[key: number]: NodeData};
+  state: ViewState;
+  // oldValues: any[];
+  disposables: DisposableFn[]|null;
+}
+
+/**
+ * Bitmask of states
+ */
+export const enum ViewState {
+  BeforeFirstCheck = 1 << 0,
+  FirstCheck = 1 << 1,
+  Attached = 1 << 2,
+  ChecksEnabled = 1 << 3,
+  IsProjectedView = 1 << 4,
+  CheckProjectedView = 1 << 5,
+  CheckProjectedViews = 1 << 6,
+  Destroyed = 1 << 7,
+
+  CatDetectChanges = Attached | ChecksEnabled,
+  CatInit = BeforeFirstCheck | CatDetectChanges
+}
+
+export interface DisposableFn { (): void; }
+
+/**
+ * Node instance data.
+ *
+ * We have a separate type per NodeType to save memory
+ * (TextData | ElementData | ProviderData | PureExpressionData | QueryList<any>)
+ *
+ * To keep our code monomorphic,
+ * we prohibit using `NodeData` directly but enforce the use of accessors (`asElementData`, ...).
+ * This way, no usage site can get a `NodeData` from view.nodes and then use it for different
+ * purposes.
+ */
+export class NodeData { private __brand: any; }
+
+/**
+ * Data for an instantiated NodeType.Text.
+ *
+ * Attention: Adding fields to this is performance sensitive!
+ */
+export interface TextData { renderText: any; }
+
+/**
+ * Accessor for view.nodes, enforcing that every usage site stays monomorphic.
+ */
+export function asTextData(view: ViewData, index: number): TextData {
+  return <any>view.nodes[index];
 }

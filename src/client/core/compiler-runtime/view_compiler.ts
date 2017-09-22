@@ -28,7 +28,7 @@ export class ViewCompiler {
 
     // Element
     const selector = CssSelector.parse(component.selector)[0];
-    const elDef = elementDef(0, [], 0, selector.element || 'div', selector.toAttrsList(true), [], [], null, );
+    const elDef = elementDef(0, [], 0, selector.element || 'div', selector.toAttrsList(true), [], [], null, null, null);
     nodes.push(elDef);
 
     // Component Provider
@@ -47,7 +47,6 @@ export class ViewCompiler {
     }
 
     const def = viewDef(nodes);
-    console.log(def);
     return def;
   }
 

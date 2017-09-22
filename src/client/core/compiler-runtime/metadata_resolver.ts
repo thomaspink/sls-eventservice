@@ -19,8 +19,7 @@ import {
 import {TemplateParser, TemplateParseResult} from '../compiler/template_parser/parser';
 
 export class MetadataResolver {
-  private _nonNormalizedComponentCache =
-  new Map<Type<any>, {annotation: Component, metadata: CompileComponentMetadata}>();
+  private _nonNormalizedComponentCache = new Map<Type<any>, CompileComponentMetadata>();
   private _componentCache = new Map<Type<any>, CompileComponentMetadata>();
 
   constructor(private _componentResolver: ComponentResolver, private _reflector: Reflector,
@@ -40,7 +39,7 @@ export class MetadataResolver {
       return null;
     }
     componentType = resolveForwardRef(componentType);
-    const {annotation, metadata} = this.getNonNormalizedComponentMetadata(componentType)!;
+    const metadata = this.getNonNormalizedComponentMetadata(componentType)!;
 
     const createComponentMetadata = (templateMetadata: CompileTemplateMetadata | null): null => {
       const normalizedCompMeta = new CompileComponentMetadata({
@@ -59,32 +58,33 @@ export class MetadataResolver {
         componentViewType: metadata.componentViewType,
         // rendererType: metadata.rendererType,
         componentFactory: metadata.componentFactory,
-        template: templateMetadata
+        template: templateMetadata,
+        childComponents: ListWrapper.flatten(metadata.childComponents)
       });
       this._componentCache.set(componentType, normalizedCompMeta);
       return null;
     };
 
-    let templateMeta: any;
+    let childMetas: (Promise<null>|null)[] = [];
+    if (metadata.childComponents && metadata.childComponents.length) {
+      childMetas = ListWrapper.flatten(metadata.childComponents).map(t => this.loadComponentMetadata(t, isSync));
+    }
+
+    let templateMeta: CompileTemplateMetadata|null = null;
     const template = metadata.template !;
     if (template && template.template) {
       let templateParseResult: TemplateParseResult;
       templateParseResult = this._templateParser.parse(template.template, stringify(componentType));
-      templateMeta = Promise.resolve(new CompileTemplateMetadata({
+      templateMeta = new CompileTemplateMetadata({
         template: template.template,
         htmlAst: noUndefined(templateParseResult.templateAst)
-      }));
+      });
     }
 
-    const promise = SyncAsync.then(noUndefined(templateMeta), createComponentMetadata);
-    if (annotation.components) {
-      const compPromiseOrValue = ListWrapper.flatten(annotation.components).map(c => this.loadComponentMetadata(c, isSync));
-      return isSync ? promise : Promise.all(compPromiseOrValue).then(() => promise);
-    }
-    return promise;
+    return SyncAsync.then(SyncAsync.then(SyncAsync.all(childMetas), _ => templateMeta), createComponentMetadata);
   }
 
-  getNonNormalizedComponentMetadata(componentType: any): {annotation: Component, metadata: CompileComponentMetadata} | null {
+  getNonNormalizedComponentMetadata(componentType: any): CompileComponentMetadata | null {
     componentType = resolveForwardRef(componentType);
     if (!componentType) {
       return null;
@@ -120,7 +120,6 @@ export class MetadataResolver {
       providers = this._getProvidersMetadata(compMeta.providers,
         `providers for "${stringify(componentType)}"`, []);
     }
-
     // let queries: CompileQueryMetadata[] = [];
     // let viewQueries: CompileQueryMetadata[] = [];
     // if (compMeta.queries != null) {
@@ -142,13 +141,13 @@ export class MetadataResolver {
       // viewQueries: viewQueries || [],
       componentViewType: this.getComponentViewClass(componentType),
       // rendererType: nonNormalizedTemplateMetadata ? this.getRendererType(componentType) : null,
-      componentFactory: null
+      componentFactory: null,
+      childComponents: compMeta.components as Type<any>[] || []
     });
     metadata.componentFactory =
       this.getComponentFactory(selector, componentType, metadata.inputs, metadata.outputs);
-    cacheEntry = {metadata, annotation: compMeta};
-    this._nonNormalizedComponentCache.set(componentType, cacheEntry);
-    return cacheEntry;
+    this._nonNormalizedComponentCache.set(componentType, metadata);
+    return metadata;
   }
 
   getProviderMetadata(provider: ProviderMeta): CompileProviderMetadata {
