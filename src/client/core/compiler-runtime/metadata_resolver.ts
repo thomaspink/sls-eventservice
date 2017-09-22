@@ -1,49 +1,49 @@
-import { Type, isType } from '../type';
-import { stringify } from '../util';
-import { Reflector } from '../reflection/reflector';
-import { Component } from '../metadata/components';
-import { Optional, SkipSelf, Self, Host } from '../di/metadata';
-import { resolveForwardRef } from '../di/forward_ref';
-import { Provider } from '../di/provider';
+import {Type, isType} from '../type';
+import {stringify} from '../util';
+import {ListWrapper} from '../util/collection';
+import {Reflector} from '../reflection/reflector';
+import {Component} from '../metadata/components';
+import {Optional, SkipSelf, Self, Host} from '../di/metadata';
+import {resolveForwardRef} from '../di/forward_ref';
+import {Provider} from '../di/provider';
+import {createComponentFactory} from '../view/refs';
 
 // Compiler Dependencies
-import { ComponentResolver } from '../compiler/component_resolver';
-import { SyncAsync, isPromise } from '../compiler/util';
+import {ComponentResolver} from '../compiler/component_resolver';
+import {SyncAsync, noUndefined} from '../compiler/util';
 import {
   CompileComponentMetadata, CompileProviderMetadata, CompileDiDependencyMetadata, CompileTypeMetadata,
   CompileFactoryMetadata, CompileTokenMetadata, CompileIdentifierMetadata, ProviderMeta, ProxyClass,
-  viewClassName, hostViewClassName
+  viewClassName, hostViewClassName, CompileTemplateMetadata
 } from '../compiler/compile_metadata';
-
-import { ViewCompiler } from './view_compiler';
+import {TemplateParser, TemplateParseResult} from '../compiler/template_parser/parser';
 
 export class MetadataResolver {
   private _nonNormalizedComponentCache =
-    new Map<Type<any>, { annotation: Component, metadata: CompileComponentMetadata }>();
+  new Map<Type<any>, {annotation: Component, metadata: CompileComponentMetadata}>();
   private _componentCache = new Map<Type<any>, CompileComponentMetadata>();
 
   constructor(private _componentResolver: ComponentResolver, private _reflector: Reflector,
-    private _viewCompiler: ViewCompiler) { }
+    private _templateParser: TemplateParser) {}
 
-    getComponentMetadata(componentType: any): CompileComponentMetadata {
-      const dirMeta = this._componentCache.get(componentType) !;
-      if (!dirMeta) {
-        throw new Error(
-          `Illegal state: getComponentMetadata can only be called after loadComponentMetadata. Component ${stringify(componentType)}.`);
-      }
-      return dirMeta;
+  getComponentMetadata(componentType: any): CompileComponentMetadata {
+    const dirMeta = this._componentCache.get(componentType)!;
+    if (!dirMeta) {
+      throw new Error(
+        `Illegal state: getComponentMetadata can only be called after loadComponentMetadata. Component ${stringify(componentType)}.`);
     }
+    return dirMeta;
+  }
 
   loadComponentMetadata(componentType: any, isSync: boolean): SyncAsync<null> {
     if (this._componentCache.has(componentType)) {
       return null;
     }
     componentType = resolveForwardRef(componentType);
-    const {annotation, metadata} = this.getNonNormalizedComponentMetadata(componentType) !;
+    const {annotation, metadata} = this.getNonNormalizedComponentMetadata(componentType)!;
 
-    const createComponentMetadata = (templateMetadata: /*CompileTemplateMetadata | */ null): null => {
+    const createComponentMetadata = (templateMetadata: CompileTemplateMetadata | null): null => {
       const normalizedCompMeta = new CompileComponentMetadata({
-        isHost: false,
         type: metadata.type,
         selector: metadata.selector,
         // changeDetection: metadata.changeDetection,
@@ -59,45 +59,32 @@ export class MetadataResolver {
         componentViewType: metadata.componentViewType,
         // rendererType: metadata.rendererType,
         componentFactory: metadata.componentFactory,
-        // template: templateMetadata
+        template: templateMetadata
       });
-      // if (templateMetadata) {
-      //   this.initComponentFactory(metadata.componentFactory !, templateMetadata.ngContentSelectors);
-      // }
       this._componentCache.set(componentType, normalizedCompMeta);
       return null;
     };
 
-    // const template = metadata.template !;
-    // const templateMeta = this._directiveNormalizer.normalizeTemplate({
-    //   ngModuleType,
-    //   componentType: directiveType,
-    //   moduleUrl: this._reflector.componentModuleUrl(directiveType, annotation),
-    //   encapsulation: template.encapsulation,
-    //   template: template.template,
-    //   templateUrl: template.templateUrl,
-    //   styles: template.styles,
-    //   styleUrls: template.styleUrls,
-    //   animations: template.animations,
-    //   interpolation: template.interpolation,
-    //   preserveWhitespaces: template.preserveWhitespaces
-    // });
+    let templateMeta: any;
+    const template = metadata.template !;
+    if (template && template.template) {
+      let templateParseResult: TemplateParseResult;
+      templateParseResult = this._templateParser.parse(template.template, stringify(componentType));
+      templateMeta = Promise.resolve(new CompileTemplateMetadata({
+        template: template.template,
+        htmlAst: noUndefined(templateParseResult.templateAst)
+      }));
+    }
 
-    // if (isPromise(templateMeta) && isSync) {
-    //   this._reportError(componentStillLoadingError(directiveType), directiveType);
-    //   return null;
-    // }
-
-    const promise = SyncAsync.then(/*templateMeta*/null, createComponentMetadata);;
+    const promise = SyncAsync.then(noUndefined(templateMeta), createComponentMetadata);
     if (annotation.components) {
-      const compPromiseOrValue = annotation.components.map(c => this.loadComponentMetadata(c, isSync));
+      const compPromiseOrValue = ListWrapper.flatten(annotation.components).map(c => this.loadComponentMetadata(c, isSync));
       return isSync ? promise : Promise.all(compPromiseOrValue).then(() => promise);
     }
     return promise;
   }
 
-  getNonNormalizedComponentMetadata(componentType: any):
-    { annotation: Component, metadata: CompileComponentMetadata } | null {
+  getNonNormalizedComponentMetadata(componentType: any): {annotation: Component, metadata: CompileComponentMetadata} | null {
     componentType = resolveForwardRef(componentType);
     if (!componentType) {
       return null;
@@ -110,20 +97,11 @@ export class MetadataResolver {
     if (!compMeta) {
       return null;
     }
-    // let nonNormalizedTemplateMetadata: CompileTemplateMetadata = undefined!;
-    // nonNormalizedTemplateMetadata = new CompileTemplateMetadata({
-    //   encapsulation: noUndefined(compMeta.encapsulation),
-    //   template: noUndefined(compMeta.template),
-    //   templateUrl: noUndefined(compMeta.templateUrl),
-    //   styles: compMeta.styles || [],
-    //   styleUrls: compMeta.styleUrls || [],
-    //   animations: animations || [],
-    //   interpolation: noUndefined(compMeta.interpolation),
-    //   isInline: !!compMeta.template,
-    //   externalStylesheets: [],
-    //   ngContentSelectors: [],
-    //   preserveWhitespaces: noUndefined(compMeta.preserveWhitespaces),
-    // });
+    let nonNormalizedTemplateMetadata: CompileTemplateMetadata = undefined!;
+    nonNormalizedTemplateMetadata = new CompileTemplateMetadata({
+      template: noUndefined(compMeta.template),
+      htmlAst: null
+    });
 
     // let changeDetectionStrategy: ChangeDetectionStrategy = compMeta.changeDetection!!;
     let viewProviders: CompileProviderMetadata[] = [];
@@ -151,10 +129,9 @@ export class MetadataResolver {
     // }
 
     const metadata = CompileComponentMetadata.create({
-      isHost: false,
       selector: selector,
       type: this._getTypeMetadata(componentType, compMeta.deps),
-      // template: nonNormalizedTemplateMetadata,
+      template: nonNormalizedTemplateMetadata,
       // changeDetection: changeDetectionStrategy,
       inputs: /*compMeta.inputs || */[],
       outputs: compMeta.outputs || [],
@@ -169,7 +146,7 @@ export class MetadataResolver {
     });
     metadata.componentFactory =
       this.getComponentFactory(selector, componentType, metadata.inputs, metadata.outputs);
-    cacheEntry = { metadata, annotation: compMeta };
+    cacheEntry = {metadata, annotation: compMeta};
     this._nonNormalizedComponentCache.set(componentType, cacheEntry);
     return cacheEntry;
   }
@@ -185,7 +162,7 @@ export class MetadataResolver {
       compileDeps = compileTypeMetadata.diDeps;
       if (provider.token === provider.useClass) {
         // use the compileTypeMetadata as it contains information about lifecycleHooks...
-        token = { identifier: compileTypeMetadata };
+        token = {identifier: compileTypeMetadata};
       }
     } else if (provider.useFactory) {
       compileFactoryMetadata = this._getFactoryMetadata(provider.useFactory, provider.dependencies);
@@ -204,17 +181,15 @@ export class MetadataResolver {
   }
 
   private getComponentFactory(
-    selector: string, compType: any, inputs: { [key: string]: string } | null,
-    outputs: { [key: string]: string }): any {
+    selector: string, compType: any, inputs: {[key: string]: string} | null,
+    outputs: {[key: string]: string}): any {
     const hostView = this.getHostComponentViewClass(compType);
-    // const createComponentFactory = .createComponentFactory);
-    // return createComponentFactory(selector, compType, <any>hostView, inputs, outputs, []);
-    return null;
+    return createComponentFactory(selector, compType, <any>hostView, inputs, outputs, []);
   }
 
   private _createProxyClass(baseType: any, name: string): ProxyClass {
     let delegate: any = null;
-    const proxyClass: ProxyClass = <any>function () {
+    const proxyClass: ProxyClass = <any>function() {
       if (!delegate) {
         throw new Error(
           `Illegal state: Class ${name} for type ${stringify(baseType)} is not compiled yet!`);
@@ -242,7 +217,8 @@ export class MetadataResolver {
     return this.getGeneratedClass(compType, hostViewClassName(compType));
   }
 
-  private _getProvidersMetadata(providers: Provider[], debugInfo?: string, compileProviders: CompileProviderMetadata[] = []) {
+  private _getProvidersMetadata(providers: Provider[], debugInfo?: string,
+    compileProviders: CompileProviderMetadata[] = []) {
     providers.forEach((provider: any, providerIdx: number) => {
       if (Array.isArray(provider)) {
         this._getProvidersMetadata(provider, debugInfo, compileProviders);
@@ -258,10 +234,10 @@ export class MetadataResolver {
           }
           providerMeta = new ProviderMeta(provider.provide, provider);
         } else if (isType(provider)) {
-          providerMeta = new ProviderMeta(provider, { useClass: provider });
+          providerMeta = new ProviderMeta(provider, {useClass: provider});
         } else if (provider === void 0) {
-          throw new Error(
-            `Encountered undefined provider! Usually this means you have a circular dependencies (might be caused by using 'barrel' index.ts files.`);
+          throw new Error(`Encountered undefined provider! Usually this means you have ` +
+            `a circular dependencies (might be caused by using 'barrel' index.ts files.`);
         } else {
           const providersInfo =
             (<string[]>providers.reduce(
@@ -286,7 +262,8 @@ export class MetadataResolver {
     return compileProviders;
   }
 
-  private _getTypeMetadata(type: Type<any>, dependencies: any[] | null = null): CompileTypeMetadata {
+  private _getTypeMetadata(type: Type<any>,
+    dependencies: any[] | null = null): CompileTypeMetadata {
     const identifier = this._getIdentifierMetadata(type);
     return {
       reference: identifier.reference,
@@ -298,12 +275,12 @@ export class MetadataResolver {
   private _getFactoryMetadata(factory: Function, dependencies: any[] | null = null):
     CompileFactoryMetadata {
     factory = resolveForwardRef(factory);
-    return { reference: factory, diDeps: this._getDependenciesMetadata(factory, dependencies) };
+    return {reference: factory, diDeps: this._getDependenciesMetadata(factory, dependencies)};
   }
 
   private _getIdentifierMetadata(type: Type<any>): CompileIdentifierMetadata {
     type = resolveForwardRef(type);
-    return { reference: type };
+    return {reference: type};
   }
 
   private _getDependenciesMetadata(typeOrFunc: Type<any> | Function, dependencies: any[] | null) {
@@ -379,9 +356,9 @@ export class MetadataResolver {
     token = resolveForwardRef(token);
     let compileToken: CompileTokenMetadata;
     if (typeof token === 'string') {
-      compileToken = { value: token };
+      compileToken = {value: token};
     } else {
-      compileToken = { identifier: { reference: token } };
+      compileToken = {identifier: {reference: token}};
     }
     return compileToken;
   }
@@ -392,5 +369,5 @@ function isTypeOf(instance: any, type: Type<any>): boolean {
 }
 
 export const METADATA_RESOLVER_PROVIDER = {
-  provide: MetadataResolver, deps: [ComponentResolver, Reflector, ViewCompiler]
-}
+  provide: MetadataResolver, deps: [ComponentResolver, Reflector, TemplateParser]
+};

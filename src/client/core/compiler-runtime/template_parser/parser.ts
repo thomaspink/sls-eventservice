@@ -1,7 +1,10 @@
-import { ListWrapper } from '../../util/collection';
-import { getSimpleHtmlTagDefinition } from '../../compiler/template_parser/html_tags';
-import { TemplateParser, TemplateParseError, TemplateParseResult } from '../../compiler/template_parser/parser';
-import { tokenize, TokenType, Token } from './lexer';
+import {Provider} from '../../di/provider';
+import {ListWrapper} from '../../util/collection';
+import {getSimpleHtmlTagDefinition} from '../../compiler/template_parser/html_tags';
+import {TemplateParser, TemplateParseError, TemplateParseResult} from '../../compiler/template_parser/parser';
+import {tokenize, TokenType, Token} from './lexer';
+import {TemplateAst, AttrAst, ElementAst, TextAst} from '../../compiler/template_parser/ast';
+import {ParseSourceSpan, ParseLocation, ParseSourceFile} from '../../compiler/parse_util';
 
 enum VmType {
   Void,
@@ -40,16 +43,21 @@ export class Parser_ {
   private _nodes: TypeNode[] = [];
   private _errors: TemplateParseError[] = [];
 
-  constructor(private _input: string, private _file: string) { }
+  private _sourceFile: ParseSourceFile;
+
+  constructor(private _input: string, private _file: string) {
+    this._sourceFile = new ParseSourceFile(_input, _file);
+  }
 
   parse(): TemplateParseResult {
     const tokenResult = tokenize(this._input, getSimpleHtmlTagDefinition);
+    const emptyResult = new TemplateParseResult([], []);
     if (tokenResult.errors.length) {
-      return new TemplateParseResult(this._file, this._input, [],
+      return new TemplateParseResult([],
         tokenResult.errors.map(err => new TemplateParseError(err.message || err as any, this._file)));
     }
     if (!tokenResult.tokens || !tokenResult.tokens.length) {
-      return new TemplateParseResult(this._file, this._input, [], []);
+      return emptyResult;
     }
     const tokens = this._tokens = tokenResult.tokens;
     this._nodes = [];
@@ -59,10 +67,10 @@ export class Parser_ {
     this._advance();
     try {
       const nodes: any[] = this._visitTokenUntilFn(token => token.type === TokenType.EOF);
-      return new TemplateParseResult(this._file, this._input, nodes, []);
+      return emptyResult;
     } catch (e) {
       if (e instanceof TemplateParseError) {
-        return new TemplateParseResult(this._file, this._input, [], this._errors);
+        return new TemplateParseResult([], this._errors);
       } else {
         throw e;
       }
@@ -84,13 +92,13 @@ export class Parser_ {
     return false;
   }
 
-  private _visitTokenUntilFn(predicate: (token: Token) => boolean): TypeNode[] {
-    const nodes: TypeNode[] = [];
+  private _visitTokenUntilFn(predicate: (token: Token) => boolean): TemplateAst[] {
+    const nodes: TemplateAst[] = [];
     while (!predicate(this._peek)) {
       if (this._attemptToken(TokenType.TAG_OPEN_START)) {
         nodes.push(this._visitTag());
       } else if (this._attemptToken(TokenType.COMMENT_START)) {
-        nodes.push(this._visitComment());
+        this._visitComment();
       } else if (this._attemptToken(TokenType.TEXT) || this._attemptToken(TokenType.RAW_TEXT)) {
         nodes.push(this._visitText());
       } else if (this._attemptToken(TokenType.ATTR_NAME)) {
@@ -102,38 +110,38 @@ export class Parser_ {
     return nodes;
   }
 
-  private _visitTag(): TypeElementNode {
+  private _visitTag(): ElementAst {
 
     const tagName = this._findInParts(this._peek);
     const def = getSimpleHtmlTagDefinition(tagName);
 
     this._advance();
-    const attrs = this._visitTokenUntilFn(token => token.type !== TokenType.ATTR_NAME) as TypeAttributeNode[];
+    const attrs = this._visitTokenUntilFn(token => token.type !== TokenType.ATTR_NAME) as AttrAst[];
     const isTagOpenEnd = this._attemptToken(TokenType.TAG_OPEN_END);
     const isTagOpenEndVOid = this._attemptToken(TokenType.TAG_OPEN_END_VOID);
     this._advance();
 
-    if ((isTagOpenEnd && def.isVoid)  || isTagOpenEndVOid) {
-      return [VmType.Element, tagName, attrs, [], true];
+    if ((isTagOpenEnd && def.isVoid) || isTagOpenEndVOid) {
+      return new ElementAst(tagName, attrs, [], this._span(), this._span());
     } else if (isTagOpenEnd) {
       const children = this._visitTokenUntilFn(token => token.type === TokenType.TAG_CLOSE);
       this._advance();
-      return [VmType.Element, tagName, attrs, children, false];
+      return new ElementAst(tagName, attrs, children, this._span(), this._span());
     } else {
       throw this._reportError(`Could not close Tag ${tagName}.`);
     }
   }
 
-  private _visitText(): TypeTextNode {
+  private _visitText(): TextAst {
     let text = '';
     ListWrapper.forEach(this._peek.parts, part => {
       if (!isEmptyText(part)) text += part;
     });
     this._advance();
-    return [VmType.Text, text];
+    return new TextAst(text, this._span());
   }
 
-  private _visitComment(): TypeCommentNode {
+  private _visitComment(): void {
     let text = '';
     this._advance();
     while (true) {
@@ -148,13 +156,13 @@ export class Parser_ {
     }
     if (this._attemptToken(TokenType.COMMENT_END)) {
       this._advance();
-      return [VmType.Comment, text];
+      // return [VmType.Comment, text];
     } else {
       throw this._reportError(`Comments can only contain text`);
     }
   }
 
-  private _visitAttribute(): TypeAttributeNode {
+  private _visitAttribute(): AttrAst {
     const name = this._findInParts(this._peek);
     let value = '';
     this._advance();
@@ -162,7 +170,7 @@ export class Parser_ {
       value = this._findInParts(this._peek);
       this._advance();
     }
-    return [VmType.Attribute, name, value];
+    return new AttrAst(name, value, this._span());
   }
 
   private _findInParts(token: Token) {
@@ -174,9 +182,19 @@ export class Parser_ {
     this._errors.push(err);
     return err;
   }
-}
 
+  private _span() {
+    // TODO @thomaspink: Implement source span in tokens
+    const empty = new ParseLocation(this._sourceFile, 0, 0, 0);
+    return new ParseSourceSpan(empty, empty);
+  }
+}
 
 function isEmptyText(text: string) {
-  return !text.replace(/[\n\r]/g, '').trim().length
+  return !text.replace(/[\n\r]/g, '').trim().length;
 }
+
+export const TEMPLATE_PARSER_PROVIDER: Provider = {
+  provide: TemplateParser, useClass: SimpleTemplateParser, deps: []
+};
+
