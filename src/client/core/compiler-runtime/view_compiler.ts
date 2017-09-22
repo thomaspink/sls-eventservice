@@ -1,14 +1,15 @@
 // import {Type, isType} from '../type';
 // import {stringify} from '../util';
-// import {ListWrapper} from '../util/collection';
+import {ListWrapper} from '../util/collection';
 import {NodeDef, NodeFlags, DepFlags, OutputDef, OutputType} from '../view/types';
 import {componentDef, providerDef} from '../view/provider';
 import {elementDef} from '../view/element';
+import {textDef} from '../view/text';
 import {viewDef} from '../view/view';
 
 // Compiler Dependencies
 // import {splitAtColon} from '../compiler/util';
-import {NullTemplateVisitor, ElementAst, templateVisitAll} from '../compiler/template_parser/ast';
+import {NullTemplateVisitor, ElementAst, TextAst, TemplateAst, templateVisitAll} from '../compiler/template_parser/ast';
 import {CssSelector} from '../compiler/selector';
 
 import {
@@ -23,17 +24,18 @@ export class ViewCompiler {
   }
 
   compileComponent(component: CompileComponentMetadata) {
-    console.log(component);
     const nodes: NodeDef[] = [];
 
     // Element
     const selector = CssSelector.parse(component.selector)[0];
-    nodes.push(elementDef(0, [], 0, selector.element || 'div', selector.toAttrsList(true), [], [], null, ));
+    const elDef = elementDef(0, [], 0, selector.element || 'div', selector.toAttrsList(true), [], [], null, );
+    nodes.push(elDef);
 
     // Component Provider
-    const compDef = componentDef(0, [], 0, component.type.reference,
+    const componentProvider = componentDef(0, [], 0, component.type.reference,
       component.type.diDeps.map(dep => this._depDef(dep)));
-    nodes.push(compDef);
+    elDef.element.componentProvider = componentProvider;
+    nodes.push(componentProvider);
 
     // Providers
     const providers = component.providers.map(provider => this._providerDef(provider));
@@ -50,7 +52,7 @@ export class ViewCompiler {
   }
 
   private _templateDef(templateMeta: CompileTemplateMetadata): NodeDef[] {
-    return templateVisitAll(visitor, templateMeta.htmlAst).filter(n => Boolean(n));
+    return visitor.visitAll(templateMeta.htmlAst);
   }
 
   private _providerDef(providerMeta: CompileProviderMetadata): NodeDef {
@@ -103,8 +105,15 @@ class TemplateVisitor extends NullTemplateVisitor {
     const attrs = ast.attrs.map(attr => [attr.name, attr.value] as [string, string]);
     const defs =  [elementDef(0, [], ast.children.length, ast.name, attrs)];
     if (ast.children && ast.children.length)
-      defs.push(...templateVisitAll(this, ast.children));
+      defs.push(...this.visitAll(ast.children));
     return defs;
+  }
+  visitText(ast: TextAst, context: any): NodeDef {
+    return textDef([ast.value]);
+  }
+
+  visitAll(asts: TemplateAst[]) {
+    return ListWrapper.flatten(templateVisitAll(this, asts)).filter(n => Boolean(n));
   }
 }
 const visitor = new TemplateVisitor();

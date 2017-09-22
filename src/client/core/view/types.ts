@@ -53,7 +53,7 @@ export interface NodeDef {
   // childMatchedQueries: number;
   element: ElementDef|null;
   provider: ProviderDef|null;
-  // text: TextDef|null;
+  text: TextDef|null;
   // query: QueryDef|null;
   // ngContent: NgContentDef|null;
 }
@@ -146,6 +146,8 @@ export const enum QueryValueType {
   Provider = 4
 }
 
+export interface TextDef { prefix: string; }
+
 export interface ElementDef {
   name: string|null;
   ns: string|null;
@@ -189,7 +191,7 @@ export interface ViewDefinition extends Definition<ViewDefinitionFactory> {
   /** aggregated NodeFlags for all nodes **/
   nodeFlags: NodeFlags;
   rootNodeFlags: NodeFlags;
-  lastRenderRootNode: NodeDef|null;
+  // lastRenderRootNode: NodeDef|null;
   bindingCount: number;
   outputCount: number;
   /**

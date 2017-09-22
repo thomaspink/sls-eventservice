@@ -81,7 +81,7 @@ export function _def(flags: NodeFlags, matchedQueriesDsl: [string | number, Quer
     bindingFlags: calcBindingFlags(bindings), outputs,
     element: null,
     provider: { token, value, deps: depDefs },
-    // text: null,
+    text: null,
     // query: null,
   };
 }

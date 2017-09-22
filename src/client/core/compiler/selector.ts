@@ -142,14 +142,14 @@ export class CssSelector {
 
   toAttrsList(includeClass = false): [string, string][] {
     const attrs = [];
-    if (this.attrs) {
+    if (this.attrs && this.attrs.length) {
       for (let i = 0; i < this.attrs.length; i += 2) {
         const name = this.attrs[i];
         const value = this.attrs[i + 1];
         attrs.push([name, value || ''] as [string, string]);
       }
     }
-    if (includeClass && this.classNames) {
+    if (includeClass && this.classNames && this.classNames.length) {
       attrs.push(['class', this.classNames.join(' ')] as [string, string]);
     }
     return attrs;
