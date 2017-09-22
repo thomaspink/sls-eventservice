@@ -84,7 +84,7 @@ export function elementDef(
       handleEvent: handleEvent || NOOP,
     },
     provider: null,
-    // text: null,
+    text: null,
     // query: null
   };
 }
