@@ -8,7 +8,6 @@ import { SWIPER_PROVIDERS } from './services/swiper';
 
 @Component({
   selector: 'body',
-<<<<<<< HEAD
   providers: [DIALOG_PROVIDERS, SWIPER_PROVIDERS],
   deps: [Dialog],
   components: [
@@ -18,31 +17,14 @@ import { SWIPER_PROVIDERS } from './services/swiper';
     ImageSliderComponent,
     DIALOG_COMPONENTS
   ]
-=======
-  providers: [DIALOG_PROVIDERS],
-  deps: [ [new Optional(), new SkipSelf(), Dialog]],
-  components: [HeaderComponent, DrawerComponent, ImageSliderComponent/*, DIALOG_COMPONENTS*/]
->>>>>>> dba3ac1... wip
 })
 export class AppComponent {
+
   @ViewChild(DrawerComponent)
   drawer: DrawerComponent;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
   @ChildListener('header', 'onToggleDrawer')
   onToggleDrawer() {
-=======
-  constructor(private dialog: any/* Dialog*/) {
-=======
-  constructor(private dialog?: any/* Dialog*/) {
->>>>>>> 57f8871... wip
-  }
-
-  @ChildListener('header', 'onToggleDrawer')
-  onToggleDrawer() {
-    // this.dialog.open(ImageSliderComponent);
->>>>>>> dba3ac1... wip
     if (this.drawer) {
       this.drawer.showDrawer();
     }
