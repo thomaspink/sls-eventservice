@@ -50,5 +50,7 @@ export abstract class RendererFactory {
   abstract createRenderer(): Renderer;
 }
 
-// tslint:disable-next-line:variable-name
-export const RendererFactoryType = new InjectionToken('renderer_factory_type');
+export interface RendererType {
+  id: string;
+  data: {[kind: string]: any};
+}

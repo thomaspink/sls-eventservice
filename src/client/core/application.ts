@@ -31,8 +31,8 @@ export class ApplicationRef extends Injector {
       componentFactory =
         this._componentFactoryResolver.resolveComponentFactory(componentOrFactory)!;
     }
-    // this._rootComponentTypes.push(componentFactory.componentType);
-    // const compRef = componentFactory.create(null, this, null);
+    this._rootComponentTypes.push(componentFactory.componentType);
+    const compRef = componentFactory.create(this, componentFactory.selector);
     // this.attachView(compRef.hostView);
     // return compRef;
   }
@@ -68,10 +68,9 @@ export function bootstrapComponent<C>(component: Type<C>) {
     COMPILER_PROVIDER
   ]);
   const compiler: JitCompiler = appInjector.get(JitCompiler);
-  // const resolver = compiler.compileComponent(component);
-  console.log(compiler.compileComponentSync(component));
-  // const app = new ApplicationRef(appInjector, resolver);
-  // app.bootstrap(component);
+  const resolver = compiler.compileComponentSync(component);
+  const app = new ApplicationRef(appInjector, resolver);
+  app.bootstrap(component);
 }
 
 function remove<T>(list: T[], el: T): void {

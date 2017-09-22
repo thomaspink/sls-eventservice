@@ -1,8 +1,9 @@
 import { Type } from '../type';
 import { stringify } from '../util';
 import { Injector } from '../di/injector';
+import { RendererType } from '../linker/renderer';
 // import { createComponentView, initView } from './view';
-import { Definition, DefinitionFactory, ViewData, ViewDefinition, DepFlags, DepDef, BindingDef, BindingFlags, NodeFlags } from './types';
+import { Definition, DefinitionFactory, ViewData, DepFlags, DepDef, BindingDef, BindingFlags } from './types';
 
 export const NOOP: any = () => {};
 
@@ -73,4 +74,23 @@ export function calcBindingFlags(bindings: BindingDef[]): BindingFlags {
     flags |= bindings[i].flags;
   }
   return flags;
+}
+
+const UNDEFINED_RENDERER_TYPE_ID = '$$undefined';
+const EMPTY_RENDERER_TYPE_ID = '$$empty';
+let _renderCompCount = 0;
+export function resolveRendererType(type?: RendererType | null): RendererType|null {
+  if (type && type.id === UNDEFINED_RENDERER_TYPE_ID) {
+    // first time we see this RendererType2. Initialize it...
+    const isFilled = Object.keys(type.data).length;
+    if (isFilled) {
+      type.id = `c${_renderCompCount++}`;
+    } else {
+      type.id = EMPTY_RENDERER_TYPE_ID;
+    }
+  }
+  if (type && type.id === EMPTY_RENDERER_TYPE_ID) {
+    type = null;
+  }
+  return type || null;
 }

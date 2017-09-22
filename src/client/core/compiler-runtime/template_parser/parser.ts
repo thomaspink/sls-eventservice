@@ -37,9 +37,6 @@ export class Parser_ {
   private _length = 0;
   private _peek: Token;
 
-  private _openNodeIndex: -1;
-  private _openNodeType: VmType = VmType.Void;
-
   private _nodes: TypeNode[] = [];
   private _errors: TemplateParseError[] = [];
 
@@ -66,8 +63,8 @@ export class Parser_ {
 
     this._advance();
     try {
-      const nodes: any[] = this._visitTokenUntilFn(token => token.type === TokenType.EOF);
-      return emptyResult;
+      const ast = this._visitTokenUntilFn(token => token.type === TokenType.EOF);
+      return new TemplateParseResult(ast, []);
     } catch (e) {
       if (e instanceof TemplateParseError) {
         return new TemplateParseResult([], this._errors);

@@ -8,7 +8,7 @@ import {InjectionToken} from '../di/injection_token';
 import {ComponentFactory, ComponentRef} from '../linker/component_factory';
 import {ComponentFactoryResolver} from '../linker/component_factory_resolver';
 import {ViewRef, InternalViewRef} from '../linker/view_ref';
-import {Renderer} from '../linker/renderer';
+import {Renderer, RendererFactory} from '../linker/renderer';
 import {callLifecycleHook} from '../lifecycle_hooks';
 // import { createComponentView, initView, destroyView } from './view';
 import {ViewDefinition, ViewData, ViewDefinitionFactory} from './types';
@@ -60,6 +60,9 @@ class ComponentFactory_ extends ComponentFactory<any> {
 
   create(injector: Injector, rootSelectorOrNode?: string | any): ComponentRef<any> {
     const viewDef = resolveDefinition(this.viewDefFactory);
+    const componentNodeIndex = viewDef.nodes[0].element !.componentProvider !.index;
+
+    console.log(componentNodeIndex, viewDef);
     // const instance = createClass(this.componentType, new Injector_(view), view.def.deps);
     // initView(view, instance, null);
     // view.renderer.parse(view);
