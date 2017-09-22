@@ -77,14 +77,9 @@ export class DialogOverlayRef {
   readonly backdrop: Element;
 
   attach<T>(compType: ComponentType<T>, element: Element): ComponentRef<T> {
-<<<<<<< HEAD:src/client/app/services/dialog/dialog-overlay.ts
     if (this._componentRef) {
       throw new Error(
         `Can not attach component to overlay, because there is already a component attached!`);
-=======
-    if (this._componentRef)  {
-      throw new Error(`Can not attach component to overlay, because there is already a component attached!`);
->>>>>>> 3499c6ed2259da4ad42557100863a296ad1758d8:src/client/app/dialog/dialog-overlay.ts
     }
     // this.pane.appendChild(element);
     // const factory = this._resolver.resolveComponentFactory(compType);
