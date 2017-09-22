@@ -1,5 +1,5 @@
 export { OnInit, OnDestroy } from './lifecycle_hooks';
-export { EventEmitter } from './events';
+export { EventEmitter, EventObservable, EventSubscription, EventObserver } from './events';
 export { Injector } from './di/injector';
 export { Component, Output, HostListener, ChildListener } from './metadata/components';
 export { ViewChild, ViewChildren } from './metadata/di';
