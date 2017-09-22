@@ -2,7 +2,7 @@
   "rules": {
     "max-line-length": [
       true,
-      100
+      140
     ],
     "no-inferrable-types": [
       false
@@ -56,7 +56,9 @@
     "variable-name": [
       true,
       "ban-keywords",
-      "allow-leading-underscore"
+      "allow-leading-underscore",
+      "allow-trailing-underscore",
+      "allow-pascal-case"
     ],
     "whitespace": [
       true,
