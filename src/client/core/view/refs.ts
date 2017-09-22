@@ -1,18 +1,25 @@
 // tslint:disable:class-name
-import { Type } from '../type';
-import { stringify } from '../util';
-import { ApplicationRef } from '../application';
-import { Injector } from '../di/injector';
-import { Provider, ClassProvider } from '../di/provider';
-import { InjectionToken } from '../di/injection_token';
-import { ComponentFactory, ComponentRef } from '../linker/component_factory';
-import { ComponentFactoryResolver } from '../linker/component_factory_resolver';
-import { ViewRef, InternalViewRef } from '../linker/view_ref';
-import { Renderer } from '../linker/renderer';
-import { callLifecycleHook } from '../lifecycle_hooks';
+import {Type} from '../type';
+import {stringify} from '../util';
+import {ApplicationRef} from '../application';
+import {Injector} from '../di/injector';
+import {Provider, ClassProvider} from '../di/provider';
+import {InjectionToken} from '../di/injection_token';
+import {ComponentFactory, ComponentRef} from '../linker/component_factory';
+import {ComponentFactoryResolver} from '../linker/component_factory_resolver';
+import {ViewRef, InternalViewRef} from '../linker/view_ref';
+import {Renderer} from '../linker/renderer';
+import {callLifecycleHook} from '../lifecycle_hooks';
 // import { createComponentView, initView, destroyView } from './view';
-import { ViewDefinition, ViewData, ViewDefinitionFactory } from './types';
-import { createClass, resolveDefinition } from './util';
+import {ViewDefinition, ViewData, ViewDefinitionFactory} from './types';
+import {createClass, resolveDefinition} from './util';
+
+export function createComponentFactory(
+  selector: string, componentType: Type<any>, viewDefFactory: ViewDefinitionFactory,
+  inputs: {[propName: string]: string} | null, outputs: {[propName: string]: string},
+  ngContentSelectors: string[]): ComponentFactory<any> {
+  return new ComponentFactory_(selector, componentType, viewDefFactory, inputs, outputs);
+}
 
 export function getComponentViewDefinitionFactory(componentFactory: ComponentFactory<any>):
   ViewDefinitionFactory {
@@ -26,27 +33,27 @@ class ComponentFactory_ extends ComponentFactory<any> {
   viewDefFactory: ViewDefinitionFactory;
 
   constructor(public selector: string, public componentType: Type<any>,
-    viewDefFactory: ViewDefinitionFactory, private _inputs: { [propName: string]: string } | null,
-    private _outputs: { [propName: string]: string }) {
+    viewDefFactory: ViewDefinitionFactory, private _inputs: {[propName: string]: string} | null,
+    private _outputs: {[propName: string]: string}) {
     super();
     this.viewDefFactory = viewDefFactory;
   }
 
   get inputs() {
-    const inputsArr: { propName: string, templateName: string }[] = [];
+    const inputsArr: {propName: string, templateName: string}[] = [];
     const inputs = this._inputs!;
     for (let propName in inputs) {
       const templateName = inputs[propName];
-      inputsArr.push({ propName, templateName });
+      inputsArr.push({propName, templateName});
     }
     return inputsArr;
   }
 
   get outputs() {
-    const outputsArr: { propName: string, templateName: string }[] = [];
+    const outputsArr: {propName: string, templateName: string}[] = [];
     for (let propName in this._outputs) {
       const templateName = this._outputs[propName];
-      outputsArr.push({ propName, templateName });
+      outputsArr.push({propName, templateName});
     }
     return outputsArr;
   }
@@ -67,17 +74,17 @@ class ComponentRef_ extends ComponentRef<any> {
     super();
   }
 
-  get location(): any { return null; /*this._view.hostElement;*/ };
-  get instance() { return this._component; };
-  get injector() { return new Injector_(this._view); };
-  get hostView() { return this._viewRef; };
-  get componentType() { return <any>this._component.constructor; }
+  get location(): any {return null; /*this._view.hostElement;*/};
+  get instance() {return this._component;};
+  get injector() {return new Injector_(this._view);};
+  get hostView() {return this._viewRef;};
+  get componentType() {return <any>this._component.constructor;}
 
   /**
    * Destroys this component and removes it from the element
    */
-  destroy(): void { this._viewRef.destroy(); }
-  onDestroy(callback: Function): void { this._viewRef.onDestroy(callback); }
+  destroy(): void {this._viewRef.destroy();}
+  onDestroy(callback: Function): void {this._viewRef.onDestroy(callback);}
 }
 
 class ViewRef_ extends ViewRef implements InternalViewRef {
@@ -88,7 +95,7 @@ class ViewRef_ extends ViewRef implements InternalViewRef {
     this._appRef = null;
   }
 
-  get renderer(): any { return null; /*this.view.renderer;*/ };
+  get renderer(): any {return null; /*this.view.renderer;*/};
 
   destroy(): void {
     // destroyView(this.view);

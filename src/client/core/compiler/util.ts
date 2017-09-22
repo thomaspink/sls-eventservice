@@ -52,3 +52,11 @@ export function isPromise(obj: any): obj is Promise<any> {
   // It's up to the caller to ensure that obj.then conforms to the spec
   return !!obj && typeof obj.then === 'function';
 }
+
+export function isDefined(val: any): boolean {
+  return val !== null && val !== undefined;
+}
+
+export function noUndefined<T>(val: T | undefined): T {
+  return val === undefined ? null ! : val;
+}

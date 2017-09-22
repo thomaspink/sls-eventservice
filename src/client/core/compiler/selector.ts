@@ -7,6 +7,7 @@
  */
 
 import {ListWrapper} from '../util/collection';
+import {getSimpleHtmlTagDefinition} from './template_parser/html_tags';
 
 const _SELECTOR_REGEXP = new RegExp(
     '(\\:not\\()|' +           // ":not("
@@ -100,6 +101,23 @@ export class CssSelector {
 
   setElement(element: string|null = null) { this.element = element; }
 
+  /** Gets a template string for an element that matches the selector. */
+  getMatchingElementTemplate(): string {
+    const tagName = this.element || 'div';
+    const classAttr = this.classNames.length > 0 ? ` class="${this.classNames.join(' ')}"` : '';
+
+    let attrs = '';
+    for (let i = 0; i < this.attrs.length; i += 2) {
+      const attrName = this.attrs[i];
+      const attrValue = this.attrs[i + 1] !== '' ? `="${this.attrs[i + 1]}"` : '';
+      attrs += ` ${attrName}${attrValue}`;
+    }
+
+    return getSimpleHtmlTagDefinition(tagName).isVoid ?
+      `<${tagName}${classAttr}${attrs}/>` :
+      `<${tagName}${classAttr}${attrs}></${tagName}>`;
+  }
+
   addAttribute(name: string, value: string = '') {
     this.attrs.push(name, value && value.toLowerCase() || '');
   }
@@ -120,6 +138,21 @@ export class CssSelector {
     }
     this.notSelectors.forEach(notSelector => res += `:not(${notSelector})`);
     return res;
+  }
+
+  toAttrsList(includeClass = false): [string, string][] {
+    const attrs = [];
+    if (this.attrs) {
+      for (let i = 0; i < this.attrs.length; i += 2) {
+        const name = this.attrs[i];
+        const value = this.attrs[i + 1];
+        attrs.push([name, value || ''] as [string, string]);
+      }
+    }
+    if (includeClass && this.classNames) {
+      attrs.push(['class', this.classNames.join(' ')] as [string, string]);
+    }
+    return attrs;
   }
 }
 

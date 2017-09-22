@@ -1,17 +1,19 @@
-import { Type, isType } from '../type';
-import { stringify } from '../util';
-import { ListWrapper } from '../util/collection';
-import { NodeDef, NodeFlags, DepFlags, OutputDef, OutputType } from '../view/types';
-import { componentDef, providerDef } from '../view/provider';
-import { elementDef } from '../view/element';
-import { viewDef } from '../view/view';
+// import {Type, isType} from '../type';
+// import {stringify} from '../util';
+// import {ListWrapper} from '../util/collection';
+import {NodeDef, NodeFlags, DepFlags, OutputDef, OutputType} from '../view/types';
+import {componentDef, providerDef} from '../view/provider';
+import {elementDef} from '../view/element';
+import {viewDef} from '../view/view';
 
 // Compiler Dependencies
-import { splitAtColon } from '../compiler/util';
-import { ComponentResolver } from '../compiler/component_resolver';
-import { CssSelector } from '../compiler/selector';
+// import {splitAtColon} from '../compiler/util';
+import {NullTemplateVisitor, ElementAst, templateVisitAll} from '../compiler/template_parser/ast';
+import {CssSelector} from '../compiler/selector';
 
-import { CompileComponentMetadata, CompileProviderMetadata, CompileDiDependencyMetadata } from '../compiler/compile_metadata';
+import {
+  CompileComponentMetadata, CompileProviderMetadata, CompileDiDependencyMetadata, CompileTemplateMetadata
+} from '../compiler/compile_metadata';
 
 // type RawProvider = ValueProvider | ExistingProvider | FactoryProvider | ClassProvider | ConstructorProvider;
 // type DepProvider = FactoryProvider | ClassProvider | ConstructorProvider;
@@ -23,16 +25,32 @@ export class ViewCompiler {
   compileComponent(component: CompileComponentMetadata) {
     console.log(component);
     const nodes: NodeDef[] = [];
-    const providers = component.providers.map(provider => this._providerDef(provider));
+
+    // Element
     const selector = CssSelector.parse(component.selector)[0];
+    nodes.push(elementDef(0, [], 0, selector.element || 'div', selector.toAttrsList(true), [], [], null, ));
+
+    // Component Provider
+    const compDef = componentDef(0, [], 0, component.type.reference,
+      component.type.diDeps.map(dep => this._depDef(dep)));
+    nodes.push(compDef);
+
+    // Providers
+    const providers = component.providers.map(provider => this._providerDef(provider));
     nodes.push(...providers);
 
-    const compDef =
-      componentDef(0, [], 0, component.type.reference, component.type.diDeps.map(dep => this._depDef(dep)));
-    nodes.push(compDef);
+    // Template
+    if (component.template) {
+      nodes.push(...this._templateDef(component.template));
+    }
 
     const def = viewDef(nodes);
     console.log(def);
+    return def;
+  }
+
+  private _templateDef(templateMeta: CompileTemplateMetadata): NodeDef[] {
+    return templateVisitAll(visitor, templateMeta.htmlAst).filter(n => Boolean(n));
   }
 
   private _providerDef(providerMeta: CompileProviderMetadata): NodeDef {
@@ -44,15 +62,18 @@ export class ViewCompiler {
       flags |= NodeFlags.TypeClassProvider;
       value = providerMeta.useClass.reference;
       depMetas = providerMeta.deps || providerMeta.useClass!.diDeps;
-    } else if(providerMeta.useFactory) {
+    } else if (providerMeta.useFactory) {
       flags |= NodeFlags.TypeFactoryProvider;
       value = providerMeta.useFactory.reference;
       depMetas = providerMeta.deps || providerMeta.useFactory.diDeps;
-    } else if(providerMeta.useExisting) {
+    } else if (providerMeta.useExisting) {
       flags |= NodeFlags.TypeUseExistingProvider;
       // value = providerMeta.useExisting;
-      depMetas = [{token: providerMeta.useExisting.identifier.reference || providerMeta.useExisting.identifier}];
-    } else if(providerMeta.useValue) {
+      depMetas = [{
+        token: providerMeta.useExisting.identifier.reference ||
+        providerMeta.useExisting.identifier
+      }];
+    } else if (providerMeta.useValue) {
       flags |= NodeFlags.TypeValueProvider;
       value = providerMeta.useValue;
       depMetas = [];
@@ -77,15 +98,18 @@ export class ViewCompiler {
   }
 }
 
-interface ViewBuilderFactory {
-  (parent: ViewBuilder): ViewBuilder;
-}
-
-class ViewBuilder {
-  constructor(private parent: ViewBuilder|null, private component: CompileComponentMetadata) {
+class TemplateVisitor extends NullTemplateVisitor {
+  visitElement(ast: ElementAst, context: any): NodeDef[] {
+    const attrs = ast.attrs.map(attr => [attr.name, attr.value] as [string, string]);
+    const defs =  [elementDef(0, [], ast.children.length, ast.name, attrs)];
+    if (ast.children && ast.children.length)
+      defs.push(...templateVisitAll(this, ast.children));
+    return defs;
   }
 }
+const visitor = new TemplateVisitor();
 
 export const VIEW_COMPILER_PROVIDER = {
   provide: ViewCompiler, deps: [] as any[]
-}
+};
+

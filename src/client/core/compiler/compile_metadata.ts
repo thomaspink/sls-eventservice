@@ -1,6 +1,7 @@
-import { stringify } from '../util';
-import { splitAtColon } from './util';
-import { Type } from '../type';
+import {stringify} from '../util';
+import {splitAtColon} from './util';
+import {Type} from '../type';
+import {TemplateAst} from './template_parser/ast';
 
 // group 0: "[prop] or (event) or @trigger"
 // group 1: "prop" from "[prop]"
@@ -12,28 +13,27 @@ const HOST_REG_EXP = /^(?:(?:\[([^\]]+)\])|(?:\(([^\)]+)\)))|(\@[-\w]+)$/;
  * Metadata regarding compilation of a component.
  */
 export class CompileComponentMetadata {
-  static create({ isHost, type, selector,/* changeDetection,*/ inputs, outputs,
-    host, providers, viewProviders,/* queries, viewQueries, template,*/
-    componentViewType,/* rendererType,*/ componentFactory }: {
-      isHost: boolean,
+  static create({type, selector,/* changeDetection,*/ inputs, outputs,
+    host, providers, viewProviders,/* queries, viewQueries,*/ template,
+    componentViewType,/* rendererType,*/ componentFactory}: {
       type: CompileTypeMetadata,
       selector: string | null,
       // changeDetection: ChangeDetectionStrategy|null,
       inputs: string[],
       outputs: string[],
-      host: { [key: string]: string },
+      host: {[key: string]: string},
       providers: CompileProviderMetadata[],
       viewProviders: CompileProviderMetadata[],
       // queries: CompileQueryMetadata[],
       // viewQueries: CompileQueryMetadata[],
-      // template: CompileTemplateMetadata,
+      template: CompileTemplateMetadata,
       componentViewType: any | null,
       // rendererType: any|object|null,
       componentFactory: any | object | null,
     }): CompileComponentMetadata {
-    const hostListeners: { [key: string]: string } = {};
-    const hostProperties: { [key: string]: string } = {};
-    const hostAttributes: { [key: string]: string } = {};
+    const hostListeners: {[key: string]: string} = {};
+    const hostProperties: {[key: string]: string} = {};
+    const hostAttributes: {[key: string]: string} = {};
     if (host != null) {
       Object.keys(host).forEach(key => {
         const value = host[key];
@@ -47,7 +47,7 @@ export class CompileComponentMetadata {
         }
       });
     }
-    const inputsMap: { [key: string]: string } = {};
+    const inputsMap: {[key: string]: string} = {};
     if (inputs != null) {
       inputs.forEach((bindConfig: string) => {
         // canonical syntax: `dirProp: elProp`
@@ -56,7 +56,7 @@ export class CompileComponentMetadata {
         inputsMap[parts[0]] = parts[1];
       });
     }
-    const outputsMap: { [key: string]: string } = {};
+    const outputsMap: {[key: string]: string} = {};
     if (outputs != null) {
       outputs.forEach((bindConfig: string) => {
         // canonical syntax: `dirProp: elProp`
@@ -67,7 +67,6 @@ export class CompileComponentMetadata {
     }
 
     return new CompileComponentMetadata({
-      isHost,
       type,
       selector,
       // changeDetection,
@@ -80,54 +79,51 @@ export class CompileComponentMetadata {
       viewProviders,
       // queries,
       // viewQueries,
-      // template,
+      template,
       componentViewType,
       // rendererType,
       componentFactory,
     });
   }
-  isHost: boolean;
   type: CompileTypeMetadata;
   selector: string | null;
   // changeDetection: ChangeDetectionStrategy|null;
-  inputs: { [key: string]: string };
-  outputs: { [key: string]: string };
-  hostListeners: { [key: string]: string };
-  hostProperties: { [key: string]: string };
-  hostAttributes: { [key: string]: string };
+  inputs: {[key: string]: string};
+  outputs: {[key: string]: string};
+  hostListeners: {[key: string]: string};
+  hostProperties: {[key: string]: string};
+  hostAttributes: {[key: string]: string};
   providers: CompileProviderMetadata[];
   viewProviders: CompileProviderMetadata[];
   // queries: CompileQueryMetadata[];
   // viewQueries: CompileQueryMetadata[];
 
-  // template: CompileTemplateMetadata|null;
+  template: CompileTemplateMetadata|null;
 
   componentViewType: any | null;
   // rendererType: any|object|null;
   componentFactory: any | object | null;
 
-  constructor({ isHost, type, selector, /*changeDetection,*/ inputs, outputs, hostListeners, hostProperties,
-    hostAttributes, providers, viewProviders, /*queries, viewQueries, template,*/ componentViewType,
-               /*rendererType,*/  componentFactory }: {
-      isHost: boolean,
+  constructor({type, selector, /*changeDetection,*/ inputs, outputs, hostListeners, hostProperties,
+    hostAttributes, providers, viewProviders, /*queries, viewQueries,*/ template, componentViewType,
+               /*rendererType,*/  componentFactory}: {
       type: CompileTypeMetadata,
       selector: string | null,
       // changeDetection: ChangeDetectionStrategy|null,
-      inputs: { [key: string]: string },
-      outputs: { [key: string]: string },
-      hostListeners: { [key: string]: string },
-      hostProperties: { [key: string]: string },
-      hostAttributes: { [key: string]: string },
+      inputs: {[key: string]: string},
+      outputs: {[key: string]: string},
+      hostListeners: {[key: string]: string},
+      hostProperties: {[key: string]: string},
+      hostAttributes: {[key: string]: string},
       providers: CompileProviderMetadata[],
       viewProviders: CompileProviderMetadata[],
       // queries: CompileQueryMetadata[],
       // viewQueries: CompileQueryMetadata[],
-      // template: CompileTemplateMetadata|null,
+      template: CompileTemplateMetadata | null,
       componentViewType: any | null,
       // rendererType: any|object|null,
       componentFactory: any | object | null,
     }) {
-    this.isHost = !!isHost;
     this.type = type;
     this.selector = selector;
     // this.changeDetection = changeDetection;
@@ -140,7 +136,7 @@ export class CompileComponentMetadata {
     this.viewProviders = _normalizeArray(viewProviders);
     // this.queries = _normalizeArray(queries);
     // this.viewQueries = _normalizeArray(viewQueries);
-    // this.template = template;
+    this.template = template;
 
     this.componentViewType = componentViewType;
     // this.rendererType = rendererType;
@@ -148,42 +144,19 @@ export class CompileComponentMetadata {
   }
 }
 
-export function createHostComponentMeta(
-  hostTypeReference: any, compMeta: CompileComponentMetadata,
-  hostViewType: any): CompileComponentMetadata {
-  // const template = CssSelector.parse(compMeta.selector!)[0].getMatchingElementTemplate();
-  return CompileComponentMetadata.create({
-    isHost: true,
-    type: { reference: hostTypeReference, diDeps: [], /* lifecycleHooks: []*/ },
-    // template: new CompileTemplateMetadata({
-    //   encapsulation: ViewEncapsulation.None,
-    //   template: template,
-    //   templateUrl: '',
-    //   styles: [],
-    //   styleUrls: [],
-    //   ngContentSelectors: [],
-    //   animations: [],
-    //   isInline: true,
-    //   externalStylesheets: [],
-    //   interpolation: null,
-    //   preserveWhitespaces: false,
-    // }),
-    // changeDetection: ChangeDetectionStrategy.Default,
-    inputs: [],
-    outputs: [],
-    host: {},
-    selector: '*',
-    providers: [],
-    viewProviders: [],
-    // queries: [],
-    // viewQueries: [],
-    componentViewType: hostViewType,
-    // rendererType: { id: '__Host__', encapsulation: ViewEncapsulation.None, styles: [], data: {} } as object,
-    componentFactory: null
-  });
+/**
+ * Metadata regarding compilation of a template.
+ */
+export class CompileTemplateMetadata {
+  template: string | null;
+  htmlAst: TemplateAst[]|null;
+  constructor({template, htmlAst}: {
+    template: string | null,
+    htmlAst: TemplateAst[]|null,
+  }) {
+    this.template = template;
+  }
 }
-
-
 
 export class ProviderMeta {
   token: any;
@@ -194,7 +167,7 @@ export class ProviderMeta {
   dependencies: Object[] | null;
   multi: boolean;
 
-  constructor(token: any, { useClass, useValue, useExisting, useFactory, deps, multi }: {
+  constructor(token: any, {useClass, useValue, useExisting, useFactory, deps, multi}: {
     useClass?: Type<any>,
     useValue?: any,
     useExisting?: any,
@@ -212,7 +185,7 @@ export class ProviderMeta {
   }
 }
 
-export interface CompileIdentifierMetadata { reference: any; }
+export interface CompileIdentifierMetadata {reference: any;}
 
 export interface CompileProviderMetadata {
   token: CompileTokenMetadata;
@@ -243,7 +216,6 @@ export interface CompileFactoryMetadata extends CompileIdentifierMetadata {
 export interface CompileDiDependencyMetadata {
   isAttribute?: boolean;
   isSelf?: boolean;
-  isHost?: boolean;
   isSkipSelf?: boolean;
   isOptional?: boolean;
   isValue?: boolean;
@@ -252,22 +224,22 @@ export interface CompileDiDependencyMetadata {
 }
 
 export function viewClassName(compType: any, embeddedTemplateIndex: number): string {
-  return `View_${identifierName({ reference: compType })}_${embeddedTemplateIndex}`;
+  return `View_${identifierName({reference: compType})}_${embeddedTemplateIndex}`;
 }
 
 export function rendererTypeName(compType: any): string {
-  return `RenderType_${identifierName({ reference: compType })}`;
+  return `RenderType_${identifierName({reference: compType})}`;
 }
 
 export function hostViewClassName(compType: any): string {
-  return `HostView_${identifierName({ reference: compType })}`;
+  return `HostView_${identifierName({reference: compType})}`;
 }
 
 export function componentFactoryName(compType: any): string {
-  return `${identifierName({ reference: compType })}NgFactory`;
+  return `${identifierName({reference: compType})}NgFactory`;
 }
 
-export interface ProxyClass { setDelegate(delegate: any): void; }
+export interface ProxyClass {setDelegate(delegate: any): void;}
 
 function _normalizeArray(obj: any[] | undefined | null): any[] {
   return obj || [];

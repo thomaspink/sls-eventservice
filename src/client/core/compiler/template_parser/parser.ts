@@ -1,8 +1,7 @@
-import { Provider } from '../../di/provider';
+import {TemplateAst} from './ast';
 
 export class TemplateParseResult {
-  constructor(public fileName: string, templateString: string,
-    public nodes: any/*TemplateNodeDef*/[], public errors: TemplateParseError[]) { }
+  constructor(public templateAst?: TemplateAst[], public errors?: TemplateParseError[]) { }
 }
 
 export class TemplateParseError extends Error {
