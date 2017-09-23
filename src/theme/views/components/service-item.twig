@@ -4,8 +4,7 @@
 
   <grid-column medium-6>
     {% include 'components/image.twig' with { image: image, style: 'service-item__image' } %}
-
-     {% include 'components/icon.twig' with { icon: get_leistung_icon(service.get_field('category')), style: 'service-item__icon' } %}
+    {% include 'components/icon.twig' with { icon: get_leistung_icon(service.get_field('category')), style: 'service-item__icon' } %}
   </grid-column>
 
   <grid-column medium-6>
