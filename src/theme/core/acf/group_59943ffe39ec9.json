@@ -28,9 +28,9 @@
         },
         {
             "key": "field_5994405f61951",
-            "label": "Icon",
-            "name": "icon",
-            "type": "select",
+            "label": "Kategorie",
+            "name": "category",
+            "type": "taxonomy",
             "instructions": "",
             "required": 0,
             "conditional_logic": 0,
@@ -39,23 +39,14 @@
                 "class": "",
                 "id": ""
             },
-            "choices": {
-                "buehnenbau": "Bühnenbau",
-                "lichttechnik": "Lichttechnik",
-                "lasertechnik": "Lasertechnik",
-                "powerfactory": "Powerfactory",
-                "pyrotechnik": "Pyrotechnik",
-                "tontechnik": "Tontechnik",
-                "videoproduktion": "Videoproduktion",
-                "videotechnik": "Videotechnik"
-            },
-            "default_value": [],
+            "taxonomy": "leistungen",
+            "field_type": "select",
             "allow_null": 0,
-            "multiple": 0,
-            "ui": 0,
-            "ajax": 0,
-            "return_format": "value",
-            "placeholder": ""
+            "add_term": 0,
+            "save_terms": 1,
+            "load_terms": 0,
+            "return_format": "id",
+            "multiple": 0
         }
     ],
     "location": [
@@ -90,5 +81,5 @@
     ],
     "active": 1,
     "description": "",
-    "modified": 1505142817
+    "modified": 1506185376
 }
