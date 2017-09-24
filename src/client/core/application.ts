@@ -2,7 +2,6 @@ import { Type } from './type';
 import { ComponentFactoryResolver } from './linker/component_factory_resolver';
 import { ComponentFactory, ComponentRef } from './linker/component_factory';
 import { Injector } from './di/injector';
-import { InjectionToken } from './di/injection_token';
 import { REFLECTIVE_PROVIDERS } from './reflection/reflection';
 import { COMPILER_PROVIDER } from './compiler-runtime/compiler';
 import { PLATFORM_BROWSER_PROVIDER } from './platform-browser/platform';
@@ -23,7 +22,7 @@ export class ApplicationRef extends Injector {
     super();
   }
 
-  bootstrap<C>(componentOrFactory: ComponentFactory<C> | Type<C>) {
+  bootstrap<C>(componentOrFactory: ComponentFactory<C> | Type<C>, rootSelectorOrNode?: string|any) {
     let componentFactory: ComponentFactory<C>;
     if (componentOrFactory instanceof ComponentFactory) {
       componentFactory = componentOrFactory;
@@ -31,8 +30,9 @@ export class ApplicationRef extends Injector {
       componentFactory =
         this._componentFactoryResolver.resolveComponentFactory(componentOrFactory)!;
     }
+    const selectorOrNode = rootSelectorOrNode || componentFactory.selector;
+    const compRef = componentFactory.create(this, selectorOrNode);
     this._rootComponentTypes.push(componentFactory.componentType);
-    const compRef = componentFactory.create(this, componentFactory.selector);
     // this.attachView(compRef.hostView);
     // return compRef;
   }
@@ -49,7 +49,6 @@ export class ApplicationRef extends Injector {
     view.detachFromAppRef();
   }
 
-
   get(token: any, notFoundValue?: any): any {
     if (token === ComponentFactoryResolver) {
       return this._componentFactoryResolver;
@@ -59,6 +58,13 @@ export class ApplicationRef extends Injector {
     }
     return this._injector.get(token, notFoundValue);
   }
+
+  ngOnDestroy() {
+    this._views.slice().forEach((view) => view.destroy());
+  }
+
+  /** Returns the number of attached views. */
+  get viewCount() { return this._views.length; }
 }
 
 export function bootstrapComponent<C>(component: Type<C>) {

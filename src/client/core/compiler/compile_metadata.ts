@@ -15,7 +15,7 @@ const HOST_REG_EXP = /^(?:(?:\[([^\]]+)\])|(?:\(([^\)]+)\)))|(\@[-\w]+)$/;
 export class CompileComponentMetadata {
   static create({type, selector,/* changeDetection,*/ inputs, outputs,
     host, providers, viewProviders,/* queries, viewQueries,*/ template,
-    componentViewType,/* rendererType,*/ componentFactory,
+    componentViewType, rendererType, componentFactory,
     childComponents}: {
       type: CompileTypeMetadata,
       selector: string | null,
@@ -29,7 +29,7 @@ export class CompileComponentMetadata {
       // viewQueries: CompileQueryMetadata[],
       template: CompileTemplateMetadata,
       componentViewType: any | null,
-      // rendererType: any|object|null,
+      rendererType: any|object|null,
       componentFactory: any | object | null,
 
       childComponents: Type<any>[];
@@ -84,7 +84,7 @@ export class CompileComponentMetadata {
       // viewQueries,
       template,
       componentViewType,
-      // rendererType,
+      rendererType,
       componentFactory,
       childComponents
     });
@@ -103,17 +103,17 @@ export class CompileComponentMetadata {
   // queries: CompileQueryMetadata[];
   // viewQueries: CompileQueryMetadata[];
 
-  template: CompileTemplateMetadata|null;
+  template: CompileTemplateMetadata | null;
 
   componentViewType: any | null;
-  // rendererType: any|object|null;
+  rendererType: any|object|null;
   componentFactory: any | object | null;
 
   childComponents: Type<any>[];
 
   constructor({type, selector, /*changeDetection,*/ inputs, outputs, hostListeners, hostProperties,
     hostAttributes, providers, viewProviders, /*queries, viewQueries,*/ template, componentViewType,
-    /*rendererType,*/ componentFactory, childComponents}: {
+    rendererType, componentFactory, childComponents}: {
       type: CompileTypeMetadata,
       selector: string | null,
       // changeDetection: ChangeDetectionStrategy|null,
@@ -128,7 +128,7 @@ export class CompileComponentMetadata {
       // viewQueries: CompileQueryMetadata[],
       template: CompileTemplateMetadata | null,
       componentViewType: any | null,
-      // rendererType: any|object|null,
+      rendererType: any | object | null,
       componentFactory: any | object | null,
       childComponents: Type<any>[],
     }) {
@@ -159,10 +159,10 @@ export class CompileComponentMetadata {
  */
 export class CompileTemplateMetadata {
   template: string | null;
-  htmlAst: TemplateAst[]|null;
+  htmlAst: TemplateAst[] | null;
   constructor({template, htmlAst}: {
     template: string | null,
-    htmlAst: TemplateAst[]|null,
+    htmlAst: TemplateAst[] | null,
   }) {
     this.template = template;
     this.htmlAst = htmlAst;
@@ -196,7 +196,7 @@ export class ProviderMeta {
   }
 }
 
-export interface CompileIdentifierMetadata {reference: any; }
+export interface CompileIdentifierMetadata {reference: any;}
 
 export interface CompileProviderMetadata {
   token: CompileTokenMetadata;
@@ -250,7 +250,7 @@ export function componentFactoryName(compType: any): string {
   return `${identifierName({reference: compType})}NgFactory`;
 }
 
-export interface ProxyClass {setDelegate(delegate: any): void; }
+export interface ProxyClass {setDelegate(delegate: any): void;}
 
 function _normalizeArray(obj: any[] | undefined | null): any[] {
   return obj || [];

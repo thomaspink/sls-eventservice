@@ -14,7 +14,7 @@ import {SyncAsync, noUndefined} from '../compiler/util';
 import {
   CompileComponentMetadata, CompileProviderMetadata, CompileDiDependencyMetadata, CompileTypeMetadata,
   CompileFactoryMetadata, CompileTokenMetadata, CompileIdentifierMetadata, ProviderMeta, ProxyClass,
-  viewClassName, hostViewClassName, CompileTemplateMetadata
+  viewClassName, hostViewClassName, CompileTemplateMetadata, rendererTypeName
 } from '../compiler/compile_metadata';
 import {TemplateParser, TemplateParseResult} from '../compiler/template_parser/parser';
 
@@ -56,7 +56,7 @@ export class MetadataResolver {
         // queries: metadata.queries,
         // viewQueries: metadata.viewQueries,
         componentViewType: metadata.componentViewType,
-        // rendererType: metadata.rendererType,
+        rendererType: metadata.rendererType,
         componentFactory: metadata.componentFactory,
         template: templateMetadata,
         childComponents: ListWrapper.flatten(metadata.childComponents)
@@ -140,7 +140,7 @@ export class MetadataResolver {
       // queries: queries || [],
       // viewQueries: viewQueries || [],
       componentViewType: this.getComponentViewClass(componentType),
-      // rendererType: nonNormalizedTemplateMetadata ? this.getRendererType(componentType) : null,
+      rendererType: nonNormalizedTemplateMetadata ? this.getRendererType(componentType) : null,
       componentFactory: null,
       childComponents: compMeta.components as Type<any>[] || []
     });
@@ -360,6 +360,13 @@ export class MetadataResolver {
       compileToken = {identifier: {reference: token}};
     }
     return compileToken;
+  }
+
+  private getRendererType(compType: any): object {
+    return <any> {
+      id: rendererTypeName(compType),
+      data: Object.create(null)
+    };
   }
 }
 

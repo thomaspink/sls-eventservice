@@ -1,7 +1,7 @@
-import { ListWrapper } from '../util/collection';
-import { Renderer, RendererFactory } from '../linker/renderer';
+import {ListWrapper} from '../util/collection';
+import {Renderer, RendererFactory, RendererType} from '../linker/renderer';
 
-export const NAMESPACE_URIS: { [ns: string]: string } = {
+export const NAMESPACE_URIS: {[ns: string]: string} = {
   'svg': 'http://www.w3.org/2000/svg',
   'xhtml': 'http://www.w3.org/1999/xhtml',
   'xlink': 'http://www.w3.org/1999/xlink',
@@ -10,11 +10,11 @@ export const NAMESPACE_URIS: { [ns: string]: string } = {
 };
 
 export class DefaultDomRenderer implements Renderer {
-  data: { [key: string]: any } = Object.create(null);
+  data: {[key: string]: any} = Object.create(null);
 
-  constructor() { }
+  constructor() {}
 
-  destroy(): void { }
+  destroy(): void {}
 
   destroyNode: null;
 
@@ -26,11 +26,11 @@ export class DefaultDomRenderer implements Renderer {
     return document.createElement(name);
   }
 
-  createComment(value: string): any { return document.createComment(value); }
+  createComment(value: string): any {return document.createComment(value);}
 
-  createText(value: string): any { return document.createTextNode(value); }
+  createText(value: string): any {return document.createTextNode(value);}
 
-  appendChild(parent: any, newChild: any): void { parent.appendChild(newChild); }
+  appendChild(parent: any, newChild: any): void {parent.appendChild(newChild);}
 
   insertBefore(parent: any, newChild: any, refChild: any): void {
     if (parent) {
@@ -53,9 +53,9 @@ export class DefaultDomRenderer implements Renderer {
     return el;
   }
 
-  parentNode(node: any): any { return node.parentNode; }
+  parentNode(node: any): any {return node.parentNode;}
 
-  nextSibling(node: any): any { return node.nextSibling; }
+  nextSibling(node: any): any {return node.nextSibling;}
 
   setAttribute(el: any, name: string, value: string, namespace?: string): void {
     if (namespace) {
@@ -84,15 +84,15 @@ export class DefaultDomRenderer implements Renderer {
     }
   }
 
-  addClass(el: any, name: string): void { el.classList.add(name); }
+  addClass(el: any, name: string): void {el.classList.add(name);}
 
-  removeClass(el: any, name: string): void { el.classList.remove(name); }
+  removeClass(el: any, name: string): void {el.classList.remove(name);}
 
   setProperty(el: any, name: string, value: any): void {
     el[name] = value;
   }
 
-  setValue(node: any, value: string): void { node.nodeValue = value; }
+  setValue(node: any, value: string): void {node.nodeValue = value;}
 
   listen(target: 'window' | 'document' | 'body' | any, event: string,
     callback: (event: any) => boolean | void): () => void {
@@ -113,7 +113,7 @@ export class DefaultDomRenderer implements Renderer {
 }
 
 export class ComponentDomRenderer extends DefaultDomRenderer {
-  constructor() {
+  constructor(private hostEl: any) {
     super();
   }
 
@@ -129,7 +129,10 @@ export class DomRendererFactory implements RendererFactory {
     this.defaultRenderer = new DefaultDomRenderer();
   };
 
-  createRenderer(): Renderer {
+  createRenderer(hostElement: any, type: RendererType | null): Renderer {
+    if (type) {
+      return new ComponentDomRenderer(hostElement);
+    }
     return this.defaultRenderer;
   }
 }

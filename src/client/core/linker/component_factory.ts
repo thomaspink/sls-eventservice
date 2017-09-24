@@ -1,6 +1,7 @@
-import { Type } from '../type';
-import { Injector } from '../di/injector';
-import { ViewRef } from '../linker/view_ref';
+import {Type} from '../type';
+import {Injector} from '../di/injector';
+import {ViewRef} from '../linker/view_ref';
+import {ElementRef} from '../linker/element_ref';
 
 /**
  * Represents an instance of a Component created via a ComponentFactory.
@@ -14,7 +15,7 @@ export abstract class ComponentRef<C> {
   /**
    * Location of the Host Element of this Component Instance.
    */
-  abstract get location(): Element;
+  abstract get location(): ElementRef;
 
   /**
    * The injector on which the component instance exists.
@@ -70,5 +71,5 @@ export abstract class ComponentFactory<C> {
   /**
    * Creates a new component.
    */
-  abstract create(injector: Injector, rootSelectorOrNode?: string|any): ComponentRef<C>;
+  abstract create(injector: Injector, rootSelectorOrNode?: string | any): ComponentRef<C>;
 }
