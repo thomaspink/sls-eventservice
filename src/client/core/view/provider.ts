@@ -97,7 +97,7 @@ export function createComponentInstance(view: ViewData, def: NodeDef): any {
   // components can see other private services, other directives can't.
   const allowPrivateServices = (def.flags & NodeFlags.Component) > 0;
 
-  // directives are always eager and classes!
+  // components are always eager and classes!
   const instance = createClass(
     view, def.parent!, allowPrivateServices, def.provider!.value, def.provider!.deps);
   // if (def.outputs.length) {
@@ -235,12 +235,6 @@ export function resolveDep(
   }
   const tokenKey = depDef.tokenKey;
 
-  // if (tokenKey === ChangeDetectorRefTokenKey) {
-  //   // directives on the same element as a component should be able to control the change detector
-  //   // of that component as well.
-  //   allowPrivateServices = !!(elDef && elDef.element!.componentView);
-  // }
-
   if (elDef && (depDef.flags & DepFlags.SkipSelf)) {
     allowPrivateServices = false;
     elDef = elDef.parent!;
@@ -250,9 +244,8 @@ export function resolveDep(
     if (elDef) {
       switch (tokenKey) {
         case RendererTokenKey: {
-          // const compView = findCompView(view, elDef, allowPrivateServices);
-          // return compView.renderer;
-          throw new Error('not implemented');
+          const compView = findCompView(view, elDef, allowPrivateServices);
+          return compView.renderer;
         }
         case ElementRefTokenKey:
           return new ElementRef(asElementData(view, elDef.index).renderElement);
@@ -288,18 +281,30 @@ export function resolveDep(
     view = view.parent!;
   }
 
-  // const value = startView.root.injector.get(depDef.token, NOT_FOUND_CHECK_ONLY_ELEMENT_INJECTOR);
-  const value: any = null;
+  const value = startView.root.injector.get(depDef.token, NOT_FOUND_CHECK_ONLY_ELEMENT_INJECTOR);
 
   if (value !== NOT_FOUND_CHECK_ONLY_ELEMENT_INJECTOR ||
     notFoundValue === NOT_FOUND_CHECK_ONLY_ELEMENT_INJECTOR) {
     // Return the value from the root element injector when
     // - it provides it
-    //   (value !== NOT_FOUND_CHECK_ONLY_ELEMENT_INJECTOR)
+      // (value !== NOT_FOUND_CHECK_ONLY_ELEMENT_INJECTOR)
     // - the module injector should not be checked
     //   (notFoundValue === NOT_FOUND_CHECK_ONLY_ELEMENT_INJECTOR)
     return value;
   }
 
   // return startView.root.ngModule.injector.get(depDef.token, notFoundValue);
+}
+
+function findCompView(view: ViewData, elDef: NodeDef, allowPrivateServices: boolean) {
+  let compView: ViewData;
+  if (allowPrivateServices) {
+    compView = asElementData(view, elDef.index).componentView;
+  } else {
+    compView = view;
+    while (compView.parent && !isComponentView(compView)) {
+      compView = compView.parent;
+    }
+  }
+  return compView;
 }

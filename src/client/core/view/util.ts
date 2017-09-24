@@ -2,10 +2,9 @@ import {Type} from '../type';
 import {stringify} from '../util';
 import {Injector} from '../di/injector';
 import {RendererType} from '../linker/renderer';
-// import { createComponentView, initView } from './view';
 import {
   Definition, DefinitionFactory, ViewData, DepFlags, DepDef, BindingDef, BindingFlags, NodeDef, NodeFlags,
-  asElementData
+  asElementData, asTextData, ElementData
 } from './types';
 
 export const NOOP: any = () => {};
@@ -98,17 +97,34 @@ export function resolveRendererType(type?: RendererType | null): RendererType | 
   return type || null;
 }
 
+export function declaredViewContainer(view: ViewData): ElementData|null {
+  if (view.parent) {
+    const parentView = view.parent;
+    return asElementData(parentView, view.parentNodeDef !.index);
+  }
+  return null;
+}
+
 /**
  * for component views, this is the host element.
  * for embedded views, this is the index of the parent node
  * that contains the view container.
  */
-export function viewParentEl(view: ViewData): NodeDef|null {
+export function viewParentEl(view: ViewData): NodeDef | null {
   const parentView = view.parent;
   if (parentView) {
-    return view.parentNodeDef !.parent;
+    return view.parentNodeDef!.parent;
   } else {
     return null;
+  }
+}
+
+export function renderNode(view: ViewData, def: NodeDef): any {
+  switch (def.flags & NodeFlags.Types) {
+    case NodeFlags.TypeElement:
+      return asElementData(view, def.index).renderElement;
+    case NodeFlags.TypeText:
+      return asTextData(view, def.index).renderText;
   }
 }
 
@@ -123,5 +139,86 @@ export function getParentRenderElement(view: ViewData, renderHost: any, def: Nod
     }
   } else {
     return renderHost;
+  }
+}
+
+export function rootRenderNodes(view: ViewData): any[] {
+  const renderNodes: any[] = [];
+  visitRootRenderNodes(view, RenderNodeAction.Collect, undefined, undefined, renderNodes);
+  return renderNodes;
+}
+
+export const enum RenderNodeAction {Collect, AppendChild, InsertBefore, RemoveChild}
+
+export function visitRootRenderNodes(
+  view: ViewData, action: RenderNodeAction, parentNode: any, nextSibling: any, target?: any[]) {
+  // We need to re-compute the parent node in case the nodes have been moved around manually
+  if (action === RenderNodeAction.RemoveChild) {
+    // parentNode = view.renderer.parentNode(renderNode(view, view.def.lastRenderRootNode!));
+  }
+  visitSiblingRenderNodes(
+    view, action, 0, view.def.nodes.length - 1, parentNode, nextSibling, target);
+}
+
+export function visitSiblingRenderNodes(
+  view: ViewData, action: RenderNodeAction, startIndex: number, endIndex: number, parentNode: any,
+  nextSibling: any, target?: any[]) {
+  for (let i = startIndex; i <= endIndex; i++) {
+    const nodeDef = view.def.nodes[i];
+    // if (nodeDef.flags & (NodeFlags.TypeElement | NodeFlags.TypeText | NodeFlags.TypeNgContent)) {
+    //   visitRenderNode(view, nodeDef, action, parentNode, nextSibling, target);
+    // }
+    // jump to next sibling
+    i += nodeDef.childCount;
+  }
+}
+
+function visitRenderNode(
+  view: ViewData, nodeDef: NodeDef, action: RenderNodeAction, parentNode: any, nextSibling: any,
+  target?: any[]) {
+  const rn = renderNode(view, nodeDef);
+  if (action === RenderNodeAction.RemoveChild && (nodeDef.flags & NodeFlags.ComponentView) &&
+    (nodeDef.bindingFlags & BindingFlags.CatSyntheticProperty)) {
+    // Note: we might need to do both actions.
+    if (nodeDef.bindingFlags & (BindingFlags.SyntheticProperty)) {
+      execRenderNodeAction(view, rn, action, parentNode, nextSibling, target);
+    }
+    if (nodeDef.bindingFlags & (BindingFlags.SyntheticHostProperty)) {
+      const compView = asElementData(view, nodeDef.index).componentView;
+      execRenderNodeAction(compView, rn, action, parentNode, nextSibling, target);
+    }
+  } else {
+    execRenderNodeAction(view, rn, action, parentNode, nextSibling, target);
+  }
+  // if (nodeDef.flags & NodeFlags.EmbeddedViews) {
+  //   const embeddedViews = asElementData(view, nodeDef.index).viewContainer!._embeddedViews;
+  //   for (let k = 0; k < embeddedViews.length; k++) {
+  //     visitRootRenderNodes(embeddedViews[k], action, parentNode, nextSibling, target);
+  //   }
+  // }
+  if (nodeDef.flags & NodeFlags.TypeElement && !nodeDef.element!.name) {
+    visitSiblingRenderNodes(
+      view, action, nodeDef.index + 1, nodeDef.index + nodeDef.childCount, parentNode,
+      nextSibling, target);
+  }
+}
+
+function execRenderNodeAction(
+  view: ViewData, renderNode: any, action: RenderNodeAction, parentNode: any, nextSibling: any,
+  target?: any[]) {
+  const renderer = view.renderer;
+  switch (action) {
+    case RenderNodeAction.AppendChild:
+      renderer.appendChild(parentNode, renderNode);
+      break;
+    case RenderNodeAction.InsertBefore:
+      renderer.insertBefore(parentNode, renderNode, nextSibling);
+      break;
+    case RenderNodeAction.RemoveChild:
+      renderer.removeChild(parentNode, renderNode);
+      break;
+    case RenderNodeAction.Collect:
+      target!.push(renderNode);
+      break;
   }
 }

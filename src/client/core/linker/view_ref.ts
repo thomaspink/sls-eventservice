@@ -1,10 +1,7 @@
-import { Injector } from '../di/injector';
-import { Renderer } from './renderer';
-import { ApplicationRef } from '../application';
+import {ApplicationRef} from '../application';
 
 export abstract class ViewRef {
 
-  abstract get renderer(): Renderer;
   /**
    * Destroys the view and all of the data structures associated with it.
    */

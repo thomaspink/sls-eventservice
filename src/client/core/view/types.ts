@@ -1,5 +1,6 @@
 // tslint:disable:no-bitwise
 import {Injector} from '../di/injector';
+import {ViewContainerRef} from '../linker/view_container_ref';
 import {Renderer, RendererFactory, RendererType} from '../linker/renderer';
 
 export interface DefinitionFactory<D extends Definition<any>> {(): D;}
@@ -91,7 +92,7 @@ export const enum NodeFlags {
   // AfterContentChecked = 1 << 21,
   // AfterViewInit = 1 << 22,
   // AfterViewChecked = 1 << 23,
-  // EmbeddedViews = 1 << 24,
+  EmbeddedViews = 1 << 24,
   ComponentView = 1 << 25,
   // TypeContentQuery = 1 << 26,
   TypeViewQuery = 1 << 27,
@@ -187,7 +188,7 @@ export interface ViewDefinition extends Definition<ViewDefinitionFactory> {
   /** aggregated NodeFlags for all nodes **/
   nodeFlags: NodeFlags;
   rootNodeFlags: NodeFlags;
-  // lastRenderRootNode: NodeDef|null;
+  lastRenderRootNode: NodeDef|null;
   bindingCount: number;
   outputCount: number;
   /**
@@ -306,16 +307,16 @@ export function asTextData(view: ViewData, index: number): TextData {
 export interface ElementData {
   renderElement: any;
   componentView: ViewData;
-  // viewContainer: ViewContainerData|null;
+  viewContainer: ViewContainerData|null;
   // template: TemplateData;
 }
 
-// export interface ViewContainerData extends ViewContainerRef {
-//   // Note: we are using the prefix _ as ViewContainerData is a ViewContainerRef and therefore
-//   // directly
-//   // exposed to the user.
-//   _embeddedViews: ViewData[];
-// }
+export interface ViewContainerData extends ViewContainerRef {
+  // Note: we are using the prefix _ as ViewContainerData is a ViewContainerRef and therefore
+  // directly
+  // exposed to the user.
+  _embeddedViews: ViewData[];
+}
 
 // export interface TemplateData extends TemplateRef<any> {
 //   // views that have been created from the template

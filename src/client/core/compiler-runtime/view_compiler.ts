@@ -29,7 +29,8 @@ export class ViewCompiler {
 
     // Element
     const selector = CssSelector.parse(component.selector)[0];
-    const elDef = elementDef(0, [], 0, selector.element || 'div', selector.toAttrsList(true), [], [], null,
+    const elDefFlags = NodeFlags.EmbeddedViews;
+    const elDef = elementDef(elDefFlags, [], 0, selector.element || 'div', selector.toAttrsList(true), [], [], null,
       component.componentViewType, component.rendererType);
     nodes.push(elDef);
 
