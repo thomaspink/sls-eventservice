@@ -16,7 +16,7 @@ export interface NodeDef {
   flags: NodeFlags;
   index: number;
   parent: NodeDef | null;
-  // renderParent: NodeDef|null;
+  renderParent: NodeDef|null;
   /** this is checked against NgContentDef.index to find matched nodes */
   // ngContentIndex: number;
   /** number of transitive children */

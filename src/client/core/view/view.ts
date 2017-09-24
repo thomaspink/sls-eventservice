@@ -1,10 +1,12 @@
-import {Renderer} from '../linker/renderer';
+import {Renderer, RendererFactory} from '../linker/renderer';
+import {Injector} from '../di/injector';
 import {
   NodeDef, ViewDefinition, ViewHandleEventFn, NodeFlags, NodeData, ViewData, ViewState,
   ElementData, ProviderData, asElementData, RootData
 } from './types';
 import {tokenKey, resolveDefinition} from './util';
 import {createText} from './text';
+import {createElement} from './element';
 import {createProviderInstance, createComponentInstance} from './provider';
 
 export function viewDef(nodes: NodeDef[]): ViewDefinition {
@@ -151,10 +153,16 @@ function validateNode(parent: NodeDef | null, node: NodeDef, nodeCount: number) 
   }
 }
 
+export function createRootData(injector: Injector, rendererFactory: RendererFactory,
+  rootSelectorOrNode: any): RootData {
+  const renderer = rendererFactory.createRenderer(null, null);
+  return {injector, selectorOrNode: rootSelectorOrNode, rendererFactory, renderer};
+}
+
 export function createRootView(root: RootData, def: ViewDefinition, context?: any): ViewData {
   const view = createView(root, root.renderer, null, null, def);
   initView(view, context, context);
-  createViewNodes(view, root.selectorOrNode);
+  createViewNodes(view);
   return view;
 }
 
@@ -197,11 +205,16 @@ function initView(view: ViewData, component: any, context: any) {
 }
 
 function createViewNodes(view: ViewData, rootEl?: any) {
+  if (rootEl && rootEl !== 'object') {
+    throw new Error(`The root element has to be of type Elment, not ${typeof rootEl}!`);
+  }
   let renderHost: any;
   // if (isComponentView(view)) {
   //   const hostDef = view.parentNodeDef;
   //   renderHost = asElementData(view.parent !, hostDef !.parent !.index).renderElement;
   // }
+
+
   const def = view.def;
   const nodes = view.nodes;
   let isFirstEl = true;
@@ -216,7 +229,7 @@ function createViewNodes(view: ViewData, rootEl?: any) {
           el = rootEl;
           isFirstEl = false;
         } else {
-          // el = createElement(view, renderHost, nodeDef) as any;
+          el = createElement(view, renderHost, nodeDef) as any;
         }
         let componentView: ViewData = undefined!;
         if (nodeDef.flags & NodeFlags.ComponentView) {

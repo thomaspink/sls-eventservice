@@ -1,9 +1,12 @@
-import { Type } from '../type';
-import { stringify } from '../util';
-import { Injector } from '../di/injector';
-import { RendererType } from '../linker/renderer';
+import {Type} from '../type';
+import {stringify} from '../util';
+import {Injector} from '../di/injector';
+import {RendererType} from '../linker/renderer';
 // import { createComponentView, initView } from './view';
-import { Definition, DefinitionFactory, ViewData, DepFlags, DepDef, BindingDef, BindingFlags } from './types';
+import {
+  Definition, DefinitionFactory, ViewData, DepFlags, DepDef, BindingDef, BindingFlags, NodeDef, NodeFlags,
+  asElementData
+} from './types';
 
 export const NOOP: any = () => {};
 
@@ -49,7 +52,7 @@ export function splitDepsDsl(deps: ([DepFlags, any] | any)[]): DepDef[] {
 const DEFINITION_CACHE = new WeakMap<any, Definition<any>>();
 
 export function resolveDefinition<D extends Definition<any>>(factory: DefinitionFactory<D>): D {
-  let value = DEFINITION_CACHE.get(factory) !as D;
+  let value = DEFINITION_CACHE.get(factory)! as D;
   if (!value) {
     value = factory();
     value.factory = factory;
@@ -62,7 +65,7 @@ const NS_PREFIX_RE = /^:([^:]+):(.+)$/;
 
 export function splitNamespace(name: string): string[] {
   if (name[0] === ':') {
-    const match = name.match(NS_PREFIX_RE) !;
+    const match = name.match(NS_PREFIX_RE)!;
     return [match[1], match[2]];
   }
   return ['', name];
@@ -79,7 +82,7 @@ export function calcBindingFlags(bindings: BindingDef[]): BindingFlags {
 const UNDEFINED_RENDERER_TYPE_ID = '$$undefined';
 const EMPTY_RENDERER_TYPE_ID = '$$empty';
 let _renderCompCount = 0;
-export function resolveRendererType(type?: RendererType | null): RendererType|null {
+export function resolveRendererType(type?: RendererType | null): RendererType | null {
   if (type && type.id === UNDEFINED_RENDERER_TYPE_ID) {
     // first time we see this RendererType2. Initialize it...
     const isFilled = Object.keys(type.data).length;
@@ -93,4 +96,32 @@ export function resolveRendererType(type?: RendererType | null): RendererType|nu
     type = null;
   }
   return type || null;
+}
+
+/**
+ * for component views, this is the host element.
+ * for embedded views, this is the index of the parent node
+ * that contains the view container.
+ */
+export function viewParentEl(view: ViewData): NodeDef|null {
+  const parentView = view.parent;
+  if (parentView) {
+    return view.parentNodeDef !.parent;
+  } else {
+    return null;
+  }
+}
+
+export function getParentRenderElement(view: ViewData, renderHost: any, def: NodeDef): any {
+  let renderParent = def.renderParent;
+  if (renderParent) {
+    if ((renderParent.flags & NodeFlags.TypeElement) === 0 ||
+      (renderParent.flags & NodeFlags.ComponentView) === 0) {
+      // only children of non components, or children of components with native encapsulation should
+      // be attached.
+      return asElementData(view, def.renderParent!.index).renderElement;
+    }
+  } else {
+    return renderHost;
+  }
 }
