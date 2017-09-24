@@ -5,6 +5,23 @@ import {
 import {NOOP, calcBindingFlags, splitNamespace, resolveRendererType, getParentRenderElement} from './util';
 import {RendererType} from '../linker/renderer';
 
+export function bindingDefs(bindings: [BindingFlags, string, string][]): BindingDef[] {
+  const bindingDefs: BindingDef[] = new Array(bindings.length);
+  for (let i = 0; i < bindings.length; i++) {
+    const [bindingFlags, namespaceAndName, suffixOrSecurityContext] = bindings[i];
+
+    const [ns, name] = splitNamespace(namespaceAndName);
+    // let securityContext: SecurityContext = undefined!;
+    let suffix: string = undefined!;
+    if (bindingFlags & BindingFlags.TypeElementStyle) {
+      suffix = <string>suffixOrSecurityContext;
+    }
+    bindingDefs[i] =
+      {flags: bindingFlags, ns, name, nonMinifiedName: name, suffix};
+  }
+  return bindingDefs;
+}
+
 export function elementDef(
   flags: NodeFlags, matchedQueriesDsl: [string | number, QueryValueType][],
   childCount: number, namespaceAndName: string, fixedAttrs: [string, string][] = [],
@@ -22,19 +39,7 @@ export function elementDef(
     [ns, name] = splitNamespace(namespaceAndName);
   }
   bindings = bindings || [];
-  const bindingDefs: BindingDef[] = new Array(bindings.length);
-  for (let i = 0; i < bindings.length; i++) {
-    const [bindingFlags, namespaceAndName, suffixOrSecurityContext] = bindings[i];
-
-    const [ns, name] = splitNamespace(namespaceAndName);
-    // let securityContext: SecurityContext = undefined!;
-    let suffix: string = undefined!;
-    if (bindingFlags & BindingFlags.TypeElementStyle) {
-      suffix = <string>suffixOrSecurityContext;
-    }
-    bindingDefs[i] =
-      {flags: bindingFlags, ns, name, nonMinifiedName: name, suffix};
-  }
+  const bindingDfs: BindingDef[] = bindingDefs(bindings);
   outputs = outputs || [];
   const outputDefs: OutputDef[] = new Array(outputs.length);
   for (let i = 0; i < outputs.length; i++) {
@@ -71,8 +76,8 @@ export function elementDef(
     // matchedQueryIds,
     // references,
     childCount,
-    bindings: bindingDefs,
-    bindingFlags: calcBindingFlags(bindingDefs),
+    bindings: bindingDfs,
+    bindingFlags: calcBindingFlags(bindingDfs),
     outputs: outputDefs,
     element: {
       ns,
@@ -89,7 +94,8 @@ export function elementDef(
     },
     provider: null,
     text: null,
-    // query: null
+    // query: null,
+    selectable: null
   };
 }
 

@@ -104,7 +104,7 @@ export class CompileComponentMetadata {
       hostListeners,
       hostProperties,
       hostAttributes,
-      bindings,
+      bindings: childBindings,
       providers,
       viewProviders,
       // queries,
@@ -125,7 +125,11 @@ export class CompileComponentMetadata {
   hostListeners: {[key: string]: string};
   hostProperties: {[key: string]: string};
   hostAttributes: {[key: string]: string};
-  bindings: any;
+  bindings: {[selector: string]: {
+    listeners: {[key: string]: string},
+    properties: {[key: string]: string},
+    attributes: {[key: string]: string}
+  }};
   providers: CompileProviderMetadata[];
   viewProviders: CompileProviderMetadata[];
   // queries: CompileQueryMetadata[];
@@ -150,7 +154,11 @@ export class CompileComponentMetadata {
       hostListeners: {[key: string]: string},
       hostProperties: {[key: string]: string},
       hostAttributes: {[key: string]: string},
-      bindings: any,
+      bindings: {[selector: string]: {
+        listeners: {[key: string]: string},
+        properties: {[key: string]: string},
+        attributes: {[key: string]: string}
+      }},
       providers: CompileProviderMetadata[],
       viewProviders: CompileProviderMetadata[],
       // queries: CompileQueryMetadata[],
