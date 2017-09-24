@@ -109,9 +109,10 @@ class WordpressSetup {
   }
 
   public function register_custom_post_types() {
-    $repertoire = new CustomPostTypes('services', 'Leistung', 'Leistungen', 'dashicons-testimonial');
-    $press = new CustomPostTypes('jobs', 'Job', 'Jobs', 'dashicons-testimonial');
-    $gallery = new CustomPostTypes('references', 'Referenz', 'Referenzen', 'dashicons-format-gallery');
+    $services = new CustomPostTypes('services', 'Leistung', 'Leistungen', 'dashicons-awards');
+    $jobs = new CustomPostTypes('jobs', 'Job', 'Jobs', 'dashicons-groups');
+    $references = new CustomPostTypes('references', 'Referenz', 'Referenzen', 'dashicons-book');
+    $gallery = new CustomPostTypes('gallery', 'Galerie', 'Gallerien', 'dashicons-format-gallery');
   }
 
   public function register_custom_taxonomies() {
