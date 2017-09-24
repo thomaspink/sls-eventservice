@@ -95,12 +95,11 @@ export function createProviderInstance(view: ViewData, def: NodeDef): any {
 
 export function createComponentInstance(view: ViewData, def: NodeDef): any {
   // components can see other private services, other directives can't.
-  // const allowPrivateServices = (def.flags & NodeFlags.Component) > 0;
-  // directives are always eager and classes!
+  const allowPrivateServices = (def.flags & NodeFlags.Component) > 0;
 
-  debugger;
+  // directives are always eager and classes!
   const instance = createClass(
-    view, def.parent!, true, def.provider!.value, def.provider!.deps);
+    view, def.parent!, allowPrivateServices, def.provider!.value, def.provider!.deps);
   // if (def.outputs.length) {
   //   for (let i = 0; i < def.outputs.length; i++) {
   //     const output = def.outputs[i];
