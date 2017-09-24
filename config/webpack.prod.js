@@ -50,9 +50,6 @@ module.exports = webpackMerge(commonConfig, {
     // extracts css form the js bundles and saves it as its own file
     new ExtractTextPlugin('[name].[hash].bundle.css'),
 
-    // inlines internal css into a style tag in you html
-    // new StyleExtHtmlWebpackPlugin('internal.css'),
-
     // adds a defer attribute to the injected script tags
     new ScriptExtHtmlWebpackPlugin({
       defaultAttribute: 'defer'

@@ -12,6 +12,7 @@ module.exports = {
     // Style entry files
     'inline': helpers.root('src', 'client', 'internal.scss'),
     'main': helpers.root('src', 'client', 'external.scss'),
+    'editor': helpers.root('src', 'client', 'editor.scss'),
   },
 
   resolve: {
