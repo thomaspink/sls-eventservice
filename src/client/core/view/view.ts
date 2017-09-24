@@ -2,12 +2,13 @@ import {Renderer, RendererFactory} from '../linker/renderer';
 import {Injector} from '../di/injector';
 import {
   NodeDef, ViewDefinition, ViewHandleEventFn, NodeFlags, NodeData, ViewData, ViewState,
-  ElementData, ProviderData, asElementData, RootData
+  ElementData, ProviderData, asElementData, RootData, asTextData
 } from './types';
 import {tokenKey, resolveDefinition} from './util';
 import {createText} from './text';
 import {createElement} from './element';
 import {createProviderInstance, createComponentInstance} from './provider';
+import {createViewContainerData} from './refs';
 
 export function viewDef(nodes: NodeDef[]): ViewDefinition {
   let viewBindingCount = 0;
@@ -16,8 +17,10 @@ export function viewDef(nodes: NodeDef[]): ViewDefinition {
   let viewRootNodeFlags = 0;
   let viewMatchedQueries = 0;
   let currentParent: NodeDef | null = null;
+  let currentRenderParent: NodeDef | null = null;
   let currentElementHasPublicProviders = false;
   let currentElementHasPrivateProviders = false;
+  let lastRenderRootNode: NodeDef | null = null;
   for (let i = 0; i < nodes.length; i++) {
 
     const node = nodes[i];
@@ -39,6 +42,10 @@ export function viewDef(nodes: NodeDef[]): ViewDefinition {
 
     viewBindingCount += node.bindings.length;
     viewDisposableCount += node.outputs.length;
+
+    if (!currentRenderParent && (node.flags & NodeFlags.CatRenderNode)) {
+      lastRenderRootNode = node;
+    }
 
     if (currentParent) {
       currentParent.childFlags |= node.flags;
@@ -111,6 +118,7 @@ export function viewDef(nodes: NodeDef[]): ViewDefinition {
     handleEvent,
     bindingCount: viewBindingCount,
     outputCount: viewDisposableCount,
+    lastRenderRootNode
   };
 }
 
@@ -214,10 +222,9 @@ function createViewNodes(view: ViewData, rootEl?: any) {
   //   renderHost = asElementData(view.parent !, hostDef !.parent !.index).renderElement;
   // }
 
-
   const def = view.def;
   const nodes = view.nodes;
-  let isFirstEl = true;
+  let isRootEl = true;
   for (let i = 0; i < def.nodes.length; i++) {
     const nodeDef = def.nodes[i];
     // Services.setCurrentNode(view, i);
@@ -225,9 +232,9 @@ function createViewNodes(view: ViewData, rootEl?: any) {
     switch (nodeDef.flags & NodeFlags.Types) {
       case NodeFlags.TypeElement:
         let el: any;
-        if (isFirstEl && rootEl) {
+        if (isRootEl && rootEl) {
           el = rootEl;
-          isFirstEl = false;
+          isRootEl = false;
         } else {
           el = createElement(view, renderHost, nodeDef) as any;
         }
@@ -243,9 +250,9 @@ function createViewNodes(view: ViewData, rootEl?: any) {
           viewContainer: null,
           // template: nodeDef.element !.template ? createTemplateData(view, nodeDef) : undefined
         };
-        // if (nodeDef.flags & NodeFlags.EmbeddedViews) {
-        //   nodeData.viewContainer = createViewContainerData(view, nodeDef, nodeData);
-        // }
+        if (nodeDef.flags & NodeFlags.EmbeddedViews) {
+          nodeData.viewContainer = createViewContainerData(view, nodeDef, nodeData);
+        }
         break;
       case NodeFlags.TypeText:
         nodeData = createText(view, renderHost, nodeDef) as any;
@@ -292,4 +299,41 @@ function createViewNodes(view: ViewData, rootEl?: any) {
   // execQueriesAction(
   //     view, NodeFlags.TypeContentQuery | NodeFlags.TypeViewQuery, NodeFlags.StaticQuery,
   //     CheckType.CheckAndUpdate);
+}
+
+
+export function destroyView(view: ViewData) {
+  if (view.state & ViewState.Destroyed) {
+    return;
+  }
+  // execEmbeddedViewsAction(view, ViewAction.Destroy);
+  // execComponentViewsAction(view, ViewAction.Destroy);
+  // callLifecycleHooksChildrenFirst(view, NodeFlags.OnDestroy);
+  if (view.disposables) {
+    for (let i = 0; i < view.disposables.length; i++) {
+      view.disposables[i]();
+    }
+  }
+  // detachProjectedView(view);
+  if (view.renderer.destroyNode) {
+    destroyViewNodes(view);
+  }
+  // if (isComponentView(view)) {
+  //   view.renderer.destroy();
+  // }
+  view.state |= ViewState.Destroyed;
+}
+
+function destroyViewNodes(view: ViewData) {
+  const len = view.def.nodes.length;
+  for (let i = 0; i < len; i++) {
+    const def = view.def.nodes[i];
+    if (def.flags & NodeFlags.TypeElement) {
+      view.renderer.destroyNode!(asElementData(view, i).renderElement);
+    } else if (def.flags & NodeFlags.TypeText) {
+      view.renderer.destroyNode!(asTextData(view, i).renderText);
+    // } else if (def.flags & NodeFlags.TypeContentQuery || def.flags & NodeFlags.TypeViewQuery) {
+    //   asQueryList(view, i).destroy();
+    }
+  }
 }
