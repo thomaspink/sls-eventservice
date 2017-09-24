@@ -3,6 +3,25 @@
     "title": "Referenz",
     "fields": [
         {
+            "key": "field_59c7b419075d2",
+            "label": "Claim",
+            "name": "claim",
+            "type": "textarea",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "maxlength": "",
+            "rows": "",
+            "new_lines": ""
+        },
+        {
             "key": "field_59b6a897637d1",
             "label": "Bild",
             "name": "image",
@@ -101,5 +120,5 @@
     ],
     "active": 1,
     "description": "",
-    "modified": 1505657978
+    "modified": 1506260008
 }

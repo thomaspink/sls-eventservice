@@ -8,27 +8,8 @@ html, body {
   font-family: $font-family;
 }
 
-
-h1, h2, h3 {
-  font-family: $font-family-condensed;
-  margin: 0;
-}
-
 .is-centered {
   text-align: center;
-}
-
-.jumbo {
-  font-size: 70px;
-  font-weight: 900;
-  line-height: 1;
-  text-transform: uppercase;
-}
-
-h1 + p,
-h2 + p,
-h3 + p {
-  margin-top: 30px;
 }
 
 .container {

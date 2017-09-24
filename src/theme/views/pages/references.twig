@@ -3,6 +3,7 @@
 {% block content %}
 
   {% set hero = page.get_field('hero') %}
+  {% set lists = page.get_field('lists') %}
 
   {% if hero.image  %}
     {% include 'components/hero.twig' with { 'hero': hero } %}
@@ -35,7 +36,7 @@
       <grid-column medium-6 class="reference-item__content">
         {% include 'components/image.twig' with { 'image': Image(post.logo), 'style': 'reference-item__logo'  } %}
 
-        <h3 class="reference-item__headline">{{ post.title }}</h3>
+        <h3 class="reference-item__headline is--bold is--uppercase">{{ post.claim }}</h3>
         <p class="refernce-item__text">{{ post.shorttext }}</p>
         <a class="reference-item__link" href="{{ post.link }}">{{ __('Mehr erfahren', 'sls-2017') }} ></a>
 
@@ -45,6 +46,21 @@
 
     {% endfor %}
 
+    {% if lists %}
+    <div class="reference-list">
+
+      {% for item in lists %}
+
+        <grid-row>
+          <grid-column medium-12>
+            <h3 class="is--uppercase">{{item.headline}}</h3>
+            {{item.list}}
+          </grid-column>
+        </grid-row>
+
+      {% endfor %}
+    </div>
+    {% endif %}
 
   </div>
 
