@@ -21,8 +21,8 @@
         </grid-column>
     </grid-row>
 
-    {% if page.gallery %}
-      {% include 'components/gallery.twig' with { 'gallery': page.gallery } only %}
+    {% if gallery %}
+      {% include 'components/gallery.twig' with { 'galleries': gallery } only %}
     {% endif %}
   </div>
 
