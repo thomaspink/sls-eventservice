@@ -86,6 +86,7 @@ export function _def(flags: NodeFlags, matchedQueriesDsl: [string | number, Quer
     provider: {token, value, deps: depDefs},
     text: null,
     // query: null,
+    selectable: null
   };
 }
 

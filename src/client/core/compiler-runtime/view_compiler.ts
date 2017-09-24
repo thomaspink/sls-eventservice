@@ -14,7 +14,7 @@ import {viewDef} from '../view/view';
 // Compiler Dependencies
 // import {splitAtColon} from '../compiler/util';
 import {NullTemplateVisitor, ElementAst, TextAst, TemplateAst, templateVisitAll} from '../compiler/template_parser/ast';
-import {CssSelector} from '../compiler/selector';
+import {CssSelector, SelectorMatcher} from '../compiler/selector';
 
 import {
   CompileComponentMetadata, CompileProviderMetadata, CompileDiDependencyMetadata, CompileTemplateMetadata
@@ -29,8 +29,6 @@ export class ViewCompiler {
 
   compileComponent(component: CompileComponentMetadata) {
     const nodes: NodeDef[] = [];
-
-    console.log(component);
 
     // Element
     const selector = CssSelector.parse(component.selector)[0];
@@ -53,8 +51,12 @@ export class ViewCompiler {
     let templateNodes: NodeDef[] = [];
     if (component.template) {
       templateNodes = this._templateDef(component.template);
-    } else {
-
+    } else if (component.bindings) {
+      Object.keys(component.bindings).forEach(sel => {
+        const s = CssSelector.parse(sel)[0];
+        // const m = new SelectorMatcher();
+        // m._matchPartial
+      });
     }
     (<any>elDef.element.componentView).setDelegate(() => viewDef(templateNodes));
 

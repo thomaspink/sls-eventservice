@@ -48,11 +48,12 @@ export interface NodeDef {
    * Used as a bloom filter.
    */
   // childMatchedQueries: number;
-  element: ElementDef | null;
-  provider: ProviderDef | null;
-  text: TextDef | null;
+  element: ElementDef|null;
+  provider: ProviderDef|null;
+  text: TextDef|null;
   // query: QueryDef|null;
   // ngContent: NgContentDef|null;
+  selectable: SelectableDef|null;
 }
 
 /**
@@ -100,10 +101,10 @@ export const enum NodeFlags {
   // DynamicQuery = 1 << 29,
   CatQuery = /*TypeContentQuery | */TypeViewQuery,
 
-  Virtual = 1 << 30,
+  TypeSelectable = 1 << 30,
 
   // mutually exclusive values...
-  Types = CatRenderNode | /*TypeNgContent | *//*TypePipe | *//*CatPureExpression | */CatProvider | CatQuery
+  Types = CatRenderNode | /*TypeNgContent | *//*TypePipe | *//*CatPureExpression | */CatProvider | CatQuery | TypeSelectable
 }
 
 export interface BindingDef {
@@ -148,17 +149,6 @@ export const enum QueryValueType {
 
 export interface TextDef {prefix: string;}
 
-export interface SelectorDef {
-  tagName: string;
-  classNames: string[];
-  attributes: [string, string][];
-}
-
-export interface SelectableDef {
-  selector: SelectorDef;
-  context: any;
-}
-
 export interface ElementDef {
   name: string | null;
   ns: string | null;
@@ -180,6 +170,22 @@ export interface ElementDef {
    */
   allProviders: {[tokenKey: string]: NodeDef} | null;
   handleEvent: ElementHandleEventFn | null;
+}
+
+export interface SelectableDef {
+  flags: SelectableFlags;
+  name: string|null;
+  attrs: [string, string][]|null;
+  classNames: [string][]|null;
+  id: string|null;
+  context: any;
+}
+
+export enum SelectableFlags {
+  TypeComponent = 1 << 0,
+  TypeBinding = 1 << 1,
+  TypeQuery = 1 << 2,
+
 }
 
 export interface ElementHandleEventFn {(view: ViewData, eventName: string, event: any): boolean;}

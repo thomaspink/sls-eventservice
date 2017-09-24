@@ -34,6 +34,7 @@ export function textDef(staticText: string[]): NodeDef {
     provider: null,
     text: {prefix: staticText[0]},
     // query: null,
+    selectable: null
   };
 }
 
