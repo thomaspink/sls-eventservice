@@ -9,16 +9,34 @@
   <div class="container">
     <grid-row gutter="medium">
         <grid-column medium-6>
-          <h2 class="jumbo">Ihr Event - <br>unsere Aufgabe</h2>
+          <h2 class="jumbo">{{ page.claim }}</h2>
           <p class="excerpt">
-          It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it ha
+            {{ page.shorttext }}
           </p>
+
+          <a href="references/" class="is--uppercase island-2">< {{ __('Zurück', 'sls-2017') }}</a>
         </grid-column>
 
         <grid-column medium-6>
 
           {% include 'components/image.twig' with { 'image': Image(page.logo), 'style': 'refernce-logo' } %}
         </grid-column>
+    </grid-row>
+
+
+    <grid-row gutter="medium" class="island-3">
+
+        <grid-column medium-12>
+
+
+          {% set gallery = post.get_field('gallery') %}
+          {% if gallery %}
+            {% include 'components/layout.twig' with { 'layout': gallery } %}
+          {% endif %}
+
+          {{ page.content }}
+        </grid-column>
+
     </grid-row>
 
     {% if gallery %}
