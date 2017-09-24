@@ -47,11 +47,11 @@
     {% endfor %}
 
     {% if lists %}
-    <div class="reference-list">
+    <div class="reference-list island-3">
 
       {% for item in lists %}
 
-        <grid-row>
+        <grid-row class="island-2">
           <grid-column medium-12>
             <h3 class="is--uppercase">{{item.headline}}</h3>
             {{item.list}}
@@ -60,6 +60,11 @@
 
       {% endfor %}
     </div>
+    {% endif %}
+
+
+    {% if gallery %}
+      {% include 'components/gallery.twig' with { 'galleries': gallery } only %}
     {% endif %}
 
   </div>
