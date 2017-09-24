@@ -1,5 +1,5 @@
 import {
-  NodeDef, NodeFlags, QueryValueType, BindingFlags, BindingDef, OutputDef,
+  NodeDef, NodeFlags, QueryValueType, BindingFlags, BindingDef, OutputDef, SelectableDef,
   OutputType, ViewDefinitionFactory, ElementHandleEventFn, ViewData, ElementData
 } from './types';
 import {NOOP, calcBindingFlags, splitNamespace, resolveRendererType, getParentRenderElement} from './util';
@@ -85,7 +85,7 @@ export function elementDef(
       componentRendererType: componentRendererType,
       publicProviders: null,
       allProviders: null,
-      handleEvent: handleEvent || NOOP,
+      handleEvent: handleEvent || NOOP
     },
     provider: null,
     text: null,

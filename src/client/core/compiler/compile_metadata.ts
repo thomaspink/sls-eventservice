@@ -14,7 +14,7 @@ const HOST_REG_EXP = /^(?:(?:\[([^\]]+)\])|(?:\(([^\)]+)\)))|(\@[-\w]+)$/;
  */
 export class CompileComponentMetadata {
   static create({type, selector,/* changeDetection,*/ inputs, outputs,
-    host, providers, viewProviders,/* queries, viewQueries,*/ template,
+    host, bindings, providers, viewProviders,/* queries, viewQueries,*/ template,
     componentViewType, rendererType, componentFactory,
     childComponents}: {
       type: CompileTypeMetadata,
@@ -23,6 +23,7 @@ export class CompileComponentMetadata {
       inputs: string[],
       outputs: string[],
       host: {[key: string]: string},
+      bindings: {[selector: string]: {[key: string]: string}},
       providers: CompileProviderMetadata[],
       viewProviders: CompileProviderMetadata[],
       // queries: CompileQueryMetadata[],
@@ -48,6 +49,31 @@ export class CompileComponentMetadata {
         } else if (matches[2] != null) {
           hostListeners[matches[2]] = value;
         }
+      });
+    }
+    const childBindings: {[selector: string]: {
+      listeners: {[key: string]: string},
+      properties: {[key: string]: string},
+      attributes: {[key: string]: string}
+    }} = {};
+    if (bindings != null) {
+      Object.keys(bindings).forEach(selctr => {
+        const binding = bindings[selctr];
+        const listeners: {[key: string]: string} = {};
+        const properties: {[key: string]: string} = {};
+        const attributes: {[key: string]: string} = {};
+        Object.keys(binding).forEach(key => {
+          const value = binding[key];
+          const matches = key.match(HOST_REG_EXP);
+          if (matches === null) {
+            attributes[key] = value;
+          } else if (matches[1] != null) {
+            properties[matches[1]] = value;
+          } else if (matches[2] != null) {
+            listeners[matches[2]] = value;
+          }
+        });
+        childBindings[selctr] = {listeners, properties, attributes};
       });
     }
     const inputsMap: {[key: string]: string} = {};
@@ -78,6 +104,7 @@ export class CompileComponentMetadata {
       hostListeners,
       hostProperties,
       hostAttributes,
+      bindings,
       providers,
       viewProviders,
       // queries,
@@ -98,6 +125,7 @@ export class CompileComponentMetadata {
   hostListeners: {[key: string]: string};
   hostProperties: {[key: string]: string};
   hostAttributes: {[key: string]: string};
+  bindings: any;
   providers: CompileProviderMetadata[];
   viewProviders: CompileProviderMetadata[];
   // queries: CompileQueryMetadata[];
@@ -112,8 +140,8 @@ export class CompileComponentMetadata {
   childComponents: Type<any>[];
 
   constructor({type, selector, /*changeDetection,*/ inputs, outputs, hostListeners, hostProperties,
-    hostAttributes, providers, viewProviders, /*queries, viewQueries,*/ template, componentViewType,
-    rendererType, componentFactory, childComponents}: {
+    hostAttributes, bindings, providers, viewProviders, /*queries, viewQueries,*/ template,
+    componentViewType, rendererType, componentFactory, childComponents}: {
       type: CompileTypeMetadata,
       selector: string | null,
       // changeDetection: ChangeDetectionStrategy|null,
@@ -122,6 +150,7 @@ export class CompileComponentMetadata {
       hostListeners: {[key: string]: string},
       hostProperties: {[key: string]: string},
       hostAttributes: {[key: string]: string},
+      bindings: any,
       providers: CompileProviderMetadata[],
       viewProviders: CompileProviderMetadata[],
       // queries: CompileQueryMetadata[],
@@ -140,6 +169,7 @@ export class CompileComponentMetadata {
     this.hostListeners = hostListeners;
     this.hostProperties = hostProperties;
     this.hostAttributes = hostAttributes;
+    this.bindings = bindings;
     this.providers = _normalizeArray(providers);
     this.viewProviders = _normalizeArray(viewProviders);
     // this.queries = _normalizeArray(queries);

@@ -2,7 +2,10 @@
 // import {stringify} from '../util';
 import {ListWrapper} from '../util/collection';
 import {RendererType} from '../linker/renderer';
-import {NodeDef, NodeFlags, DepFlags} from '../view/types';
+import {
+  NodeDef, NodeFlags, DepFlags, QueryValueType, ElementHandleEventFn,
+  ViewDefinitionFactory, BindingDef, BindingFlags
+} from '../view/types';
 import {componentDef, providerDef} from '../view/provider';
 import {elementDef} from '../view/element';
 import {textDef} from '../view/text';
@@ -27,10 +30,12 @@ export class ViewCompiler {
   compileComponent(component: CompileComponentMetadata) {
     const nodes: NodeDef[] = [];
 
+    console.log(component);
+
     // Element
     const selector = CssSelector.parse(component.selector)[0];
-    const elDefFlags = NodeFlags.EmbeddedViews;
-    const elDef = elementDef(elDefFlags, [], 0, selector.element || 'div', selector.toAttrsList(true), [], [], null,
+    const elDef = this._elementDef(NodeFlags.EmbeddedViews, [], 0, selector,
+      component.hostListeners, component.hostProperties, component.hostAttributes, [], null,
       component.componentViewType, component.rendererType);
     nodes.push(elDef);
 
@@ -48,11 +53,30 @@ export class ViewCompiler {
     let templateNodes: NodeDef[] = [];
     if (component.template) {
       templateNodes = this._templateDef(component.template);
+    } else {
+
     }
     (<any>elDef.element.componentView).setDelegate(() => viewDef(templateNodes));
 
     const def = viewDef(nodes);
     return def;
+  }
+
+  private _elementDef(flags: NodeFlags, matchedQueriesDsl: [string | number, QueryValueType][],
+    childCount: number, selector: CssSelector, listeners: {[key: string]: string},
+    properties: {[key: string]: string}, attributes: {[key: string]: string},
+    outputs?: ([string, string])[], handleEvent?: ElementHandleEventFn,
+    componentView?: ViewDefinitionFactory, componentRendererType?: RendererType | null): NodeDef {
+
+    const name = selector.element || 'div';
+    const fixedAttrs = selector.toAttrsList(true);
+    const bindings: [BindingFlags, string, string][] = [];
+    Object.keys(listeners).forEach(key => bindings.push([BindingFlags.TypeEvent, key, listeners[key]]));
+    Object.keys(properties).forEach(key => bindings.push([BindingFlags.TypeProperty, key, listeners[key]]));
+    Object.keys(attributes).forEach(key => bindings.push([BindingFlags.TypeElementAttribute, key, listeners[key]]));
+
+    return elementDef(flags, matchedQueriesDsl, childCount, name, fixedAttrs, bindings,
+      [], handleEvent, componentView, componentRendererType);
   }
 
   private _templateDef(templateMeta: CompileTemplateMetadata): NodeDef[] {
@@ -107,7 +131,7 @@ export class ViewCompiler {
 class TemplateVisitor extends NullTemplateVisitor {
   visitElement(ast: ElementAst, context: any): NodeDef[] {
     const attrs = ast.attrs.map(attr => [attr.name, attr.value] as [string, string]);
-    const defs =  [elementDef(0, [], ast.children.length, ast.name, attrs)];
+    const defs = [elementDef(0, [], ast.children.length, ast.name, attrs)];
     if (ast.children && ast.children.length)
       defs.push(...this.visitAll(ast.children));
     return defs;

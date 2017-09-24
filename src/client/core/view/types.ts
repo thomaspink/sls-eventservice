@@ -100,6 +100,8 @@ export const enum NodeFlags {
   // DynamicQuery = 1 << 29,
   CatQuery = /*TypeContentQuery | */TypeViewQuery,
 
+  Virtual = 1 << 30,
+
   // mutually exclusive values...
   Types = CatRenderNode | /*TypeNgContent | *//*TypePipe | *//*CatPureExpression | */CatProvider | CatQuery
 }
@@ -118,12 +120,13 @@ export const enum BindingFlags {
   TypeElementClass = 1 << 1,
   TypeElementStyle = 1 << 2,
   TypeProperty = 1 << 3,
-  SyntheticProperty = 1 << 4,
-  SyntheticHostProperty = 1 << 5,
+  TypeEvent = 1 << 4,
+  SyntheticProperty = 1 << 5,
+  SyntheticHostProperty = 1 << 6,
   CatSyntheticProperty = SyntheticProperty | SyntheticHostProperty,
 
   // mutually exclusive values...
-  Types = TypeElementAttribute | TypeElementClass | TypeElementStyle | TypeProperty
+  Types = TypeElementAttribute | TypeElementClass | TypeElementStyle | TypeProperty | TypeEvent
 }
 
 export interface OutputDef {
@@ -189,6 +192,17 @@ export const enum QueryValueType {
 }
 
 export interface TextDef {prefix: string;}
+
+export interface SelectorDef {
+  tagName: string;
+  classNames: string[];
+  attributes: [string, string][];
+}
+
+export interface SelectableDef {
+  selector: SelectorDef;
+  context: any;
+}
 
 export interface ElementDef {
   name: string | null;

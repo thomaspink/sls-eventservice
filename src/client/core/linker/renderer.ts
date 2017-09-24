@@ -54,3 +54,7 @@ export interface RendererType {
   id: string;
   data: {[kind: string]: any};
 }
+
+export abstract class PlatformVisitor {
+  abstract visitElement(): void;
+}
