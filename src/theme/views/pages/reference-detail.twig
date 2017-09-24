@@ -29,15 +29,30 @@
         <grid-column medium-12>
 
 
-          {% set gallery = post.get_field('gallery') %}
-          {% if gallery %}
-            {% include 'components/layout.twig' with { 'layout': gallery } %}
+          {% set layout = page.get_field('gallery') %}
+          {% if layout %}
+            {% include 'components/layout.twig' with { 'layout': layout } %}
           {% endif %}
 
           {{ page.content }}
         </grid-column>
 
     </grid-row>
+
+
+    <grid-row>
+      <grid-column medium-12>
+        <h3 class="is--uppercase is--bold">{{ __('Weitere Referenzen', 'sls-2017') }}</h3>
+      </grid-column>
+
+      {% for reference in references %}
+      <grid-column medium-3>
+        {% include 'components/image.twig' with { 'image': Image(reference.logo) } only %}
+      </grid-column>
+      {% endfor %}
+
+    </grid-row>
+
 
     {% if gallery %}
       {% include 'components/gallery.twig' with { 'galleries': gallery } only %}
