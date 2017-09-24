@@ -1,18 +1,16 @@
 // tslint:disable:class-name
 import {Type} from '../type';
-import {stringify} from '../util';
 import {ApplicationRef} from '../application';
 import {Injector} from '../di/injector';
-import {Provider, ClassProvider} from '../di/provider';
 import {InjectionToken} from '../di/injection_token';
 import {ComponentFactory, ComponentRef} from '../linker/component_factory';
-import {ComponentFactoryResolver} from '../linker/component_factory_resolver';
-import {ViewRef, InternalViewRef} from '../linker/view_ref';
-import {Renderer, RendererFactory} from '../linker/renderer';
-import {callLifecycleHook} from '../lifecycle_hooks';
-// import { createComponentView, initView, destroyView } from './view';
-import {ViewDefinition, ViewData, ViewDefinitionFactory} from './types';
-import {createClass, resolveDefinition} from './util';
+import {ViewRef, InternalViewRef} from '../linker/view_ref';;
+import {ElementRef} from '../linker/element_ref';
+import {createRootView} from './view';
+import {ViewData, ViewDefinitionFactory, asProviderData, asElementData, NodeDef} from './types';
+import {resolveDefinition} from './util';
+
+const EMPTY_CONTEXT = new Object();
 
 export function createComponentFactory(
   selector: string, componentType: Type<any>, viewDefFactory: ViewDefinitionFactory,
@@ -60,27 +58,30 @@ class ComponentFactory_ extends ComponentFactory<any> {
 
   create(injector: Injector, rootSelectorOrNode?: string | any): ComponentRef<any> {
     const viewDef = resolveDefinition(this.viewDefFactory);
-    const componentNodeIndex = viewDef.nodes[0].element !.componentProvider !.index;
+    const componentNodeIndex = viewDef.nodes[0].element!.componentProvider!.index;
 
-    console.log(componentNodeIndex, viewDef);
-    // const instance = createClass(this.componentType, new Injector_(view), view.def.deps);
-    // initView(view, instance, null);
-    // view.renderer.parse(view);
-    // callLifecycleHook(instance, 'onInit');
-    // return new ComponentRef_(view, new ViewRef_(view), instance);
-    return null;
+    const view = createRootView(null, viewDef, EMPTY_CONTEXT);
+    const component = asProviderData(view, componentNodeIndex).instance;
+
+    return new ComponentRef_(view, new ViewRef_(view), component);
   }
 }
 
 class ComponentRef_ extends ComponentRef<any> {
+  public readonly hostView: ViewRef;
+  public readonly instance: any;
+  private _elDef: NodeDef;
   constructor(private _view: ViewData, private _viewRef: ViewRef, private _component: any) {
     super();
+    this._elDef = this._view.def.nodes[0];
+    this.hostView = _viewRef;
+    this.instance = _component;
   }
 
-  get location(): any {return null; /*this._view.hostElement;*/};
-  get instance() {return this._component;};
+  get location(): ElementRef {
+    return new ElementRef(asElementData(this._view, this._elDef.index).renderElement);
+  }
   get injector() {return new Injector_(this._view);};
-  get hostView() {return this._viewRef;};
   get componentType() {return <any>this._component.constructor;}
 
   /**
@@ -91,7 +92,7 @@ class ComponentRef_ extends ComponentRef<any> {
 }
 
 class ViewRef_ extends ViewRef implements InternalViewRef {
-  private _appRef: ApplicationRef | null;
+  private _appRef: ApplicationRef|null;
 
   constructor(public view: ViewData) {
     super();

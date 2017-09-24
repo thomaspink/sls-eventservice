@@ -1,7 +1,8 @@
 // import {Type, isType} from '../type';
 // import {stringify} from '../util';
 import {ListWrapper} from '../util/collection';
-import {NodeDef, NodeFlags, DepFlags, OutputDef, OutputType} from '../view/types';
+import {RendererType} from '../linker/renderer';
+import {NodeDef, NodeFlags, DepFlags} from '../view/types';
 import {componentDef, providerDef} from '../view/provider';
 import {elementDef} from '../view/element';
 import {textDef} from '../view/text';
@@ -28,7 +29,8 @@ export class ViewCompiler {
 
     // Element
     const selector = CssSelector.parse(component.selector)[0];
-    const elDef = elementDef(0, [], 0, selector.element || 'div', selector.toAttrsList(true), [], [], null, null, null);
+    const elDef = elementDef(0, [], 0, selector.element || 'div', selector.toAttrsList(true), [], [], null,
+      component.componentViewType, component.rendererType);
     nodes.push(elDef);
 
     // Component Provider
@@ -43,7 +45,10 @@ export class ViewCompiler {
 
     // Template
     if (component.template) {
-      nodes.push(...this._templateDef(component.template));
+      const templateNodes = this._templateDef(component.template);
+      (<any>elDef.element.componentView).setDelegate(() => {
+        viewDef(templateNodes);
+      });
     }
 
     const def = viewDef(nodes);

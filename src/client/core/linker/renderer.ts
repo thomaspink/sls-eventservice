@@ -47,7 +47,7 @@ export abstract class Renderer {
 }
 
 export abstract class RendererFactory {
-  abstract createRenderer(): Renderer;
+  abstract createRenderer(hostElement: any, type: RendererType|null): Renderer;
 }
 
 export interface RendererType {

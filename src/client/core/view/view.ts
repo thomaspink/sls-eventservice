@@ -1,6 +1,11 @@
-import {NodeDef, ViewDefinition, ViewHandleEventFn, NodeFlags, NodeData, ViewData, ViewState} from './types';
-import {tokenKey} from './util';
 import {Renderer} from '../linker/renderer';
+import {
+  NodeDef, ViewDefinition, ViewHandleEventFn, NodeFlags, NodeData, ViewData, ViewState,
+  ElementData, ProviderData, asElementData, RootData
+} from './types';
+import {tokenKey, resolveDefinition} from './util';
+import {createText} from './text';
+import {createProviderInstance, createComponentInstance} from './provider';
 
 export function viewDef(nodes: NodeDef[]): ViewDefinition {
   let viewBindingCount = 0;
@@ -146,20 +151,35 @@ function validateNode(parent: NodeDef | null, node: NodeDef, nodeCount: number) 
   }
 }
 
-export function createRootView(rootRenderer: Renderer, def: ViewDefinition, context?: any): ViewData {
-  const view = createView(rootRenderer, null, null, def);
+export function createRootView(root: RootData, def: ViewDefinition, context?: any): ViewData {
+  const view = createView(root, root.renderer, null, null, def);
   initView(view, context, context);
-  // createViewNodes(view);
+  createViewNodes(view, root.selectorOrNode);
   return view;
 }
 
-function createView(renderer: Renderer, parent: ViewData | null, parentNodeDef: NodeDef | null, def: ViewDefinition): ViewData {
+export function createComponentView(parentView: ViewData, nodeDef: NodeDef,
+  viewDef: ViewDefinition, hostElement: any): ViewData {
+  const rendererType = nodeDef.element!.componentRendererType;
+  let compRenderer: Renderer;
+  if (!rendererType) {
+    compRenderer = parentView.root.renderer;
+  } else {
+    compRenderer = parentView.root.rendererFactory.createRenderer(hostElement, rendererType);
+  }
+  return createView(parentView.root, compRenderer, parentView, nodeDef.element!.componentProvider, viewDef);
+}
+
+function createView(root: RootData, renderer: Renderer, parent: ViewData | null,
+  parentNodeDef: NodeDef | null, def: ViewDefinition): ViewData {
   const nodes: NodeData[] = new Array(def.nodes.length);
   const disposables = def.outputCount ? new Array(def.outputCount) : null;
   const view: ViewData = {
     def,
     parent,
-    viewContainerParent: null, parentNodeDef,
+    root,
+    viewContainerParent: null,
+    parentNodeDef,
     context: null,
     component: null, nodes,
     state: ViewState.CatInit,
@@ -174,4 +194,89 @@ function createView(renderer: Renderer, parent: ViewData | null, parentNodeDef: 
 function initView(view: ViewData, component: any, context: any) {
   view.component = component;
   view.context = context;
+}
+
+function createViewNodes(view: ViewData, rootEl?: any) {
+  let renderHost: any;
+  // if (isComponentView(view)) {
+  //   const hostDef = view.parentNodeDef;
+  //   renderHost = asElementData(view.parent !, hostDef !.parent !.index).renderElement;
+  // }
+  const def = view.def;
+  const nodes = view.nodes;
+  let isFirstEl = true;
+  for (let i = 0; i < def.nodes.length; i++) {
+    const nodeDef = def.nodes[i];
+    // Services.setCurrentNode(view, i);
+    let nodeData: any;
+    switch (nodeDef.flags & NodeFlags.Types) {
+      case NodeFlags.TypeElement:
+        let el: any;
+        if (isFirstEl && rootEl) {
+          el = rootEl;
+          isFirstEl = false;
+        } else {
+          // el = createElement(view, renderHost, nodeDef) as any;
+        }
+        let componentView: ViewData = undefined!;
+        if (nodeDef.flags & NodeFlags.ComponentView) {
+          const compViewDef = resolveDefinition(nodeDef.element!.componentView!);
+          componentView = createComponentView(view, nodeDef, compViewDef, el);
+        }
+        // listenToElementOutputs(view, componentView, nodeDef, el);
+        nodeData = <ElementData>{
+          renderElement: el,
+          componentView,
+          viewContainer: null,
+          // template: nodeDef.element !.template ? createTemplateData(view, nodeDef) : undefined
+        };
+        // if (nodeDef.flags & NodeFlags.EmbeddedViews) {
+        //   nodeData.viewContainer = createViewContainerData(view, nodeDef, nodeData);
+        // }
+        break;
+      case NodeFlags.TypeText:
+        nodeData = createText(view, renderHost, nodeDef) as any;
+        break;
+      case NodeFlags.TypeClassProvider:
+      case NodeFlags.TypeFactoryProvider:
+      case NodeFlags.TypeUseExistingProvider:
+      case NodeFlags.TypeValueProvider: {
+        const instance = createProviderInstance(view, nodeDef);
+        nodeData = <ProviderData>{instance};
+        break;
+      }
+      // case NodeFlags.TypePipe: {
+      //   const instance = createPipeInstance(view, nodeDef);
+      //   nodeData = <ProviderData>{instance};
+      //   break;
+      // }
+      case NodeFlags.TypeComponent: {
+        const instance = createComponentInstance(view, nodeDef);
+        nodeData = <ProviderData>{instance};
+        if (nodeDef.flags & NodeFlags.Component) {
+          const compView = asElementData(view, nodeDef.parent!.index).componentView;
+          initView(compView, instance, instance);
+        }
+        break;
+      }
+      // case NodeFlags.TypePureArray:
+      // case NodeFlags.TypePureObject:
+      // case NodeFlags.TypePurePipe:
+      //   nodeData = createPureExpression(view, nodeDef) as any;
+      //   break;
+      // case NodeFlags.TypeContentQuery:
+      // case NodeFlags.TypeViewQuery:
+      //   nodeData = createQuery() as any;
+      //   break;
+    }
+    nodes[i] = nodeData;
+  }
+  // Create the ViewData.nodes of component views after we created everything else,
+  // so that e.g. ng-content works
+  // execComponentViewsAction(view, ViewAction.CreateViewNodes);
+
+  // fill static content and view queries
+  // execQueriesAction(
+  //     view, NodeFlags.TypeContentQuery | NodeFlags.TypeViewQuery, NodeFlags.StaticQuery,
+  //     CheckType.CheckAndUpdate);
 }

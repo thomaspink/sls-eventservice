@@ -1,14 +1,10 @@
 // tslint:disable:no-bitwise
-// import { Type } from '../type';
-// import { ClassProvider, ConstructorProvider, ExistingProvider, FactoryProvider, ValueProvider } from '../di/provider';
-// import { Injector } from '../di/injector';
-// import { ComponentFactory } from '../linker/component_factory';
-// import { ComponentFactoryResolver } from '../linker/component_factory_resolver';
-import { Renderer, RendererType } from '../linker/renderer';
+import {Injector} from '../di/injector';
+import {Renderer, RendererFactory, RendererType} from '../linker/renderer';
 
-export interface DefinitionFactory<D extends Definition<any>> { (): D; }
+export interface DefinitionFactory<D extends Definition<any>> {(): D;}
 
-export interface Definition<DF extends DefinitionFactory<any>> { factory: DF|null; }
+export interface Definition<DF extends DefinitionFactory<any>> {factory: DF | null;}
 
 /**
  * A node definition in the view.
@@ -19,7 +15,7 @@ export interface Definition<DF extends DefinitionFactory<any>> { factory: DF|nul
 export interface NodeDef {
   flags: NodeFlags;
   index: number;
-  parent: NodeDef|null;
+  parent: NodeDef | null;
   // renderParent: NodeDef|null;
   /** this is checked against NgContentDef.index to find matched nodes */
   // ngContentIndex: number;
@@ -51,9 +47,9 @@ export interface NodeDef {
    * Used as a bloom filter.
    */
   // childMatchedQueries: number;
-  element: ElementDef|null;
-  provider: ProviderDef|null;
-  text: TextDef|null;
+  element: ElementDef | null;
+  provider: ProviderDef | null;
+  text: TextDef | null;
   // query: QueryDef|null;
   // ngContent: NgContentDef|null;
 }
@@ -85,7 +81,7 @@ export const enum NodeFlags {
   TypeComponent = 1 << 14,
   Component = 1 << 15,
   CatProviderNoDirective =
-      TypeValueProvider | TypeClassProvider | TypeFactoryProvider | TypeUseExistingProvider,
+  TypeValueProvider | TypeClassProvider | TypeFactoryProvider | TypeUseExistingProvider,
   CatProvider = CatProviderNoDirective | TypeComponent,
   OnInit = 1 << 16,
   OnDestroy = 1 << 17,
@@ -109,11 +105,11 @@ export const enum NodeFlags {
 
 export interface BindingDef {
   flags: BindingFlags;
-  ns: string|null;
-  name: string|null;
-  nonMinifiedName: string|null;
+  ns: string | null;
+  name: string | null;
+  nonMinifiedName: string | null;
   // securityContext: SecurityContext|null;
-  suffix: string|null;
+  suffix: string | null;
 }
 
 export const enum BindingFlags {
@@ -131,9 +127,9 @@ export const enum BindingFlags {
 
 export interface OutputDef {
   type: OutputType;
-  target: 'window'|'document'|'body'|'component'|null;
+  target: 'window' | 'document' | 'body' | 'component' | null;
   eventName: string;
-  propName: string|null;
+  propName: string | null;
 }
 
 export const enum OutputType {ElementOutput, ComponentOutput}
@@ -146,32 +142,32 @@ export const enum QueryValueType {
   Provider = 4
 }
 
-export interface TextDef { prefix: string; }
+export interface TextDef {prefix: string;}
 
 export interface ElementDef {
-  name: string|null;
-  ns: string|null;
+  name: string | null;
+  ns: string | null;
   /** ns, name, value */
-  attrs: [string, string, string][]|null;
+  attrs: [string, string, string][] | null;
   // template: ViewDefinition|null;
-  componentProvider: NodeDef|null;
-  componentRendererType: RendererType|null;
+  componentProvider: NodeDef | null;
+  componentRendererType: RendererType | null;
   // closure to allow recursive components
-  componentView: ViewDefinitionFactory|null;
+  componentView: ViewDefinitionFactory | null;
   /**
    * visible public providers for DI in the view,
    * as see from this element. This does not include private providers.
    */
-  publicProviders: {[tokenKey: string]: NodeDef}|null;
+  publicProviders: {[tokenKey: string]: NodeDef} | null;
   /**
    * same as visiblePublicProviders, but also includes private providers
    * that are located on this element.
    */
-  allProviders: {[tokenKey: string]: NodeDef}|null;
-  handleEvent: ElementHandleEventFn|null;
+  allProviders: {[tokenKey: string]: NodeDef} | null;
+  handleEvent: ElementHandleEventFn | null;
 }
 
-export interface ElementHandleEventFn { (view: ViewData, eventName: string, event: any): boolean; }
+export interface ElementHandleEventFn {(view: ViewData, eventName: string, event: any): boolean;}
 
 /**
  * ViewDefinition
@@ -237,12 +233,12 @@ export const enum DepFlags {
  */
 export interface ViewData {
   def: ViewDefinition;
-  // root: RootData;
+  root: RootData;
   renderer: Renderer;
   // index of component provider / anchor.
-  parentNodeDef: NodeDef|null;
-  parent: ViewData|null;
-  viewContainerParent: ViewData|null;
+  parentNodeDef: NodeDef | null;
+  parent: ViewData | null;
+  viewContainerParent: ViewData | null;
   component: any;
   context: any;
   // Attention: Never loop over this, as this will
@@ -253,7 +249,7 @@ export interface ViewData {
   nodes: {[key: number]: NodeData};
   state: ViewState;
   // oldValues: any[];
-  disposables: DisposableFn[]|null;
+  disposables: DisposableFn[] | null;
 }
 
 /**
@@ -273,7 +269,7 @@ export const enum ViewState {
   CatInit = BeforeFirstCheck | CatDetectChanges
 }
 
-export interface DisposableFn { (): void; }
+export interface DisposableFn {(): void;}
 
 /**
  * Node instance data.
@@ -286,18 +282,75 @@ export interface DisposableFn { (): void; }
  * This way, no usage site can get a `NodeData` from view.nodes and then use it for different
  * purposes.
  */
-export class NodeData { private __brand: any; }
+export class NodeData {private __brand: any;}
 
 /**
  * Data for an instantiated NodeType.Text.
  *
  * Attention: Adding fields to this is performance sensitive!
  */
-export interface TextData { renderText: any; }
+export interface TextData {renderText: any;}
 
 /**
  * Accessor for view.nodes, enforcing that every usage site stays monomorphic.
  */
 export function asTextData(view: ViewData, index: number): TextData {
   return <any>view.nodes[index];
+}
+
+/**
+ * Data for an instantiated NodeType.Element.
+ *
+ * Attention: Adding fields to this is performance sensitive!
+ */
+export interface ElementData {
+  renderElement: any;
+  componentView: ViewData;
+  // viewContainer: ViewContainerData|null;
+  // template: TemplateData;
+}
+
+// export interface ViewContainerData extends ViewContainerRef {
+//   // Note: we are using the prefix _ as ViewContainerData is a ViewContainerRef and therefore
+//   // directly
+//   // exposed to the user.
+//   _embeddedViews: ViewData[];
+// }
+
+// export interface TemplateData extends TemplateRef<any> {
+//   // views that have been created from the template
+//   // of this element,
+//   // but inserted into the embeddedViews of another element.
+//   // By default, this is undefined.
+//   // Note: we are using the prefix _ as TemplateData is a TemplateRef and therefore directly
+//   // exposed to the user.
+//   _projectedViews: ViewData[];
+// }
+
+/**
+ * Accessor for view.nodes, enforcing that every usage site stays monomorphic.
+ */
+export function asElementData(view: ViewData, index: number): ElementData {
+  return <any>view.nodes[index];
+}
+
+/**
+ * Data for an instantiated NodeType.Provider.
+ *
+ * Attention: Adding fields to this is performance sensitive!
+ */
+export interface ProviderData {instance: any;}
+
+/**
+ * Accessor for view.nodes, enforcing that every usage site stays monomorphic.
+ */
+export function asProviderData(view: ViewData, index: number): ProviderData {
+  return <any>view.nodes[index];
+}
+
+export interface RootData {
+  injector: Injector;
+  selectorOrNode: any;
+  renderer: Renderer;
+  rendererFactory: RendererFactory;
 }

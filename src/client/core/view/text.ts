@@ -1,4 +1,4 @@
-import {NodeDef, BindingDef, BindingFlags, NodeFlags} from './types';
+import {NodeDef, BindingDef, BindingFlags, NodeFlags, ViewData, TextData} from './types';
 
 export function textDef(staticText: string[]): NodeDef {
   const bindings: BindingDef[] = new Array(staticText.length - 1);
@@ -34,4 +34,16 @@ export function textDef(staticText: string[]): NodeDef {
     text: {prefix: staticText[0]},
     // query: null
   };
+}
+
+export function createText(view: ViewData, renderHost: any, def: NodeDef): TextData {
+  throw new Error(`createText not yet implemented`);
+  // let renderNode: any;
+  // const renderer = view.renderer;
+  // renderNode = renderer.createText(def.text !.prefix);
+  // const parentEl = getParentRenderElement(view, renderHost, def);
+  // if (parentEl) {
+  //   renderer.appendChild(parentEl, renderNode);
+  // }
+  // return {renderText: renderNode};
 }
