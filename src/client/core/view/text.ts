@@ -16,6 +16,7 @@ export function textDef(staticText: string[]): NodeDef {
     // will bet set by the view definition
     index: -1,
     parent: null,
+    renderParent: null,
     bindingIndex: -1,
     outputIndex: -1,
     // regular values
@@ -32,7 +33,7 @@ export function textDef(staticText: string[]): NodeDef {
     element: null,
     provider: null,
     text: {prefix: staticText[0]},
-    // query: null
+    // query: null,
   };
 }
 

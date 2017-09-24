@@ -1,9 +1,12 @@
-import { Injector } from '../di/injector';
-import { Renderer } from '../linker/renderer';
-import { ElementRef } from '../linker/element_ref';
-import { NodeDef, NodeFlags, DepDef, DepFlags, BindingDef, BindingFlags, OutputDef, OutputType, ViewData, QueryValueType } from './types';
-import { tokenKey, splitDepsDsl, calcBindingFlags, isComponentView } from './util';
-import { createInjector } from './refs';
+import {Injector} from '../di/injector';
+import {Renderer} from '../linker/renderer';
+import {ElementRef} from '../linker/element_ref';
+import {
+  NodeDef, NodeFlags, DepDef, DepFlags, BindingDef, BindingFlags, OutputDef, OutputType,
+  ViewData, QueryValueType, asProviderData, asElementData
+} from './types';
+import {tokenKey, splitDepsDsl, calcBindingFlags, isComponentView, viewParentEl} from './util';
+import {createInjector} from './refs';
 
 const RendererTokenKey = tokenKey(Renderer);
 const ElementRefTokenKey = tokenKey(ElementRef);
@@ -16,8 +19,8 @@ const NOT_CREATED = new Object();
 
 export function componentDef(
   flags: NodeFlags, matchedQueries: [string | number, QueryValueType][], childCount: number,
-  ctor: any, deps: ([DepFlags, any] | any)[], props?: { [name: string]: [number, string] },
-  outputs?: { [name: string]: string }): NodeDef {
+  ctor: any, deps: ([DepFlags, any] | any)[], props?: {[name: string]: [number, string]},
+  outputs?: {[name: string]: string}): NodeDef {
   const bindings: BindingDef[] = [];
   if (props) {
     for (let prop in props) {
@@ -35,7 +38,7 @@ export function componentDef(
   if (outputs) {
     for (let propName in outputs) {
       outputDefs.push(
-        { type: OutputType.ComponentOutput, propName, target: null, eventName: outputs[propName] });
+        {type: OutputType.ComponentOutput, propName, target: null, eventName: outputs[propName]});
     }
   }
   flags |= NodeFlags.TypeComponent;
@@ -65,7 +68,7 @@ export function _def(flags: NodeFlags, matchedQueriesDsl: [string | number, Quer
     // will bet set by the view definition
     index: -1,
     parent: null,
-    // renderParent: null,
+    renderParent: null,
     bindingIndex: -1,
     outputIndex: -1,
     // regular values
@@ -80,7 +83,7 @@ export function _def(flags: NodeFlags, matchedQueriesDsl: [string | number, Quer
     bindings,
     bindingFlags: calcBindingFlags(bindings), outputs,
     element: null,
-    provider: { token, value, deps: depDefs },
+    provider: {token, value, deps: depDefs},
     text: null,
     // query: null,
   };
@@ -94,6 +97,8 @@ export function createComponentInstance(view: ViewData, def: NodeDef): any {
   // components can see other private services, other directives can't.
   // const allowPrivateServices = (def.flags & NodeFlags.Component) > 0;
   // directives are always eager and classes!
+
+  debugger;
   const instance = createClass(
     view, def.parent!, true, def.provider!.value, def.provider!.deps);
   // if (def.outputs.length) {
@@ -251,8 +256,7 @@ export function resolveDep(
           throw new Error('not implemented');
         }
         case ElementRefTokenKey:
-          throw new Error('not implemented');
-        // return new ElementRef(asElementData(view, elDef.index).renderElement);
+          return new ElementRef(asElementData(view, elDef.index).renderElement);
         // case ViewContainerRefTokenKey:
         //   return asElementData(view, elDef.index).viewContainer;
         // case TemplateRefTokenKey: {
@@ -266,24 +270,23 @@ export function resolveDep(
         //   return createChangeDetectorRef(cdView);
         // }
         case InjectorRefTokenKey:
-          throw new Error('not implemented');
-        // return createInjector(view, elDef);
+          return createInjector(view, elDef);
         default:
-        // const providerDef =
-        //   (allowPrivateServices ? elDef.element!.allProviders :
-        //     elDef.element!.publicProviders)![tokenKey];
-        // if (providerDef) {
-        //   const providerData = asProviderData(view, providerDef.index);
-        //   if (providerData.instance === NOT_CREATED) {
-        //     providerData.instance = _createProviderInstance(view, providerDef);
-        //   }
-        //   return providerData.instance;
-        // }
+          const providerDef =
+            (allowPrivateServices ? elDef.element!.allProviders :
+              elDef.element!.publicProviders)![tokenKey];
+          if (providerDef) {
+            const providerData = asProviderData(view, providerDef.index);
+            if (providerData.instance === NOT_CREATED) {
+              providerData.instance = _createProviderInstance(view, providerDef);
+            }
+            return providerData.instance;
+          }
       }
     }
     allowPrivateServices = isComponentView(view);
-    // elDef = viewParentEl(view)!;
-    // view = view.parent!;
+    elDef = viewParentEl(view)!;
+    view = view.parent!;
   }
 
   // const value = startView.root.injector.get(depDef.token, NOT_FOUND_CHECK_ONLY_ELEMENT_INJECTOR);

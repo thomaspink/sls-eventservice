@@ -44,12 +44,11 @@ export class ViewCompiler {
     nodes.push(...providers);
 
     // Template
+    let templateNodes: NodeDef[] = [];
     if (component.template) {
-      const templateNodes = this._templateDef(component.template);
-      (<any>elDef.element.componentView).setDelegate(() => {
-        viewDef(templateNodes);
-      });
+      templateNodes = this._templateDef(component.template);
     }
+    (<any>elDef.element.componentView).setDelegate(() => viewDef(templateNodes));
 
     const def = viewDef(nodes);
     return def;

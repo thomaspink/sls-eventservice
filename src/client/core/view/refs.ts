@@ -3,12 +3,14 @@ import {Type} from '../type';
 import {ApplicationRef} from '../application';
 import {Injector} from '../di/injector';
 import {InjectionToken} from '../di/injection_token';
+import {RendererFactory} from '../linker/renderer';
 import {ComponentFactory, ComponentRef} from '../linker/component_factory';
-import {ViewRef, InternalViewRef} from '../linker/view_ref';;
+import {ViewRef, InternalViewRef} from '../linker/view_ref';
 import {ElementRef} from '../linker/element_ref';
-import {createRootView} from './view';
-import {ViewData, ViewDefinitionFactory, asProviderData, asElementData, NodeDef} from './types';
-import {resolveDefinition} from './util';
+import {createRootView, createRootData} from './view';
+import {ViewData, ViewDefinitionFactory, asProviderData, asElementData, NodeDef, NodeFlags, DepFlags} from './types';
+import {resolveDefinition, tokenKey} from './util';
+import {resolveDep} from './provider';
 
 const EMPTY_CONTEXT = new Object();
 
@@ -60,10 +62,15 @@ class ComponentFactory_ extends ComponentFactory<any> {
     const viewDef = resolveDefinition(this.viewDefFactory);
     const componentNodeIndex = viewDef.nodes[0].element!.componentProvider!.index;
 
-    const view = createRootView(null, viewDef, EMPTY_CONTEXT);
-    const component = asProviderData(view, componentNodeIndex).instance;
+    // TODO @thomaspink: Maybe change this in a later stage
+    const rendererFactory: RendererFactory = injector.get(<any>RendererFactory);
+    const rootData = createRootData(injector, rendererFactory, rootSelectorOrNode);
 
-    return new ComponentRef_(view, new ViewRef_(view), component);
+    const view = createRootView(rootData, viewDef, EMPTY_CONTEXT);
+    // const component = asProviderData(view, componentNodeIndex).instance;
+
+    // return new ComponentRef_(view, new ViewRef_(view), component);
+    return null;
   }
 }
 
@@ -81,7 +88,7 @@ class ComponentRef_ extends ComponentRef<any> {
   get location(): ElementRef {
     return new ElementRef(asElementData(this._view, this._elDef.index).renderElement);
   }
-  get injector() {return new Injector_(this._view);};
+  get injector(): Injector { return new Injector_(this._view, this._elDef); }
   get componentType() {return <any>this._component.constructor;}
 
   /**
@@ -128,30 +135,18 @@ class ViewRef_ extends ViewRef implements InternalViewRef {
 
 }
 
-export function createInjector(view: ViewData, parent?: Injector): Injector {
-  return new Injector_(view);
+export function createInjector(view: ViewData, elDef: NodeDef): Injector {
+  return new Injector_(view, elDef);
 }
-class Injector_ extends Injector {
-  private parent: Injector;
-  constructor(private view: ViewData, _parent?: Injector) {
-    super();
-    // this.parent = _parent || view.injector || Injector.NULL;
-  }
 
-  get(token: any, notFoundValue?: any): any {
-    // if (token === ELEMENT) {
-    //   return this.view.hostElement;
-    // }
-    // if (token === ComponentRef) {
-    //   return new ComponentRef_(this.view, new ViewRef_(this.view), this.view.component);
-    // }
-    // if (token === Renderer) {
-    //   return this.view.renderer;
-    // }
-    // if (token === ComponentFactoryResolver) {
-    //   return this.view.def.resolver || this.view.def.parent.resolver;
-    // }
-    return this.parent.get(token, notFoundValue);
+class Injector_ implements Injector {
+  constructor(private view: ViewData, private elDef: NodeDef|null) {}
+  get(token: any, notFoundValue: any = Injector.THROW_IF_NOT_FOUND): any {
+    const allowPrivateServices =
+        this.elDef ? (this.elDef.flags & NodeFlags.ComponentView) !== 0 : false;
+    return resolveDep(
+        this.view, this.elDef, allowPrivateServices,
+        {flags: DepFlags.None, token, tokenKey: tokenKey(token)}, notFoundValue);
   }
 }
 

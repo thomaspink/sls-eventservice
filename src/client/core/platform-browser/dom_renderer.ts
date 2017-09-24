@@ -1,4 +1,3 @@
-import {ListWrapper} from '../util/collection';
 import {Renderer, RendererFactory, RendererType} from '../linker/renderer';
 
 export const NAMESPACE_URIS: {[ns: string]: string} = {
@@ -122,7 +121,7 @@ export class ComponentDomRenderer extends DefaultDomRenderer {
 }
 
 export class DomRendererFactory implements RendererFactory {
-  // private _renderer = new Map<any, Renderer>();
+  private _renderer = new Map<any, Renderer>();
   private defaultRenderer: Renderer;
 
   constructor() {
@@ -160,3 +159,6 @@ function getGlobalEventTarget(target: string): any {
   return undefined;
 }
 
+export const RENDERER_FACTORY_PROVIDER = {
+  provide: RendererFactory, useClass: DomRendererFactory, deps: [] as any[]
+};
