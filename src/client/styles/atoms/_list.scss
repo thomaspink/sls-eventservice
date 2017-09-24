@@ -6,10 +6,11 @@ ul.has--dash {
 .has--arrows > li,
 .has--dash > li {
   list-style-type: none;
+  margin-left: 0.8em;
 
   &::before {
     content: '> ';
-    margin-left: -1em;
+    margin-left: -1.2em;
     padding-right: 0.5em;
     display: inline-block;
   }
