@@ -77,7 +77,8 @@
                         "hero--outline": "Outline",
                         "hero--large": "Großer Hero",
                         "hero--bg-bottom": "Hintergrund Unten ausgerichtet",
-                        "hero--right": "Rechts ausgerichtet"
+                        "hero--right": "Rechts ausgerichtet",
+                        "hero--bg-black": "Schwarzer Hintergrund"
                     },
                     "default_value": [],
                     "allow_null": 0,
@@ -107,5 +108,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1505676546
+    "modified": 1506007820
 }

@@ -17,10 +17,14 @@ addons:
 
 script:
   - npm install
+  - npm run build
+  - npm run wp:plugins
 
 after_success:
-  - mv src/theme src/sls-2017
-  - lftp -c "open -u $FTP_USER,$FTP_PASSWORD $FTP_HOST; set ssl:verify-certificate no; mirror -R src/sls-2017/ /html/apps/wordpress-56023/wp-content/themes/"
+  # download plugins
+  - lftp -c "open -u $FTP_USER,$FTP_PASSWORD $FTP_HOST; set ssl:verify-certificate no; mirror -R public/wp-content/plugins/ /html/apps/wordpress-56023/wp-content/plugins/"
+  # copy themes
+  - lftp -c "open -u $FTP_USER,$FTP_PASSWORD $FTP_HOST; set ssl:verify-certificate no; mirror -R dist/sls-2017/ /html/apps/wordpress-56023/wp-content/themes/"
 
 notifications:
   email:

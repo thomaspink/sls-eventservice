@@ -1,7 +1,40 @@
+image-gallery-navigation,
 [image-gallery-item] {
   display: block;
   position: relative;
   width: 100%;
+}
+
+image-gallery-navigation {
+  ul {
+    display: flex;
+    flex-flow: row;
+    padding: 0;
+    justify-content: space-around;
+  }
+
+  li {
+    list-style-type: none;
+    color: lighten($color-black, 50%);
+    transition: color 250ms ease-out;
+
+    &.is-active,
+    &:hover {
+      color: $color-black;
+      cursor: pointer;
+    }
+  }
+}
+
+image-gallery {
+  display: none;
+
+  &.is-active {
+    display: block;
+  }
+}
+
+[image-gallery-item] {
   padding-bottom: 65%;
   background-position: 50% 50%;
   background-size: cover;

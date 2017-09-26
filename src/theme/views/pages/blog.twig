@@ -2,7 +2,7 @@
 
 {% block content %}
 
-  {% if hero.image %}
+  {% if (hero.image or hero.style or hero.title ) %}
     {% include 'components/hero.twig' with { 'hero': hero } only %}
   {% endif %}
 

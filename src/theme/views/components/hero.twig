@@ -3,10 +3,11 @@
   hero--outline
   hero--large
   hero--bg-bottom
+  hero--black-bg
 
 #}
 <div class="hero {{ hero.style | join(' ') }} "
-  style="background-image: url('{{ hero.image.url }}')">
+  {% if hero.image %}style="background-image: url('{{ hero.image.url }}')"{% endif %}>
   <div class="container">
     {% if hero.title %}
 

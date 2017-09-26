@@ -3,6 +3,7 @@
     <grid-row gutter="medium">
       <grid-column medium-6 large-3>
         <h3>{{ __( 'Kontakt', 'sls-2017' ) }}</h3>
+        {% if footer.addess %}
         <v-card class="vcard" itemscope="" itemtype="http://microformats.org/profile/hcard">
           <div>
             <span itemprop="org">SLS Eventservice</span><br>
@@ -29,6 +30,7 @@
           {% endfor %}
           </div>
         </v-card>
+        {% endif %}
       </grid-column>
       <grid-column medium-6 large-3>
         <h3>{{ __( 'Jobs', 'sls-2017' ) }}</h3>

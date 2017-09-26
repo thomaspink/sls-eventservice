@@ -1,11 +1,11 @@
 {
-    "key": "group_59b6b8429807a",
-    "title": "Referenz – Gallerie",
+    "key": "group_59c7e3d02d7be",
+    "title": "Galerie",
     "fields": [
         {
-            "key": "field_59b6b84dd0aaa",
-            "label": "Gallerie",
-            "name": "gallery",
+            "key": "field_59c7e3e27f472",
+            "label": "Bilder",
+            "name": "images",
             "type": "gallery",
             "instructions": "",
             "required": 0,
@@ -33,17 +33,32 @@
             {
                 "param": "post_type",
                 "operator": "==",
-                "value": "references"
+                "value": "gallery"
             }
         ]
     ],
     "menu_order": 0,
     "position": "normal",
-    "style": "seamless",
+    "style": "default",
     "label_placement": "top",
     "instruction_placement": "label",
-    "hide_on_screen": "",
+    "hide_on_screen": [
+        "the_content",
+        "excerpt",
+        "custom_fields",
+        "discussion",
+        "comments",
+        "revisions",
+        "slug",
+        "author",
+        "format",
+        "page_attributes",
+        "featured_image",
+        "categories",
+        "tags",
+        "send-trackbacks"
+    ],
     "active": 1,
     "description": "",
-    "modified": 1505146976
+    "modified": 1506272247
 }

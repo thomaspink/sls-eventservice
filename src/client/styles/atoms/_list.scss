@@ -1,8 +1,10 @@
-ul.has--arrows {
+ul.has--arrows,
+ul.has--dash {
   padding-left: 1em;
 }
 
-.has--arrows > li {
+.has--arrows > li
+.has--dash > li {
   list-style-type: none;
 
   &::before {
@@ -21,4 +23,8 @@ ul.has--arrows {
       opacity: 0.6;
     }
   }
+}
+
+.has--dash > li::before {
+  content: '–';
 }
