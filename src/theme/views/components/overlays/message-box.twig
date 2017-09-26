@@ -1,0 +1,6 @@
+<div class="error-box">
+  {% for message in messages %}
+
+    <p>{{ message | json_encode() }}</p>
+  {% endfor %}
+</div>

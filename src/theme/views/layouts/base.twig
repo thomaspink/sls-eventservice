@@ -35,6 +35,12 @@
   <div class="root">
     {% include 'components/header/header.twig' %}
 
+    {% block messages %}
+      {% if messages %}
+        {% include 'components/overlays/message-box.twig' with { 'messages': messages } only %}
+      {% endif %}
+    {% endblock %}
+
     <main id="main" role="main">
 
     {% block content %}
