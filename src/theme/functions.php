@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/core/vendor/autoload.php';
 require_once __DIR__ . '/core/requireDir.php';
+require_once __DIR__ . '/core/lib/Singleton.php';
 
 $timber = new \Timber\Timber();
 
@@ -20,6 +21,9 @@ if ( !class_exists( 'Timber' ) ) {
   require_once __DIR__ . '/core/classes/OptionsPage.class.php';
   require_once __DIR__ . '/core/classes/WordpressSetup.class.php';
   require_once __DIR__ . '/core/classes/TimberSetup.class.php';
+
+
+  require_once __DIR__ . '/core/controller/MailController.php';
 
   includeDir(  __DIR__ . '/core/classes/Timber/' );
 
