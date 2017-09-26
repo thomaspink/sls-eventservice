@@ -38,7 +38,9 @@
       }
 
       $this->setHeaders();
-      $result = wp_mail(self::$mailTo, $this->fields['subject'], $this->fields['message'], $this->headers);
+      $message = 'www.sls-eventservice.at <br><hr><br>' . $this->fields['message'];
+
+      $result = wp_mail(self::$mailTo, $this->fields['subject'], $message, $this->headers);
 
       if($result) {
         $this->messages->addSuccess('Ihre Nachricht wurde erfolgreich versandt!');
@@ -56,8 +58,13 @@
       $this->fields['name'] = $_POST['sls_name'];
       $this->fields['email'] = $_POST['sls_email'];
       $this->fields['subject'] = $_POST['sls_subject'];
-      $this->fields['message'] = 'www.sls-eventservice.at <br><hr><br>' . $_POST['sls_message'];
+      $this->fields['message'] = $_POST['sls_message'];
     }
+
+    public function getPostVars() {
+      return $this->fields;
+    }
+
 
     private function validate() {
 

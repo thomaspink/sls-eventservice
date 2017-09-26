@@ -16,6 +16,7 @@
     $context = Timber::get_context();
     $context['page'] = new Timber\Post();
     $context['messages'] = $messages->getMessages();
+    $context['post_Query'] = $mail->getPostVars();
     Timber::render( array( 'pages/contact.twig' ), $context );
 
   ?>
