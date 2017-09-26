@@ -42,17 +42,17 @@
     </grid-row>
     <grid-row gutter='medium'>
       <grid-column medium-8>
-        <form action="" class="contact-form">
+        <form action="{{ page.path | e('url') }}" class="contact-form" type="post">
           <grid-row gutter='medium'>
               <grid-column medium-6>
-                <input type="text" placeholder="Vorname Nachname" required>
+                <input type="text" placeholder="Vorname Nachname" name="name" required>
               </grid-column>
               <grid-column medium-6>
-                <input type="text" placeholder="E-Mail Adresse" required>
+                <input type="text" placeholder="E-Mail Adresse" name="email" required>
               </grid-column>
           </grid-row>
-          <input type="text" placeholder="Betreff">
-          <textarea placeholder="Ihre Nachricht ..."></textarea>
+          <input type="text" placeholder="Betreff" name="subject">
+          <textarea placeholder="Ihre Nachricht ..." name="message"></textarea>
           <button class="btn btn--black btn--block" type="submit">Senden</button>
         </form>
       </grid-column>
