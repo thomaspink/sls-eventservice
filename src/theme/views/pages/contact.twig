@@ -42,7 +42,7 @@
     </grid-row>
     <grid-row gutter='medium'>
       <grid-column medium-8>
-        <form action="{{ page.path | e('url') }}" class="contact-form" type="post">
+        <form action="{{ page.path }}" class="contact-form" method="POST">
           <grid-row gutter='medium'>
               <grid-column medium-6>
                 <input type="text" placeholder="Vorname Nachname" name="name" required>
