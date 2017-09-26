@@ -13,13 +13,15 @@
     private static $prodMailTo = 'office@sls-eventservice.at';
     private static $mailTo;
 
+
     private $fields;
     private $validation;
-    private $response = array('error' => array(), 'success' => array(), 'warning' => array());
+    private $messages;
     private $headers = array();
 
     public function __construct() {
       self::$mailTo = (WP_ENV === 'development')? self::$devMailTo : self:: $prodMailTo;
+      $this->messages = MessageController::getInstance();
 
       add_action('wp_mail_failed', array( $this, 'logErrors'), 10, 1);
     }
@@ -39,11 +41,11 @@
       $result = wp_mail(self::$mailTo, $this->fields['subject'], $this->fields['message'], $this->headers);
 
       if($result) {
-        $this->response['success'] = __('Ihre Nachricht wurde erfolgreich versandt!', 'sls-2017');
+        $this->messages->addSuccess('Ihre Nachricht wurde erfolgreich versandt!');
         return;
       }
 
-      $this->response['error'] = __('Es trat ein Fehler beim Absenden der Nachricht auf!', 'sls-2017');
+      $this->messages->addError('Es trat ein Fehler beim Absenden der Nachricht auf!');
     }
 
     public function getResponse() {
@@ -68,7 +70,6 @@
       }
 
       if($v->getErrors()) {
-        $this->response['error'] = $v->getErrors();
         return false;
       }
 

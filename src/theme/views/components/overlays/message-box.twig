@@ -1,6 +1,7 @@
-<div class="error-box">
-  {% for message in messages %}
-
-    <p>{{ message | json_encode() }}</p>
+{% for message in messages %}
+<div class="message-box {{ message.style | join(' ') }}">
+  {% for text in message.messages %}
+    <p>{{ text }}</p>
   {% endfor %}
 </div>
+{% endfor %}
