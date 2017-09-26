@@ -24,7 +24,7 @@ class MessageController {
 
   private function addMessage($message, $type) {
     if ($this->messages[$type]) {
-      $this->messages[$type][] = __($message, self::$textDomain);
+      $this->messages[$type]['messages'][] = __($message, self::$textDomain);
       return;
     }
     $this->messages[$type] = array(

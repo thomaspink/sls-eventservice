@@ -1,7 +1,7 @@
 {% for message in messages %}
 <div class="message-box {{ message.style | join(' ') }}">
   {% for text in message.messages %}
-    <p>{{ text }}</p>
+    <p> — {{ text }}</p>
   {% endfor %}
 </div>
 {% endfor %}
