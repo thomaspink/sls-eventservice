@@ -1,12 +1,12 @@
 import {
-  Component, ELEMENT, HostListener, ChildListener, ViewChild
+  Component, ELEMENT, HostListener, ChildListener, ViewChild, ElementRef
 } from '../../core';
 
 
 // tslint:disable:no-unused-variable
 @Component({
   selector: 'side-drawer',
-  deps: [ELEMENT]
+  deps: [ElementRef]
 })
 export class DrawerComponent {
   private startX = 0;
@@ -23,7 +23,10 @@ export class DrawerComponent {
   @ViewChild('.side-drawer__close', {read: ELEMENT})
   private closeBtn: HTMLElement;
 
-  constructor(private element: Element) {
+  private element: Element;
+
+  constructor(ref: ElementRef) {
+    this.element = ref.nativeElement;
     this.update = this.update.bind(this);
     this.enableAnimatable();
   }

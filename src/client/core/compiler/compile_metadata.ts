@@ -29,10 +29,9 @@ export class CompileComponentMetadata {
       // queries: CompileQueryMetadata[],
       // viewQueries: CompileQueryMetadata[],
       template: CompileTemplateMetadata,
-      componentViewType: any | null,
+      componentViewType: ProxyClass | null,
       rendererType: any|object|null,
       componentFactory: any | object | null,
-
       childComponents: Type<any>[];
     }): CompileComponentMetadata {
     const hostListeners: {[key: string]: string} = {};
@@ -137,7 +136,7 @@ export class CompileComponentMetadata {
 
   template: CompileTemplateMetadata | null;
 
-  componentViewType: any | null;
+  componentViewType: ProxyClass | null;
   rendererType: any|object|null;
   componentFactory: any | object | null;
 
@@ -164,7 +163,7 @@ export class CompileComponentMetadata {
       // queries: CompileQueryMetadata[],
       // viewQueries: CompileQueryMetadata[],
       template: CompileTemplateMetadata | null,
-      componentViewType: any | null,
+      componentViewType: ProxyClass | null,
       rendererType: any | object | null,
       componentFactory: any | object | null,
       childComponents: Type<any>[],
@@ -185,7 +184,7 @@ export class CompileComponentMetadata {
     this.template = template;
 
     this.componentViewType = componentViewType;
-    // this.rendererType = rendererType;
+    this.rendererType = rendererType;
     this.componentFactory = componentFactory;
 
     this.childComponents = childComponents;

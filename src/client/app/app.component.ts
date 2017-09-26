@@ -21,9 +21,6 @@ export class AppComponent {
   @ViewChild(DrawerComponent)
   drawer: DrawerComponent;
 
-  constructor(private dialog: any/* Dialog*/) {
-  }
-
   @ChildListener('header', 'onToggleDrawer')
   onToggleDrawer() {
     // this.dialog.open(ImageSliderComponent);

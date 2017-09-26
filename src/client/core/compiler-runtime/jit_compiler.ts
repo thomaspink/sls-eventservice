@@ -1,10 +1,9 @@
 import {Type} from '../type';
-import {ListWrapper} from '../util/collection';
 import {MetadataResolver} from './metadata_resolver';
 import {ViewCompiler} from './view_compiler';
 
 import {SyncAsync} from '../compiler/util';
-import {ProxyClass} from '../compiler/compile_metadata';
+import {ProxyClass, CompileComponentMetadata} from '../compiler/compile_metadata';
 
 import {CodegenComponentFactoryResolver} from '../linker/component_factory_resolver';
 
@@ -29,16 +28,19 @@ export class JitCompiler {
 
   private _compileComponent(component: Type<any>, allComponentFactories: any[]|null) {
     const compMeta = this._metadataResolver.getComponentMetadata(component);
-    const viewDef = this._viewCompiler.compileComponent(compMeta);
-    (<ProxyClass>compMeta.componentFactory.viewDefFactory).setDelegate(() => viewDef);
-
     if (allComponentFactories) {
       allComponentFactories.push(compMeta.componentFactory);
     }
 
+    let childMetas: CompileComponentMetadata[] = [];
     if (compMeta.childComponents && compMeta.childComponents.length) {
-      compMeta.childComponents.forEach(c => this._compileComponent(c, allComponentFactories));
+      childMetas = compMeta.childComponents.map(c => {
+        this._compileComponent(c, allComponentFactories);
+        return this._metadataResolver.getComponentMetadata(c);
+      });
     }
+    const viewDef = this._viewCompiler.compileComponent(compMeta);
+    (<ProxyClass>compMeta.componentFactory.viewDefFactory).setDelegate(() => viewDef);
   }
 }
 

@@ -4,8 +4,6 @@ import { ComponentResolver } from './component_resolver';
 import { BindingCompiler } from './binding_compiler';
 import { EXPRESSION_PARSER_PROVIDERS, ExpressionParser } from './expression_parser/expression_parser';
 
-import {VIEW_COMPILER_PROVIDER} from './view_compiler';
-
 export const COMPILER_PROVIDER: Provider[] = [
   { provide: ComponentResolver, deps: [Reflector] },
   EXPRESSION_PARSER_PROVIDERS,

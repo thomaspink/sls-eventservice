@@ -4,11 +4,12 @@ import {
   NodeDef, ViewDefinition, ViewHandleEventFn, NodeFlags, NodeData, ViewData, ViewState,
   ElementData, ProviderData, asElementData, RootData, asTextData
 } from './types';
-import {tokenKey, resolveDefinition} from './util';
+import {tokenKey, resolveDefinition, isComponentView} from './util';
 import {createText} from './text';
 import {createElement} from './element';
 import {createProviderInstance, createComponentInstance} from './provider';
 import {createViewContainerData} from './refs';
+import {createVisitor} from './visitor';
 
 export function viewDef(nodes: NodeDef[]): ViewDefinition {
   let viewBindingCount = 0;
@@ -28,6 +29,9 @@ export function viewDef(nodes: NodeDef[]): ViewDefinition {
     node.parent = currentParent;
     node.bindingIndex = viewBindingCount;
     node.outputIndex = viewDisposableCount;
+
+    viewNodeFlags |= node.flags;
+    // viewMatchedQueries |= node.matchedQueryIds;
 
     if (node.element) {
       const elDef = node.element;
@@ -163,7 +167,7 @@ function validateNode(parent: NodeDef | null, node: NodeDef, nodeCount: number) 
 
 export function createRootData(injector: Injector, rendererFactory: RendererFactory,
   rootSelectorOrNode: any): RootData {
-  const renderer = rendererFactory.createRenderer(null, null);
+  const renderer = rendererFactory.createRenderer(null, null, null);
   return {injector, selectorOrNode: rootSelectorOrNode, rendererFactory, renderer};
 }
 
@@ -181,14 +185,14 @@ export function createComponentView(parentView: ViewData, nodeDef: NodeDef,
   if (!rendererType) {
     compRenderer = parentView.root.renderer;
   } else {
-    compRenderer = parentView.root.rendererFactory.createRenderer(hostElement, rendererType);
+    compRenderer = parentView.root.rendererFactory.createRenderer(hostElement, rendererType, createVisitor());
   }
   return createView(parentView.root, compRenderer, parentView, nodeDef.element!.componentProvider, viewDef);
 }
 
 function createView(root: RootData, renderer: Renderer, parent: ViewData | null,
   parentNodeDef: NodeDef | null, def: ViewDefinition): ViewData {
-  const nodes: NodeData[] = new Array(def.nodes.length);
+  const nodes: NodeData[] = [];
   const disposables = def.outputCount ? new Array(def.outputCount) : null;
   const view: ViewData = {
     def,
@@ -212,20 +216,30 @@ function initView(view: ViewData, component: any, context: any) {
   view.context = context;
 }
 
-function createViewNodes(view: ViewData, rootEl?: any) {
-  if (rootEl && rootEl !== 'object') {
+export function createViewNodes(view: ViewData, skipSelectable = true, startIndex?: number, endIndex?: number, rootEl?: any) {
+  if (rootEl && typeof rootEl !== 'object') {
     throw new Error(`The root element has to be of type Elment, not ${typeof rootEl}!`);
   }
+
+  // Skip if we have selectable nodes
+  if (skipSelectable && view.def.nodeFlags & NodeFlags.CatSelectable) {
+    return;
+  }
+
   let renderHost: any;
-  // if (isComponentView(view)) {
-  //   const hostDef = view.parentNodeDef;
-  //   renderHost = asElementData(view.parent !, hostDef !.parent !.index).renderElement;
-  // }
+  if (isComponentView(view)) {
+    const hostDef = view.parentNodeDef;
+    renderHost = asElementData(view.parent!, hostDef!.parent!.index).renderElement;
+  }
+
 
   const def = view.def;
   const nodes = view.nodes;
   let isRootEl = true;
-  for (let i = 0; i < def.nodes.length; i++) {
+  if (!endIndex || endIndex > def.nodes.length) {
+    endIndex = def.nodes.length;
+  }
+  for (let i = startIndex || 0; i < endIndex; i++) {
     const nodeDef = def.nodes[i];
     // Services.setCurrentNode(view, i);
     let nodeData: any;
@@ -245,6 +259,7 @@ function createViewNodes(view: ViewData, rootEl?: any) {
         }
         // listenToElementOutputs(view, componentView, nodeDef, el);
         nodeData = <ElementData>{
+          defIndex: nodeDef.index,
           renderElement: el,
           componentView,
           viewContainer: null,
@@ -262,7 +277,7 @@ function createViewNodes(view: ViewData, rootEl?: any) {
       case NodeFlags.TypeUseExistingProvider:
       case NodeFlags.TypeValueProvider: {
         const instance = createProviderInstance(view, nodeDef);
-        nodeData = <ProviderData>{instance};
+        nodeData = <ProviderData>{defIndex: nodeDef.index, instance};
         break;
       }
       // case NodeFlags.TypePipe: {
@@ -272,7 +287,7 @@ function createViewNodes(view: ViewData, rootEl?: any) {
       // }
       case NodeFlags.TypeComponent: {
         const instance = createComponentInstance(view, nodeDef);
-        nodeData = <ProviderData>{instance};
+        nodeData = <ProviderData>{defIndex: nodeDef.index, instance};
         if (nodeDef.flags & NodeFlags.Component) {
           const compView = asElementData(view, nodeDef.parent!.index).componentView;
           initView(compView, instance, instance);
@@ -289,16 +304,27 @@ function createViewNodes(view: ViewData, rootEl?: any) {
       //   nodeData = createQuery() as any;
       //   break;
     }
-    nodes[i] = nodeData;
+    nodes.push(nodeData);
+    // nodes[i] = nodeData;
   }
-  // Create the ViewData.nodes of component views after we created everything else,
-  // so that e.g. ng-content works
-  // execComponentViewsAction(view, ViewAction.CreateViewNodes);
+
+  // Create the ViewData.nodes of component views after we created everything else
+  execComponentViewsAction(view, ViewAction.CreateViewNodes);
+
+  execComponentViewsAction(view, ViewAction.ParseView);
 
   // fill static content and view queries
   // execQueriesAction(
   //     view, NodeFlags.TypeContentQuery | NodeFlags.TypeViewQuery, NodeFlags.StaticQuery,
   //     CheckType.CheckAndUpdate);
+}
+
+function parseView(view: ViewData) {
+  // Skip if we have no selectables
+  if (!(view.def.nodeFlags & NodeFlags.CatSelectable)) {
+    return;
+  }
+  view.renderer.parse(view);
 }
 
 
@@ -332,8 +358,91 @@ function destroyViewNodes(view: ViewData) {
       view.renderer.destroyNode!(asElementData(view, i).renderElement);
     } else if (def.flags & NodeFlags.TypeText) {
       view.renderer.destroyNode!(asTextData(view, i).renderText);
-    // } else if (def.flags & NodeFlags.TypeContentQuery || def.flags & NodeFlags.TypeViewQuery) {
-    //   asQueryList(view, i).destroy();
+      // } else if (def.flags & NodeFlags.TypeContentQuery || def.flags & NodeFlags.TypeViewQuery) {
+      //   asQueryList(view, i).destroy();
     }
+  }
+}
+
+enum ViewAction {
+  CreateViewNodes,
+  ParseView,
+  CheckNoChanges,
+  CheckNoChangesProjectedViews,
+  CheckAndUpdate,
+  CheckAndUpdateProjectedViews,
+  Destroy
+}
+
+function execComponentViewsAction(view: ViewData, action: ViewAction) {
+  const def = view.def;
+  if (!(def.nodeFlags & NodeFlags.ComponentView)) {
+    return;
+  }
+  for (let i = 0; i < view.nodes.length; i++) {
+    const node = view.nodes[i];
+    const nodeDef = def.nodes[node.defIndex];
+    if (nodeDef.flags & NodeFlags.ComponentView) {
+      // a leaf
+      callViewAction(asElementData(view,   i).componentView, action);
+    } else if ((nodeDef.childFlags & NodeFlags.ComponentView) === 0) {
+      // a parent with leafs
+      // no child is a component,
+      // then skip the children
+      i += nodeDef.childCount;
+    }
+  }
+}
+
+function callViewAction(view: ViewData, action: ViewAction) {
+  const viewState = view.state;
+  switch (action) {
+    case ViewAction.CheckNoChanges:
+      if ((viewState & ViewState.Destroyed) === 0) {
+        if ((viewState & ViewState.CatDetectChanges) === ViewState.CatDetectChanges) {
+          // checkNoChangesView(view);
+        } else if (viewState & ViewState.CheckProjectedViews) {
+          // execProjectedViewsAction(view, ViewAction.CheckNoChangesProjectedViews);
+        }
+      }
+      break;
+    case ViewAction.CheckNoChangesProjectedViews:
+      if ((viewState & ViewState.Destroyed) === 0) {
+        if (viewState & ViewState.CheckProjectedView) {
+          // checkNoChangesView(view);
+        } else if (viewState & ViewState.CheckProjectedViews) {
+          // execProjectedViewsAction(view, action);
+        }
+      }
+      break;
+    case ViewAction.CheckAndUpdate:
+      if ((viewState & ViewState.Destroyed) === 0) {
+        if ((viewState & ViewState.CatDetectChanges) === ViewState.CatDetectChanges) {
+          // checkAndUpdateView(view);
+        } else if (viewState & ViewState.CheckProjectedViews) {
+          // execProjectedViewsAction(view, ViewAction.CheckAndUpdateProjectedViews);
+        }
+      }
+      break;
+    case ViewAction.CheckAndUpdateProjectedViews:
+      if ((viewState & ViewState.Destroyed) === 0) {
+        if (viewState & ViewState.CheckProjectedView) {
+          // checkAndUpdateView(view);
+        } else if (viewState & ViewState.CheckProjectedViews) {
+          // execProjectedViewsAction(view, action);
+        }
+      }
+      break;
+    case ViewAction.Destroy:
+      // Note: destroyView recurses over all views,
+      // so we don't need to special case projected views here.
+      destroyView(view);
+      break;
+    case ViewAction.CreateViewNodes:
+      createViewNodes(view);
+      break;
+    case ViewAction.ParseView:
+      parseView(view);
+      break;
   }
 }

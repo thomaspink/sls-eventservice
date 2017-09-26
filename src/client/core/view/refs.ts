@@ -65,16 +65,20 @@ class ComponentFactory_ extends ComponentFactory<any> {
 
   create(injector: Injector, rootSelectorOrNode?: string | any): ComponentRef<any> {
     const viewDef = resolveDefinition(this.viewDefFactory);
-    const componentNodeIndex = viewDef.nodes[0].element!.componentProvider!.index;
+    const elementNode = viewDef.nodes[0];
+    const componentNodeIndex = elementNode.element!.componentProvider!.index;
 
     // TODO @thomaspink: Maybe change this in a later stage
     const rendererFactory: RendererFactory = injector.get(<any>RendererFactory);
     const rootData = createRootData(injector, rendererFactory, rootSelectorOrNode);
 
-    const view = createRootView(rootData, viewDef, EMPTY_CONTEXT);
-    const component = asProviderData(view, componentNodeIndex).instance;
+    const hostView = createRootView(rootData, viewDef, EMPTY_CONTEXT);
+    const component = asProviderData(hostView, componentNodeIndex).instance;
+    // const componentView = asElementData(hostView, elementNode.index).componentView;
 
-    return new ComponentRef_(view, new ViewRef_(view), component);
+    // .renderer.parse();
+
+    return new ComponentRef_(hostView, new ViewRef_(hostView), component);
   }
 }
 

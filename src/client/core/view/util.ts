@@ -30,8 +30,7 @@ export function createClass<C>(ctor: Type<C>, injector: Injector, deps: any[] = 
 }
 
 export function isComponentView(view: ViewData): boolean {
-  // return !!(view.def.nodeFlags & NodeFlags.Component);
-  return true;
+  return !!(view.def.nodeFlags & NodeFlags.Component);
 }
 
 export function splitDepsDsl(deps: ([DepFlags, any] | any)[]): DepDef[] {

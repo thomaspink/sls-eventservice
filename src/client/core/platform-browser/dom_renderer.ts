@@ -1,4 +1,6 @@
 import {Renderer, RendererFactory, RendererType} from '../linker/renderer';
+import {Visitor} from '../linker/visitor';
+import {NodeWalker} from './node_walker';
 
 export const NAMESPACE_URIS: {[ns: string]: string} = {
   'svg': 'http://www.w3.org/2000/svg',
@@ -112,27 +114,31 @@ export class DefaultDomRenderer implements Renderer {
 }
 
 export class ComponentDomRenderer extends DefaultDomRenderer {
-  constructor(private hostEl: any) {
+  private _walker = new NodeWalker();
+  constructor(private _hostEl: Element, private _visitor: Visitor) {
     super();
   }
 
   parse(view: any): void {
+    for (let i = 0; i < this._hostEl.children.length; i++) {
+      this._walker.traverse(this._hostEl.children.item(i), this._visitor, view);
+    }
   }
 }
 
 export class DomRendererFactory implements RendererFactory {
   private _renderer = new Map<any, Renderer>();
-  private defaultRenderer: Renderer;
+  private _defaultRenderer: Renderer;
 
   constructor() {
-    this.defaultRenderer = new DefaultDomRenderer();
+    this._defaultRenderer = new DefaultDomRenderer();
   };
 
-  createRenderer(hostElement: any, type: RendererType | null): Renderer {
+  createRenderer(hostElement: any, type: RendererType|null, visitor: Visitor|null): Renderer {
     if (type) {
-      return new ComponentDomRenderer(hostElement);
+      return new ComponentDomRenderer(hostElement, visitor);
     }
-    return this.defaultRenderer;
+    return this._defaultRenderer;
   }
 }
 

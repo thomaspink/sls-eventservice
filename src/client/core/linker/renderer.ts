@@ -1,4 +1,4 @@
-import { InjectionToken } from '../di/injection_token';
+import {Visitor} from './visitor';
 
 export abstract class Renderer {
   /**
@@ -47,7 +47,7 @@ export abstract class Renderer {
 }
 
 export abstract class RendererFactory {
-  abstract createRenderer(hostElement: any, type: RendererType|null): Renderer;
+  abstract createRenderer(hostElement: any, type: RendererType|null, visitor: Visitor): Renderer;
 }
 
 export interface RendererType {

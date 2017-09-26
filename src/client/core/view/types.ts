@@ -1,4 +1,5 @@
 // tslint:disable:no-bitwise
+import {Type} from '../type';
 import {Injector} from '../di/injector';
 import {ViewContainerRef} from '../linker/view_container_ref';
 import {Renderer, RendererFactory, RendererType} from '../linker/renderer';
@@ -101,10 +102,10 @@ export const enum NodeFlags {
   // DynamicQuery = 1 << 29,
   CatQuery = /*TypeContentQuery | */TypeViewQuery,
 
-  TypeSelectable = 1 << 30,
+  CatSelectable = 1 << 30,
 
   // mutually exclusive values...
-  Types = CatRenderNode | /*TypeNgContent | *//*TypePipe | *//*CatPureExpression | */CatProvider | CatQuery | TypeSelectable
+  Types = CatRenderNode | /*TypeNgContent | *//*TypePipe | *//*CatPureExpression | */CatProvider | CatQuery
 }
 
 export interface BindingDef {
@@ -137,6 +138,9 @@ export interface OutputDef {
   propName: string | null;
 }
 
+/**
+ * Provider
+ */
 export interface ProviderDef {
   token: any;
   value: any;
@@ -157,29 +161,6 @@ export const enum DepFlags {
   SkipSelf = 1 << 0,
   Optional = 1 << 1,
   Value = 2 << 2,
-}
-
-/**
- * Element
- */
-export interface ElementDef extends Node {
-  name: string | null;
-  ns: string | null;
-  /** ns, name, value */
-  attrs: [string, string, string][] | null;
-  template: TemplateNodeDef[] | null;
-}
-
-/**
- * Template
- */
-export enum TemplateTypes {
-  Void,
-  Element,
-  Text,
-  Comment,
-  Attribute,
-  EOF
 }
 
 export const enum OutputType {ElementOutput, ComponentOutput}
@@ -218,19 +199,10 @@ export interface ElementDef {
 }
 
 export interface SelectableDef {
-  flags: SelectableFlags;
   name: string|null;
   attrs: [string, string][]|null;
-  classNames: [string][]|null;
-  id: string|null;
-  context: any;
-}
-
-export enum SelectableFlags {
-  TypeComponent = 1 << 0,
-  TypeBinding = 1 << 1,
-  TypeQuery = 1 << 2,
-
+  classNames: string[]|null;
+  componentType: Type<any>|null;
 }
 
 export interface ElementHandleEventFn {(view: ViewData, eventName: string, event: any): boolean;}
@@ -269,31 +241,6 @@ export interface ViewHandleEventFn {
 }
 
 /**
- * Provider
- */
-export interface ProviderDef {
-  token: any;
-  value: any;
-  deps: DepDef[];
-}
-
-export interface DepDef {
-  flags: DepFlags;
-  token: any;
-  tokenKey: string;
-}
-
-/**
- * Bitmask for DI flags
- */
-export const enum DepFlags {
-  None = 0,
-  SkipSelf = 1 << 0,
-  Optional = 1 << 1,
-  Value = 2 << 2,
-}
-
-/**
  * View instance data.
  * Attention: Adding fields to this is performance sensitive!
  */
@@ -312,7 +259,8 @@ export interface ViewData {
   // Instead: Always loop over ViewDefinition.nodes,
   // and call the right accessor (e.g. `elementData`) based on
   // the NodeType.
-  nodes: {[key: number]: NodeData};
+  // nodes: {[key: number]: NodeData};
+  nodes: NodeData[],
   state: ViewState;
   // oldValues: any[];
   disposables: DisposableFn[] | null;
@@ -348,7 +296,10 @@ export interface DisposableFn {(): void;}
  * This way, no usage site can get a `NodeData` from view.nodes and then use it for different
  * purposes.
  */
-export class NodeData {private __brand: any;}
+export class NodeData {
+  defIndex: number;
+  private __brand: any;
+}
 
 /**
  * Data for an instantiated NodeType.Text.

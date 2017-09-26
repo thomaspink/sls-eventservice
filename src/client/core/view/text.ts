@@ -47,5 +47,5 @@ export function createText(view: ViewData, renderHost: any, def: NodeDef): TextD
   // if (parentEl) {
   //   renderer.appendChild(parentEl, renderNode);
   // }
-  // return {renderText: renderNode};
+  // return {defIndex: def.index, renderText: renderNode};
 }

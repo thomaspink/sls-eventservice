@@ -1,6 +1,8 @@
+import {ViewData} from '../view/types';
+
 export abstract class Visitor {
-  abstract visitElement(element: any, context: any):
-    { visitor: Visitor  | null, context: any | null } | null;
-  abstract visitAttribute(element: any, attribute: any, context: any): void;
-  abstract finish(context: any): void;
+  abstract visitElement(view: ViewData, el: any, name: string, attrs: [string, string, string][]|null,
+    classNames: string[]|null): ViewData|null;
+  abstract visitAttribute(view: ViewData, name: string, value: string|null): void;
+  abstract finish(view: ViewData): void;
 }

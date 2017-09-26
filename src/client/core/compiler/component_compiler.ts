@@ -17,7 +17,7 @@ import {
 import { CssSelector } from './selector';
 import { RendererFactory } from '../linker/renderer';
 import { Visitor } from '../linker/visitor';
-import { CodegenVisitor, Selectable } from './visitor';
+// import { CodegenVisitor, Selectable } from './visitor';
 import { BindingCompiler } from './binding_compiler';
 import { AST } from './expression_parser/ast';
 import { ExpressionContext, ExpressionInterpreter } from './expression_parser/interpreter';

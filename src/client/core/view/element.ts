@@ -21,7 +21,7 @@ export function bindingDefs(bindings: [BindingFlags, string, string][]): Binding
   }
   return bindingDefs;
 }
-
+let prev = 0;
 export function elementDef(
   flags: NodeFlags, matchedQueriesDsl: [string | number, QueryValueType][],
   childCount: number, namespaceAndName: string, fixedAttrs: [string, string][] = [],
@@ -60,6 +60,7 @@ export function elementDef(
     flags |= NodeFlags.ComponentView;
   }
   flags |= NodeFlags.TypeElement;
+  prev = flags;
   return {
     // will bet set by the view definition
     index: -1,
