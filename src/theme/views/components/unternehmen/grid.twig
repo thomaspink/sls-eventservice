@@ -1,0 +1,21 @@
+{# grid Layout for unternehmen page #}
+
+<div class="container {{ item.styles | join(' ') }}">
+  <grid-row gutter="medium">
+
+    {% for column in item.column %}
+
+      <grid-column medium-{{ column.width }}>
+
+      {% if column.acf_fc_layout == 'image' %}
+        {% include 'components/image.twig' with { 'image': Image(column.image) } %}
+      {% elseif column.acf_fc_layout == 'text' %}
+        {% include 'components/text.twig' with { 'text': column.text} %}
+      {% endif %}
+
+      </grid-column>
+
+    {% endfor %}
+
+  </grid-row>
+</div>

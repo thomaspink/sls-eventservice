@@ -5,6 +5,7 @@ import { QuotesSwiperComponent } from './components/quotes-swiper.component';
 import { ImageSliderComponent } from './components/image-slider.component';
 import { DIALOG_COMPONENTS, DIALOG_PROVIDERS, Dialog } from './services/dialog/dialog';
 import { SWIPER_PROVIDERS } from './services/swiper';
+import { MessageComponent } from './components/message.component';
 
 @Component({
   selector: 'body',
@@ -12,6 +13,7 @@ import { SWIPER_PROVIDERS } from './services/swiper';
   deps: [Dialog],
   components: [
     HeaderComponent,
+    MessageComponent,
     DrawerComponent,
     QuotesSwiperComponent,
     ImageSliderComponent,

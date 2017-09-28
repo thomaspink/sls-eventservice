@@ -11,7 +11,7 @@ $font-family-condensed: Oswald, 'Roboto Condensed', Roboto, 'Helvetica Neue', He
 
 .jumbo {
   font-size: 70px;
-  line-height: 1;
+  line-height: 1em;
   @extend .is--bold;
   @extend .is--uppercase;
 }
@@ -25,6 +25,8 @@ h6 {
   font-family: $font-family-condensed;
   font-weight: 300;
   margin: 0;
+  line-height: 1.2em;
+  @extend .is--uppercase;
 }
 
 h1 + p,
