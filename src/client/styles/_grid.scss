@@ -31,6 +31,10 @@ grid-column, [column] {
     flex-shrink: 1;
     width: 100%;
 
+    &.is-centered {
+      justify-content: center;
+    }
+
     > * {
         width: 100%;
     }

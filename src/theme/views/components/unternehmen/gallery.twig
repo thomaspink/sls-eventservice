@@ -6,7 +6,7 @@
 
     {% for image in item.gallery %}
 
-      <grid-column medium-3 class="parnter-logos__item">
+      <grid-column medium-3 class="parnter-logos__item is-centered">
         {% include 'components/image.twig' with { 'image': Image(image) } %}
       </grid-column>
 
