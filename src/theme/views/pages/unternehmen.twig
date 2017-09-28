@@ -13,7 +13,7 @@
 
     {% if item.acf_fc_layout == 'text' %}
 
-    <div class="container" class="{{ item.styles | join(' ') }}">
+    <div class="container {{ item.styles | join(' ') }}">
       {% include 'components/text.twig' with { 'text': item.text} %}
     </div>
 
@@ -24,6 +24,10 @@
     {% elseif item.acf_fc_layout == 'grid' %}
 
       {% include 'components/unternehmen/grid.twig' %}
+
+    {% elseif item.acf_fc_layout == 'statistik' %}
+
+      {% include 'components/unternehmen/statistik.twig' %}
 
     {% endif %}
 

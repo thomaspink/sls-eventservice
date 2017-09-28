@@ -346,6 +346,77 @@
                     ],
                     "min": "",
                     "max": ""
+                },
+                "59ccf27c2bfc1": {
+                    "key": "59ccf27c2bfc1",
+                    "name": "statistik",
+                    "label": "Statistik",
+                    "display": "row",
+                    "sub_fields": [
+                        {
+                            "key": "field_59ccf28c2bfc2",
+                            "label": "Chart",
+                            "name": "chart",
+                            "type": "repeater",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "collapsed": "",
+                            "min": 0,
+                            "max": 4,
+                            "layout": "table",
+                            "button_label": "",
+                            "sub_fields": [
+                                {
+                                    "key": "field_59ccf2b72bfc3",
+                                    "label": "Zahl",
+                                    "name": "number",
+                                    "type": "number",
+                                    "instructions": "",
+                                    "required": 0,
+                                    "conditional_logic": 0,
+                                    "wrapper": {
+                                        "width": "40",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "default_value": "",
+                                    "placeholder": "",
+                                    "prepend": "",
+                                    "append": "",
+                                    "min": "",
+                                    "max": "",
+                                    "step": ""
+                                },
+                                {
+                                    "key": "field_59ccf2d22bfc4",
+                                    "label": "Name",
+                                    "name": "name",
+                                    "type": "text",
+                                    "instructions": "",
+                                    "required": 0,
+                                    "conditional_logic": 0,
+                                    "wrapper": {
+                                        "width": "60",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "default_value": "",
+                                    "placeholder": "",
+                                    "prepend": "",
+                                    "append": "",
+                                    "maxlength": ""
+                                }
+                            ]
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
                 }
             },
             "button_label": "Elemente hinzufügen",
@@ -369,7 +440,6 @@
     "instruction_placement": "label",
     "hide_on_screen": [
         "permalink",
-        "the_content",
         "excerpt",
         "custom_fields",
         "discussion",
@@ -386,5 +456,5 @@
     ],
     "active": 1,
     "description": "",
-    "modified": 1506602273
+    "modified": 1506604025
 }

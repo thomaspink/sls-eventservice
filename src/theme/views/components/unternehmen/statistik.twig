@@ -1,0 +1,18 @@
+<div class="statistik island-i-3 island-3 hero--bg-black">
+  <div class="container">
+
+    <grid-row gutter="medium">
+
+      {% for item in item.chart %}
+
+        <grid-column medium-3 small-6 class="is-centered is--uppercase island-1">
+          <h1 class="island-none">{{ item.number }}</h1>
+          <p class="island-none">&mdash;<br>{{ item.name }}</p>
+        </grid-column>
+
+      {% endfor %}
+
+    </grid-row>
+
+  </div>
+</div>

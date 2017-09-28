@@ -1,6 +1,6 @@
 {# grid Layout for unternehmen page #}
 
-<div class="container" class="{{ item.styles | join(' ') }}">
+<div class="container {{ item.styles | join(' ') }}">
   <grid-row gutter="medium">
 
     {% for column in item.column %}
