@@ -8,6 +8,27 @@
     {% include 'components/hero.twig' with { 'hero': hero } %}
   {% endif %}
 
+
+  {% for item in page.get_field('content') %}
+
+    {% if item.acf_fc_layout == 'text' %}
+
+    <div class="container" class="{{ item.styles | join(' ') }}">
+      {% include 'components/text.twig' with { 'text': item.text} %}
+    </div>
+
+    {% elseif item.acf_fc_layout == 'gallery' %}
+
+      {% include 'components/unternehmen/gallery.twig' %}
+
+    {% elseif item.acf_fc_layout == 'grid' %}
+
+      {% include 'components/unternehmen/grid.twig' %}
+
+    {% endif %}
+
+  {% endfor %}
+
 <div class="container">
 
  <h2>{{ __('Offene Stellen', 'sls-2017') }}</h2>

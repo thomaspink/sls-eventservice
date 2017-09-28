@@ -120,7 +120,7 @@
                                                 "id": ""
                                             },
                                             "return_format": "array",
-                                            "preview_size": "thumbnail",
+                                            "preview_size": "medium",
                                             "library": "all",
                                             "min_width": "",
                                             "min_height": "",
@@ -188,8 +188,18 @@
                                 "id": ""
                             },
                             "choices": {
-                                "gridFullScreen": "Volle Breite",
-                                "inverted": "Invertiert"
+                                "island-1": "Abstand 1x",
+                                "island-2": "Abstand 2x",
+                                "island-3": "Abstand 3x",
+                                "island-i-1": "Abstand innen 1x",
+                                "island-i-2": "Abstand innen 2x",
+                                "island-i-3": "Abstand innen 3x",
+                                "island-t-1": "Abstand oben 1x",
+                                "island-t-2": "Abstand oben 2x",
+                                "island-t-3": "Abstand oben 3x",
+                                "island-b-1": "Abstand unten 1x",
+                                "island-b-2": "Abstand unten 2x",
+                                "island-b-3": "Abstand unten 3x"
                             },
                             "default_value": [],
                             "allow_null": 1,
@@ -227,6 +237,41 @@
                             "toolbar": "full",
                             "media_upload": 1,
                             "delay": 0
+                        },
+                        {
+                            "key": "field_59cceced678f5",
+                            "label": "Styles",
+                            "name": "styles",
+                            "type": "select",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "choices": {
+                                "island-1": "Abstand 1x",
+                                "island-2": "Abstand 2x",
+                                "island-3": "Abstand 3x",
+                                "island-i-1": "Abstand innen 1x",
+                                "island-i-2": "Abstand innen 2x",
+                                "island-i-3": "Abstand innen 3x",
+                                "island-t-1": "Abstand oben 1x",
+                                "island-t-2": "Abstand oben 2x",
+                                "island-t-3": "Abstand oben 3x",
+                                "island-b-1": "Abstand unten 1x",
+                                "island-b-2": "Abstand unten 2x",
+                                "island-b-3": "Abstand unten 3x"
+                            },
+                            "default_value": [],
+                            "allow_null": 1,
+                            "multiple": 1,
+                            "ui": 0,
+                            "ajax": 0,
+                            "return_format": "value",
+                            "placeholder": ""
                         }
                     ],
                     "min": "",
@@ -262,6 +307,41 @@
                             "max_height": "",
                             "max_size": "",
                             "mime_types": ""
+                        },
+                        {
+                            "key": "field_59cced0b678f6",
+                            "label": "Styles",
+                            "name": "styles",
+                            "type": "select",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "choices": {
+                                "island-1": "Abstand 1x",
+                                "island-2": "Abstand 2x",
+                                "island-3": "Abstand 3x",
+                                "island-i-1": "Abstand innen 1x",
+                                "island-i-2": "Abstand innen 2x",
+                                "island-i-3": "Abstand innen 3x",
+                                "island-t-1": "Abstand oben 1x",
+                                "island-t-2": "Abstand oben 2x",
+                                "island-t-3": "Abstand oben 3x",
+                                "island-b-1": "Abstand unten 1x",
+                                "island-b-2": "Abstand unten 2x",
+                                "island-b-3": "Abstand unten 3x"
+                            },
+                            "default_value": [],
+                            "allow_null": 1,
+                            "multiple": 1,
+                            "ui": 0,
+                            "ajax": 0,
+                            "return_format": "value",
+                            "placeholder": ""
                         }
                     ],
                     "min": "",
@@ -306,5 +386,5 @@
     ],
     "active": 1,
     "description": "",
-    "modified": 1503431635
+    "modified": 1506602273
 }

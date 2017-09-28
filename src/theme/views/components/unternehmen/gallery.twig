@@ -1,0 +1,17 @@
+{# gallery Layout for unternehmen page #}
+
+<div class="container" class="{{ item.styles | join(' ') }}">
+
+  <grid-row gutter="large" class="partner-logos island-3">
+
+    {% for image in item.gallery %}
+
+      <grid-column medium-3 class="parnter-logos__item">
+        {% include 'components/image.twig' with { 'image': Image(image) } %}
+      </grid-column>
+
+    {% endfor %}
+
+  </grid-row>
+
+</div>
