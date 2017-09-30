@@ -69,7 +69,7 @@ module.exports = webpackMerge(commonConfig, {
       options: {
         languageIn: 'ECMASCRIPT5',
         languageOut: 'ECMASCRIPT5',
-        compilationLevel: 'ADVANCED',
+        compilationLevel: 'SIMPLE', // 'ADVANCED',
         warningLevel: 'QUIET', // 'DEFAULT',
         externs: [{ src: externs }]
       },
