@@ -11,9 +11,11 @@
   <div class="container">
 
     {% if page %}
-
-      {{ page.content }}
-
+      <grid-row class="island-3">
+        <grid-column medium-8>
+          {{ page.content }}
+        </grid-column>
+      </grid-row>
     {% endif %}
 
   </div>
